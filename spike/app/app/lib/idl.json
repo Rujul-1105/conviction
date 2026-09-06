@@ -1,0 +1,1224 @@
+{
+  "address": "2Prk1oV522ED8y5tsHXXxLYfBaPVYSHLEwRoXg3At979",
+  "metadata": {
+    "name": "counter",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Phase 0 spike — minimal counter for ER/PER verification"
+  },
+  "instructions": [
+    {
+      "name": "bump",
+      "docs": [
+        "Increment on the ER. Public so any wallet can press it during the spike;",
+        "the real game in Phase A narrows this to one permissioned player."
+      ],
+      "discriminator": [
+        102,
+        163,
+        91,
+        221,
+        146,
+        88,
+        184,
+        142
+      ],
+      "accounts": [
+        {
+          "name": "counter",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  117,
+                  110,
+                  116,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "counter.authority",
+                "account": "Counter"
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "signer": true,
+          "relations": [
+            "counter"
+          ]
+        },
+        {
+          "name": "payer",
+          "writable": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "close_stop_loss_permission",
+      "discriminator": [
+        170,
+        6,
+        17,
+        36,
+        124,
+        227,
+        151,
+        4
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "stop_loss"
+          ]
+        },
+        {
+          "name": "stop_loss",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  111,
+                  112,
+                  45,
+                  108,
+                  111,
+                  115,
+                  115
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "stop_loss.authority",
+                "account": "StopLoss"
+              }
+            ]
+          }
+        },
+        {
+          "name": "permission",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  101,
+                  114,
+                  109,
+                  105,
+                  115,
+                  115,
+                  105,
+                  111,
+                  110,
+                  58
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "stop_loss"
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "permission_program"
+            }
+          }
+        },
+        {
+          "name": "permission_program",
+          "address": "ACLseoPoyC3cBqoUtkbjZ4aDrkurZW86v19pXz2XQnp1"
+        },
+        {
+          "name": "ephemeral_vault",
+          "writable": true,
+          "address": "MagicVau1t999999999999999999999999999999999"
+        },
+        {
+          "name": "magic_program",
+          "address": "Magic11111111111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "commit_counter",
+      "discriminator": [
+        46,
+        194,
+        134,
+        164,
+        151,
+        171,
+        164,
+        33
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "counter",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  117,
+                  110,
+                  116,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "counter.authority",
+                "account": "Counter"
+              }
+            ]
+          }
+        },
+        {
+          "name": "magic_program",
+          "address": "Magic11111111111111111111111111111111111111"
+        },
+        {
+          "name": "magic_context",
+          "writable": true,
+          "address": "MagicContext1111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "delegate_counter",
+      "discriminator": [
+        191,
+        73,
+        158,
+        84,
+        28,
+        42,
+        192,
+        253
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "signer": true
+        },
+        {
+          "name": "buffer_counter",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  117,
+                  102,
+                  102,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "counter"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                20,
+                182,
+                181,
+                47,
+                64,
+                206,
+                144,
+                247,
+                243,
+                6,
+                55,
+                168,
+                144,
+                45,
+                87,
+                34,
+                10,
+                113,
+                65,
+                2,
+                40,
+                229,
+                99,
+                146,
+                154,
+                145,
+                168,
+                79,
+                203,
+                8,
+                126,
+                12
+              ]
+            }
+          }
+        },
+        {
+          "name": "delegation_record_counter",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  101,
+                  108,
+                  101,
+                  103,
+                  97,
+                  116,
+                  105,
+                  111,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "counter"
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "delegation_program"
+            }
+          }
+        },
+        {
+          "name": "delegation_metadata_counter",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  101,
+                  108,
+                  101,
+                  103,
+                  97,
+                  116,
+                  105,
+                  111,
+                  110,
+                  45,
+                  109,
+                  101,
+                  116,
+                  97,
+                  100,
+                  97,
+                  116,
+                  97
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "counter"
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "delegation_program"
+            }
+          }
+        },
+        {
+          "name": "counter",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  117,
+                  110,
+                  116,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "authority"
+              }
+            ]
+          }
+        },
+        {
+          "name": "owner_program",
+          "address": "2Prk1oV522ED8y5tsHXXxLYfBaPVYSHLEwRoXg3At979"
+        },
+        {
+          "name": "delegation_program",
+          "address": "DELeGGvXpWV2fqJUhqcF5ZSYMS4JTLjteaAMARRSaeSh"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "delegate_stop_loss",
+      "discriminator": [
+        150,
+        182,
+        8,
+        159,
+        90,
+        251,
+        119,
+        185
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "signer": true
+        },
+        {
+          "name": "buffer_stop_loss",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  117,
+                  102,
+                  102,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "stop_loss"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                20,
+                182,
+                181,
+                47,
+                64,
+                206,
+                144,
+                247,
+                243,
+                6,
+                55,
+                168,
+                144,
+                45,
+                87,
+                34,
+                10,
+                113,
+                65,
+                2,
+                40,
+                229,
+                99,
+                146,
+                154,
+                145,
+                168,
+                79,
+                203,
+                8,
+                126,
+                12
+              ]
+            }
+          }
+        },
+        {
+          "name": "delegation_record_stop_loss",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  101,
+                  108,
+                  101,
+                  103,
+                  97,
+                  116,
+                  105,
+                  111,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "stop_loss"
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "delegation_program"
+            }
+          }
+        },
+        {
+          "name": "delegation_metadata_stop_loss",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  101,
+                  108,
+                  101,
+                  103,
+                  97,
+                  116,
+                  105,
+                  111,
+                  110,
+                  45,
+                  109,
+                  101,
+                  116,
+                  97,
+                  100,
+                  97,
+                  116,
+                  97
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "stop_loss"
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "delegation_program"
+            }
+          }
+        },
+        {
+          "name": "stop_loss",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  111,
+                  112,
+                  45,
+                  108,
+                  111,
+                  115,
+                  115
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "authority"
+              }
+            ]
+          }
+        },
+        {
+          "name": "owner_program",
+          "address": "2Prk1oV522ED8y5tsHXXxLYfBaPVYSHLEwRoXg3At979"
+        },
+        {
+          "name": "delegation_program",
+          "address": "DELeGGvXpWV2fqJUhqcF5ZSYMS4JTLjteaAMARRSaeSh"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "init_stop_loss_permission",
+      "discriminator": [
+        35,
+        197,
+        82,
+        69,
+        101,
+        153,
+        62,
+        201
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "stop_loss"
+          ]
+        },
+        {
+          "name": "stop_loss",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  111,
+                  112,
+                  45,
+                  108,
+                  111,
+                  115,
+                  115
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "stop_loss.authority",
+                "account": "StopLoss"
+              }
+            ]
+          }
+        },
+        {
+          "name": "permission",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  101,
+                  114,
+                  109,
+                  105,
+                  115,
+                  115,
+                  105,
+                  111,
+                  110,
+                  58
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "stop_loss"
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "permission_program"
+            }
+          }
+        },
+        {
+          "name": "permission_program",
+          "address": "ACLseoPoyC3cBqoUtkbjZ4aDrkurZW86v19pXz2XQnp1"
+        },
+        {
+          "name": "ephemeral_vault",
+          "writable": true,
+          "address": "MagicVau1t999999999999999999999999999999999"
+        },
+        {
+          "name": "magic_program",
+          "address": "Magic11111111111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "members",
+          "type": {
+            "vec": {
+              "defined": {
+                "name": "MemberArg"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "initialize_counter",
+      "discriminator": [
+        67,
+        89,
+        100,
+        87,
+        231,
+        172,
+        35,
+        124
+      ],
+      "accounts": [
+        {
+          "name": "counter",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  117,
+                  110,
+                  116,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "authority"
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "initialize_stop_loss",
+      "discriminator": [
+        36,
+        91,
+        88,
+        87,
+        17,
+        0,
+        217,
+        218
+      ],
+      "accounts": [
+        {
+          "name": "stop_loss",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  111,
+                  112,
+                  45,
+                  108,
+                  111,
+                  115,
+                  115
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "authority"
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "max_loss_bps",
+          "type": "u16"
+        }
+      ]
+    },
+    {
+      "name": "process_undelegation",
+      "discriminator": [
+        196,
+        28,
+        41,
+        206,
+        48,
+        37,
+        51,
+        167
+      ],
+      "accounts": [
+        {
+          "name": "base_account",
+          "writable": true
+        },
+        {
+          "name": "buffer",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  117,
+                  110,
+                  100,
+                  101,
+                  108,
+                  101,
+                  103,
+                  97,
+                  116,
+                  101,
+                  45,
+                  98,
+                  117,
+                  102,
+                  102,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "base_account"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                181,
+                183,
+                0,
+                225,
+                242,
+                87,
+                58,
+                192,
+                204,
+                6,
+                34,
+                1,
+                52,
+                74,
+                207,
+                151,
+                184,
+                53,
+                6,
+                235,
+                140,
+                229,
+                25,
+                152,
+                204,
+                98,
+                126,
+                24,
+                147,
+                128,
+                167,
+                62
+              ]
+            }
+          }
+        },
+        {
+          "name": "payer",
+          "writable": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "account_seeds",
+          "type": {
+            "vec": "bytes"
+          }
+        }
+      ]
+    },
+    {
+      "name": "undelegate_counter",
+      "discriminator": [
+        160,
+        10,
+        117,
+        157,
+        44,
+        10,
+        180,
+        179
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "counter",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  117,
+                  110,
+                  116,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "counter.authority",
+                "account": "Counter"
+              }
+            ]
+          }
+        },
+        {
+          "name": "magic_program",
+          "address": "Magic11111111111111111111111111111111111111"
+        },
+        {
+          "name": "magic_context",
+          "writable": true,
+          "address": "MagicContext1111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "undelegate_stop_loss",
+      "discriminator": [
+        195,
+        4,
+        171,
+        153,
+        247,
+        111,
+        200,
+        143
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "stop_loss",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  111,
+                  112,
+                  45,
+                  108,
+                  111,
+                  115,
+                  115
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "stop_loss.authority",
+                "account": "StopLoss"
+              }
+            ]
+          }
+        },
+        {
+          "name": "magic_program",
+          "address": "Magic11111111111111111111111111111111111111"
+        },
+        {
+          "name": "magic_context",
+          "writable": true,
+          "address": "MagicContext1111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "update_stop_loss_permission",
+      "discriminator": [
+        212,
+        229,
+        174,
+        51,
+        176,
+        158,
+        227,
+        136
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "stop_loss"
+          ]
+        },
+        {
+          "name": "stop_loss",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  111,
+                  112,
+                  45,
+                  108,
+                  111,
+                  115,
+                  115
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "stop_loss.authority",
+                "account": "StopLoss"
+              }
+            ]
+          }
+        },
+        {
+          "name": "permission",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  101,
+                  114,
+                  109,
+                  105,
+                  115,
+                  115,
+                  105,
+                  111,
+                  110,
+                  58
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "stop_loss"
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "permission_program"
+            }
+          }
+        },
+        {
+          "name": "permission_program",
+          "address": "ACLseoPoyC3cBqoUtkbjZ4aDrkurZW86v19pXz2XQnp1"
+        },
+        {
+          "name": "ephemeral_vault",
+          "writable": true,
+          "address": "MagicVau1t999999999999999999999999999999999"
+        },
+        {
+          "name": "magic_program",
+          "address": "Magic11111111111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "members",
+          "type": {
+            "vec": {
+              "defined": {
+                "name": "MemberArg"
+              }
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Counter",
+      "discriminator": [
+        255,
+        176,
+        4,
+        245,
+        188,
+        253,
+        124,
+        25
+      ]
+    },
+    {
+      "name": "StopLoss",
+      "discriminator": [
+        251,
+        211,
+        91,
+        132,
+        59,
+        107,
+        142,
+        94
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "NotAuthority",
+      "msg": "Signer is not the counter authority"
+    },
+    {
+      "code": 6001,
+      "name": "TooManyMembers",
+      "msg": "Permission member count exceeds MAX_PERMISSION_MEMBERS"
+    }
+  ],
+  "types": [
+    {
+      "name": "Counter",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "count",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "MemberArg",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "pubkey",
+            "type": "pubkey"
+          },
+          {
+            "name": "flags",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "StopLoss",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "min_bps",
+            "type": "u16"
+          },
+          {
+            "name": "max_bps",
+            "type": "u16"
+          }
+        ]
+      }
+    }
+  ]
+}
