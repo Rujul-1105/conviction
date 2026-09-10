@@ -1,7 +1,7 @@
 'use client'
 
-import { useMemo, useState } from 'react'
-import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react'
+import { useEffect, useMemo, useState } from 'react'
+import { ConnectionProvider, WalletProvider, useConnection, useWallet } from '@solana/wallet-adapter-react'
 import { WalletModalProvider } from '@solana/wallet-adapter-react-ui'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import {
@@ -13,6 +13,7 @@ import { clusterApiUrl } from '@solana/web3.js'
 import { Toaster } from 'sonner'
 
 import '@solana/wallet-adapter-react-ui/styles.css'
+import { setConnection, setWallet, invalidateProgram } from '@/lib/anchor/context'
 
 /**
  * Client provider tree. Ported from the Phase 0 spike, plus Sonner for toasts.
@@ -20,10 +21,10 @@ import '@solana/wallet-adapter-react-ui/styles.css'
  * Order matters: ConnectionProvider must wrap WalletProvider, which must wrap
  * WalletModalProvider. React Query sits inside so hooks can read the wallet.
  *
- * On wallets: DESIGN.md §10 asks for Phantom / Solflare / Backpack. Only the
- * first two are listed explicitly — Backpack ships a Wallet Standard provider,
- * so wallet-adapter auto-detects it when installed and there is no
- * BackpackWalletAdapter to import. Adding one here would be a build error.
+ * Phase 3 adds `<WalletContextBridge>` — a small inner component that copies
+ * the wallet-adapter's connection + signing wallet into the module-level
+ * `lib/anchor/context.ts` holder so `real.ts` can build an Anchor Program
+ * from anywhere in the tree.
  */
 
 const NETWORK =
@@ -40,6 +41,41 @@ function resolveEndpoint(): string {
   }
   if (process.env.NEXT_PUBLIC_USE_LOCAL === '1') return 'http://127.0.0.1:8899'
   return clusterApiUrl(NETWORK)
+}
+
+/**
+ * Inner component that runs inside ConnectionProvider + WalletProvider so
+ * it can read the live connection + signing wallet and copy them into the
+ * module-level context that `real.ts` reads from. Re-runs whenever either
+ * dependency changes; rebuilds the cached Anchor Program on each change.
+ */
+function WalletContextBridge({ children }: { children: React.ReactNode }) {
+  const { connection } = useConnection()
+  const { publicKey, signTransaction, signAllTransactions, connected } =
+    useWallet()
+
+  useEffect(() => {
+    if (connection) setConnection(connection)
+  }, [connection])
+
+  useEffect(() => {
+    if (connected && publicKey && signTransaction && signAllTransactions) {
+      setWallet({
+        publicKey,
+        signTransaction,
+        signAllTransactions,
+      })
+    } else {
+      setWallet({
+        publicKey: null,
+        signTransaction: null,
+        signAllTransactions: null,
+      })
+      invalidateProgram()
+    }
+  }, [connected, publicKey, signTransaction, signAllTransactions])
+
+  return <>{children}</>
 }
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -74,7 +110,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <WalletProvider wallets={wallets} autoConnect>
         <WalletModalProvider>
           <QueryClientProvider client={queryClient}>
-            {children}
+            <WalletContextBridge>{children}</WalletContextBridge>
             <Toaster
               theme="dark"
               position="bottom-right"

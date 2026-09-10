@@ -207,12 +207,14 @@ export type ConvictionApi = {
   getVillainToken: (matchId: string) => Promise<Token | null>
 }
 
-import { mockApi } from './mock'
+import { realApi } from './real'
 
 /**
  * The single api instance the whole app imports.
  *
- * Phase B ships on mocks. See lib/api/real.ts for why the program can't back
- * these calls yet and what each one maps to when it can.
+ * Phase 3 ships on `realApi` against the devnet program. The mock layer
+ * (`./mock`) is kept around for offline dev / unit tests but is no longer
+ * imported here. To swap back to mocks for testing, change the export to
+ * `mockApi`.
  */
-export const api: ConvictionApi = mockApi
+export const api: ConvictionApi = realApi
