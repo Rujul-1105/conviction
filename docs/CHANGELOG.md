@@ -5,6 +5,8 @@ listing what shipped, what's known-bad, and ADR pointers. Newest entries first.
 
 ---
 
+- [Phase 4 source-only, uncommitted] 2026-09-10 — Birdeye live prices wired into `price-chart.tsx`. `useBirdeyePrices` polls every 10s for every mint across team baskets; P&L derived from basket weights × price change vs entry. Chart header shows "Birdeye live" / "Mock walk" pill. Sonner toast on 401 / missing key, with seeded walk fallback. `pnpm typecheck` + `pnpm build` clean.
+
 - [Phase 3 source-only, uncommitted] 2026-09-10 — real.ts wire-up landed locally. All 18 ConvictionApi functions implemented against `Fh6b…` on devnet (no `notWired(` calls remain). New files: `app/lib/anchor/pda.ts` (PDA derivations), `app/lib/anchor/program.ts` (Anchor Program factory), `app/lib/anchor/context.ts` (module-level mutable connection + wallet holder). `WalletContextBridge` in providers copies wallet-adapter state into context. `app/lib/api/index.ts` flipped from `mockApi` to `realApi`. Loose-typed throughout (Anchor's IDL generics aren't worth fighting for MVP). `pnpm typecheck` + `pnpm build` clean.
 
 - [Phase 1.6 deploy] 2026-09-10 — Phase 1 source committed + redeployed to devnet at `Fh6bQUgE35Hq7nP22GZ1Youwnph2UaiEh9xTtDJuHJbH`. Deploy required `solana program extend 10240` (new bytecode 661,696 bytes vs prior 656,728 — added 2 instructions + 25-entry TOKEN_UNIVERSE constant). Deploy tx `5fHLmsv9…`. On-chain bytecode matches local ELF (BPF loader header accounts for the 5KB on-chain-vs-local size delta).

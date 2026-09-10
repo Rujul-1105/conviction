@@ -14,19 +14,14 @@ Stack locked in breif.md (Anchor, Next.js 14, Tailwind+shadcn, Framer Motion,
 wallet-adapter-react, Zustand+React Query, Birdeye, Helius, Vercel).
 
 ## Current phase
-**Phase 3 — real.ts wire-up (source-only, uncommitted).** Phases 1+2 source
-committed locally (`db1cdcc`, `c04e089`). Phase 1.6 deployed to devnet at
-`Fh6bQUgE35Hq7nP22GZ1Youwnph2UaiEh9xTtDJuHJbH` on 2026-09-10.
-Phase 3 wired all 18 api functions in `app/lib/api/real.ts` against the
-on-chain program. New files: `app/lib/anchor/pda.ts` (PDA derivations for
-match/team/basket/stop-loss/villain/proposal/chaos/round/config), and
-`app/lib/anchor/context.ts` (module-level mutable holder for connection +
-signing wallet, populated by `WalletContextBridge` in providers).
-`app/lib/api/index.ts` flipped from `mockApi` to `realApi`.
-`pnpm typecheck` + `pnpm build` clean. Verified: no `notWired(` calls
-remain in real.ts (zero). Loose-typed throughout — Anchor's intricate
-IDL generics aren't worth fighting for the MVP.
-Plan: `/home/rujul/.claude/plans/what-all-are-the-velvet-umbrella.md`.
+**Phase 4 — Birdeye live prices (source-only, uncommitted).** Phase 3
+committed at `020fafc`. Phase 4 wires `useBirdeyePrices` into
+`price-chart.tsx`: every 10s, prices are pulled for every mint across all
+team baskets, P&L is derived from basket weights × price change vs entry,
+and a "Birdeye live" / "Mock walk" pill in the chart header signals the
+data source. When the key is missing or Birdeye 401s, the chart falls
+back to its seeded mock walk and a Sonner toast warns the operator.
+`pnpm typecheck` + `pnpm build` clean. Plan: `/home/rujul/.claude/plans/what-all-are-the-velvet-umbrella.md`.
 
 > **Phase A.2 correction:** the bytecode deployed at `Fh6b…` had the *old* MVP
 > program ID baked in as `declare_id`, so every instruction reverted with

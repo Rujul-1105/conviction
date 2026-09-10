@@ -25,8 +25,10 @@ export function useVillainToken(matchId: string) {
 /**
  * Live prices from Birdeye (DESIGN.md §7).
  *
- * NOT used by the live round during the demo — that runs on mock prices, which
- * are more dramatic and controllable. This is for the deployed build.
+ * Used by the deployed build's live-round chart. When the key is missing
+ * or Birdeye 401s, the chart falls back to its seeded mock walk — see
+ * `price-chart.tsx`. A Sonner toast surfaces the failure so the operator
+ * knows the chart is decorative.
  *
  * `retry: false` because a failed price fetch should surface as stale data
  * immediately rather than retrying behind a spinner; PLAN.md is explicit that
@@ -36,7 +38,8 @@ export function useBirdeyePrices(mints: string[]) {
   return useQuery({
     queryKey: ['prices', [...mints].sort().join(',')],
     queryFn: () => fetchBirdeyePrices(mints),
-    refetchInterval: 5000,
+    refetchInterval: 10_000,
+    staleTime: 5_000,
     enabled: mints.length > 0,
     retry: false,
   })
