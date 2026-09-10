@@ -4,7 +4,7 @@
     "name": "conviction",
     "version": "0.1.0",
     "spec": "0.1.0",
-    "description": "Path A mini-season — team vs team chicken game (Stonk Battles) on ER/PER/VRF"
+    "description": "Path A mini-season — team vs team game (Stonk Battles) on ER/PER/VRF"
   },
   "instructions": [
     {
@@ -661,199 +661,6 @@
       ]
     },
     {
-      "name": "delegate_spectator_bid",
-      "discriminator": [
-        223,
-        245,
-        103,
-        9,
-        98,
-        52,
-        217,
-        9
-      ],
-      "accounts": [
-        {
-          "name": "spectator",
-          "signer": true
-        },
-        {
-          "name": "buffer_bid",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  98,
-                  117,
-                  102,
-                  102,
-                  101,
-                  114
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "bid"
-              }
-            ],
-            "program": {
-              "kind": "const",
-              "value": [
-                218,
-                73,
-                44,
-                110,
-                232,
-                150,
-                102,
-                212,
-                239,
-                202,
-                74,
-                215,
-                147,
-                203,
-                19,
-                225,
-                89,
-                28,
-                132,
-                98,
-                59,
-                127,
-                178,
-                134,
-                120,
-                30,
-                219,
-                39,
-                72,
-                37,
-                35,
-                8
-              ]
-            }
-          }
-        },
-        {
-          "name": "delegation_record_bid",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  100,
-                  101,
-                  108,
-                  101,
-                  103,
-                  97,
-                  116,
-                  105,
-                  111,
-                  110
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "bid"
-              }
-            ],
-            "program": {
-              "kind": "account",
-              "path": "delegation_program"
-            }
-          }
-        },
-        {
-          "name": "delegation_metadata_bid",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  100,
-                  101,
-                  108,
-                  101,
-                  103,
-                  97,
-                  116,
-                  105,
-                  111,
-                  110,
-                  45,
-                  109,
-                  101,
-                  116,
-                  97,
-                  100,
-                  97,
-                  116,
-                  97
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "bid"
-              }
-            ],
-            "program": {
-              "kind": "account",
-              "path": "delegation_program"
-            }
-          }
-        },
-        {
-          "name": "bid",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  115,
-                  112,
-                  101,
-                  99
-                ]
-              },
-              {
-                "kind": "arg",
-                "path": "match_id"
-              },
-              {
-                "kind": "account",
-                "path": "spectator"
-              }
-            ]
-          }
-        },
-        {
-          "name": "owner_program",
-          "address": "Fh6bQUgE35Hq7nP22GZ1Youwnph2UaiEh9xTtDJuHJbH"
-        },
-        {
-          "name": "delegation_program",
-          "address": "DELeGGvXpWV2fqJUhqcF5ZSYMS4JTLjteaAMARRSaeSh"
-        },
-        {
-          "name": "system_program",
-          "address": "11111111111111111111111111111111"
-        }
-      ],
-      "args": [
-        {
-          "name": "match_id",
-          "type": "u32"
-        }
-      ]
-    },
-    {
       "name": "delegate_stop_loss",
       "discriminator": [
         150,
@@ -1271,6 +1078,69 @@
       ]
     },
     {
+      "name": "fold",
+      "discriminator": [
+        63,
+        91,
+        162,
+        171,
+        160,
+        70,
+        220,
+        136
+      ],
+      "accounts": [
+        {
+          "name": "player",
+          "signer": true
+        },
+        {
+          "name": "match_account",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  116,
+                  99,
+                  104
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "match_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "team",
+          "writable": true
+        },
+        {
+          "name": "magic_program",
+          "address": "Magic11111111111111111111111111111111111111"
+        },
+        {
+          "name": "magic_context",
+          "writable": true,
+          "address": "MagicContext1111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "match_id",
+          "type": "u32"
+        },
+        {
+          "name": "side",
+          "type": "u8"
+        }
+      ]
+    },
+    {
       "name": "init_basket_permission",
       "discriminator": [
         169,
@@ -1514,90 +1384,6 @@
       ]
     },
     {
-      "name": "init_spectator_bid_permission",
-      "discriminator": [
-        168,
-        13,
-        137,
-        238,
-        179,
-        135,
-        126,
-        98
-      ],
-      "accounts": [
-        {
-          "name": "spectator",
-          "signer": true
-        },
-        {
-          "name": "bid",
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  115,
-                  112,
-                  101,
-                  99
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "bid"
-              }
-            ]
-          }
-        },
-        {
-          "name": "permission",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  112,
-                  101,
-                  114,
-                  109,
-                  105,
-                  115,
-                  115,
-                  105,
-                  111,
-                  110,
-                  58
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "bid"
-              }
-            ],
-            "program": {
-              "kind": "account",
-              "path": "permission_program"
-            }
-          }
-        },
-        {
-          "name": "ephemeral_vault",
-          "writable": true,
-          "address": "MagicVau1t999999999999999999999999999999999"
-        },
-        {
-          "name": "magic_program",
-          "address": "Magic11111111111111111111111111111111111111"
-        },
-        {
-          "name": "permission_program"
-        }
-      ],
-      "args": []
-    },
-    {
       "name": "init_stop_loss_permission",
       "discriminator": [
         35,
@@ -1685,6 +1471,60 @@
         }
       ],
       "args": []
+    },
+    {
+      "name": "leave_match",
+      "discriminator": [
+        199,
+        14,
+        16,
+        91,
+        104,
+        95,
+        166,
+        15
+      ],
+      "accounts": [
+        {
+          "name": "player",
+          "signer": true
+        },
+        {
+          "name": "match_account",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  116,
+                  99,
+                  104
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "match_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "team",
+          "writable": true
+        }
+      ],
+      "args": [
+        {
+          "name": "match_id",
+          "type": "u32"
+        },
+        {
+          "name": "side",
+          "type": "u8"
+        }
+      ]
     },
     {
       "name": "lock_in_pre_round",
@@ -1821,117 +1661,6 @@
               "name": "StopLossRange"
             }
           }
-        },
-        {
-          "name": "per_member_pubkeys",
-          "type": {
-            "array": [
-              "pubkey",
-              8
-            ]
-          }
-        },
-        {
-          "name": "per_member_flags",
-          "type": {
-            "array": [
-              "u8",
-              8
-            ]
-          }
-        },
-        {
-          "name": "per_member_count",
-          "type": "u8"
-        }
-      ]
-    },
-    {
-      "name": "place_spectator_bid",
-      "discriminator": [
-        57,
-        114,
-        231,
-        126,
-        187,
-        180,
-        249,
-        36
-      ],
-      "accounts": [
-        {
-          "name": "spectator",
-          "writable": true,
-          "signer": true
-        },
-        {
-          "name": "match_account",
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  109,
-                  97,
-                  116,
-                  99,
-                  104
-                ]
-              },
-              {
-                "kind": "arg",
-                "path": "match_id"
-              }
-            ]
-          }
-        },
-        {
-          "name": "bid",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  115,
-                  112,
-                  101,
-                  99
-                ]
-              },
-              {
-                "kind": "arg",
-                "path": "match_id"
-              },
-              {
-                "kind": "account",
-                "path": "spectator"
-              }
-            ]
-          }
-        },
-        {
-          "name": "system_program",
-          "address": "11111111111111111111111111111111"
-        }
-      ],
-      "args": [
-        {
-          "name": "_match_id",
-          "type": "u32"
-        },
-        {
-          "name": "prediction_hash",
-          "type": {
-            "array": [
-              "u8",
-              32
-            ]
-          }
-        },
-        {
-          "name": "amount",
-          "type": "u64"
         },
         {
           "name": "per_member_pubkeys",
@@ -2817,19 +2546,6 @@
       ]
     },
     {
-      "name": "SpectatorBid",
-      "discriminator": [
-        118,
-        250,
-        202,
-        35,
-        99,
-        198,
-        176,
-        116
-      ]
-    },
-    {
       "name": "StopLoss",
       "discriminator": [
         251,
@@ -2999,9 +2715,6 @@
     },
     {
       "name": "ChaosEvent",
-      "docs": [
-        "VRF-driven chaos event. Created on the ER; never committed back to base."
-      ],
       "type": {
         "kind": "struct",
         "fields": [
@@ -3145,6 +2858,18 @@
           {
             "name": "bump",
             "type": "u8"
+          },
+          {
+            "name": "last_prices_e6",
+            "docs": [
+              "Latest observed price (e6) per basket slot. See file-level note."
+            ],
+            "type": {
+              "array": [
+                "u64",
+                3
+              ]
+            }
           }
         ]
       }
@@ -3247,61 +2972,6 @@
           {
             "name": "current_round",
             "type": "u32"
-          },
-          {
-            "name": "bump",
-            "type": "u8"
-          }
-        ]
-      }
-    },
-    {
-      "name": "SpectatorBid",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "match_id",
-            "type": "u32"
-          },
-          {
-            "name": "spectator",
-            "type": "pubkey"
-          },
-          {
-            "name": "prediction_hash",
-            "type": {
-              "array": [
-                "u8",
-                32
-              ]
-            }
-          },
-          {
-            "name": "amount",
-            "type": "u64"
-          },
-          {
-            "name": "placed_at_slot",
-            "type": "u64"
-          },
-          {
-            "name": "per_members",
-            "type": {
-              "array": [
-                "pubkey",
-                8
-              ]
-            }
-          },
-          {
-            "name": "per_flags",
-            "type": {
-              "array": [
-                "u8",
-                8
-              ]
-            }
           },
           {
             "name": "bump",
@@ -3422,6 +3092,10 @@
           {
             "name": "bump",
             "type": "u8"
+          },
+          {
+            "name": "folded",
+            "type": "bool"
           }
         ]
       }
@@ -3448,10 +3122,6 @@
     },
     {
       "name": "VillainPick",
-      "docs": [
-        "VRF-driven villain token selection. Pre-created by `request_villain_vrf`;",
-        "`callback_villain` writes the randomness on fulfillment."
-      ],
       "type": {
         "kind": "struct",
         "fields": [

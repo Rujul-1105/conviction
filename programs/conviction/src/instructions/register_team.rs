@@ -39,6 +39,7 @@ pub fn handler(
     team.score = 0;
     team.alive = 1;
     team.bump = ctx.bumps.team;
+    team.folded = false;
 
     let m = &mut ctx.accounts.match_account;
     m.teams[side as usize] = ctx.accounts.team.key();

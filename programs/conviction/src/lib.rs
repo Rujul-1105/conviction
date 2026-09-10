@@ -52,6 +52,7 @@ pub use instructions::delegate_basket::DelegateBasket;
 pub use instructions::delegate_stop_loss::DelegateStopLoss;
 pub use instructions::init_basket_permission::InitBasketPermission;
 pub use instructions::init_stop_loss_permission::InitStopLossPermission;
+pub use instructions::leave_match::LeaveMatch;
 pub use instructions::request_villain_vrf::RequestVillainVrf;
 pub use instructions::callback_villain::CallbackVillain;
 pub use instructions::request_chaos_vrf::RequestChaosVrf;
@@ -59,6 +60,7 @@ pub use instructions::callback_chaos::CallbackChaos;
 pub use instructions::tick_price::TickPrice;
 pub use instructions::reveal_round::RevealRound;
 pub use instructions::finalize_round::CommitAndUndelegateMatchState;
+pub use instructions::fold::Fold;
 pub use instructions::commit_match_state::CommitMatchState;
 pub use instructions::propose_param_change::ProposeParamChange;
 pub use instructions::vote_on_proposal::VoteOnProposal;
@@ -79,6 +81,7 @@ pub use instructions::delegate_basket::__client_accounts_delegate_basket as __cl
 pub use instructions::delegate_stop_loss::__client_accounts_delegate_stop_loss as __client_accounts_delegate_stop_loss;
 pub use instructions::init_basket_permission::__client_accounts_init_basket_permission as __client_accounts_init_basket_permission;
 pub use instructions::init_stop_loss_permission::__client_accounts_init_stop_loss_permission as __client_accounts_init_stop_loss_permission;
+pub use instructions::leave_match::__client_accounts_leave_match as __client_accounts_leave_match;
 pub use instructions::request_villain_vrf::__client_accounts_request_villain_vrf as __client_accounts_request_villain_vrf;
 pub use instructions::callback_villain::__client_accounts_callback_villain as __client_accounts_callback_villain;
 pub use instructions::request_chaos_vrf::__client_accounts_request_chaos_vrf as __client_accounts_request_chaos_vrf;
@@ -86,6 +89,7 @@ pub use instructions::callback_chaos::__client_accounts_callback_chaos as __clie
 pub use instructions::tick_price::__client_accounts_tick_price as __client_accounts_tick_price;
 pub use instructions::reveal_round::__client_accounts_reveal_round as __client_accounts_reveal_round;
 pub use instructions::finalize_round::__client_accounts_commit_and_undelegate_match_state as __client_accounts_commit_and_undelegate_match_state;
+pub use instructions::fold::__client_accounts_fold as __client_accounts_fold;
 pub use instructions::commit_match_state::__client_accounts_commit_match_state as __client_accounts_commit_match_state;
 pub use instructions::propose_param_change::__client_accounts_propose_param_change as __client_accounts_propose_param_change;
 pub use instructions::vote_on_proposal::__client_accounts_vote_on_proposal as __client_accounts_vote_on_proposal;
@@ -193,6 +197,14 @@ pub mod conviction {
         instructions::init_stop_loss_permission::handler(ctx)
     }
 
+    pub fn leave_match(
+        ctx: Context<LeaveMatch>,
+        match_id: u32,
+        side: u8,
+    ) -> Result<()> {
+        instructions::leave_match::handler(ctx, match_id, side)
+    }
+
     pub fn request_villain_vrf(
         ctx: Context<RequestVillainVrf>,
         _match_id: u32,
@@ -246,6 +258,14 @@ pub mod conviction {
         _match_id: u32,
     ) -> Result<()> {
         instructions::finalize_round::handler(ctx, _match_id)
+    }
+
+    pub fn fold(
+        ctx: Context<Fold>,
+        match_id: u32,
+        side: u8,
+    ) -> Result<()> {
+        instructions::fold::handler(ctx, match_id, side)
     }
 
     pub fn commit_match_state(

@@ -14,10 +14,20 @@ Stack locked in breif.md (Anchor, Next.js 14, Tailwind+shadcn, Framer Motion,
 wallet-adapter-react, Zustand+React Query, Birdeye, Helius, Vercel).
 
 ## Current phase
-**Phase B — frontend (landed).** All 10 routes built on a mock-first data layer,
-`pnpm build` clean with full type checking. Program redeployed and now actually
-executable (see below). Active pause gate: **awaiting user confirmation to begin
-Phase C (Supabase + Helius) or to wire `lib/api/real.ts`.**
+**Phase 1 — on-chain gap fixes shipped (uncommitted, source-only).** Added
+two instructions: `fold` (player voluntarily folds their team during the
+Live phase; `#[commit]`-tagged so ER commits it) and `leave_match` (player
+abandons pre-round in the Created phase). Fixed two blockers:
+`tick_price` now persists into `Match.last_prices_e6[0..=2]` (slot index
+encoded in the synthetic `_mint` Pubkey's first byte), and
+`callback_villain` writes a real mint from a new `TOKEN_UNIVERSE: [Pubkey; 25]`
+constant in `constants.rs` (mirrors `app/tokens.json`). State additions:
+`Team.folded: bool` (size: 8 + 4 + 1 + 32 + (4 + 4 * 96) + 8 + 1 + 1 + 1) and
+`Match.last_prices_e6: [u64; 3]` (size: +24 bytes). IDL regenerated:
+24 user instructions + 1 ephemeral `process_undelegation` = 25 entries.
+**Not yet deployed to devnet** — that's the next action. **Not yet
+committed** — awaiting user approval on the commit message.
+Plan: `/home/rujul/.claude/plans/what-all-are-the-velvet-umbrella.md`.
 
 > **Phase A.2 correction:** the bytecode deployed at `Fh6b…` had the *old* MVP
 > program ID baked in as `declare_id`, so every instruction reverted with
@@ -76,9 +86,10 @@ Phase C (Supabase + Helius) or to wire `lib/api/real.ts`.**
     pin, Anchor workspace restore + the A.2 `declare_id` deploy fix.
 
 ## Known risks (carried forward)
-- **Anchor 1.2 macro hygiene** blocks multi-module split — documented in ADR
-  0002. Until upstream fixes this (or we vendor a patched SDK), `lib.rs`
-  remains the single compile unit.
+- **Anchor 1.2 macro hygiene** — **closed by ADR 0004.** Vendored
+  `anchor-syn 1.2.0` patch (`pub(crate)` → `pub` on
+  `__client_accounts.rs:190`); revert by removing `[patch.crates-io]` in
+  root `Cargo.toml`.
 - **Program emits no events** (zero `emit!`). Realtime must use
   `onAccountChange` on delegated PDAs, not event subscriptions.
 - **No manual `fold` instruction and no `leave_match`** — folding only happens
@@ -108,16 +119,24 @@ Phase C (Supabase + Helius) or to wire `lib/api/real.ts`.**
 conviction/
 ├── CLAUDE.md                # this file (≤300 lines)
 ├── Anchor.toml              # root (Phase B: standard workspace restored)
-├── Cargo.toml               # [workspace] members = ["programs/*"]
+├── Cargo.toml               # [workspace] + [patch.crates-io] → vendor/anchor-syn (ADR 0004)
 ├── docs/
 │   ├── PLAN.md              # full plan (Phase B routes are STALE — see ADR 0003)
 │   ├── CHANGELOG.md         # append-only phase log
 │   ├── DESIGN.md            # AUTHORITATIVE frontend spec
 │   ├── PHASE_B_BRIEF.md     # layout/motion/tone only — palette superseded
 │   ├── design-tokens.json   # superseded by DESIGN.md §1
-│   └── decisions/           # ADRs 0001–0003
+│   └── decisions/           # ADRs 0001–0004
 ├── programs/
-│   └── stonk_battles/       # Anchor crate (src/lib.rs flat; ADR 0002)
+│   └── conviction/       # Anchor crate — src/ split per ADR 0004
+│       ├── Cargo.toml       # anchor-lang 1.0.2, anchor-spl 1.0.2, ephemeral-rollups-sdk 0.16.2
+│       └── src/
+│           ├── lib.rs                  # ~50 LOC entry: declare_id + 26 aliases + 25 forwarders
+│           ├── errors.rs               # ConvictionError (14 variants)
+│           ├── constants.rs            # 11 SEED consts + MAX_PERMISSION_MEMBERS
+│           ├── helpers.rs              # 6 free functions (PER + MagicBlock helpers)
+│           ├── state/                  # 11 #[account] structs + 3 enums (per-file)
+│           └── instructions/           # 25 per-ix files, each with Accounts struct + handler
 ├── target/                  # idl/conviction.json + deploy/conviction.so
 ├── app/                     # Next.js 14 frontend (Phase B — 10 routes)
 │   ├── app/ components/ lib/
@@ -141,12 +160,15 @@ conviction/
    / docs/CHANGELOG.md / docs/decisions/.
 5. Phase pauses: stop at every pause gate and wait for user confirmation.
 6. Source files: cap at 300 LOC of code (comments excluded); split modules when
-   approaching the cap. Phase A MVP intentionally violated this — see ADR 0002.
+   approaching the cap. **Phase A MVP was the only known violation;** the
+   refactor described in ADR 0004 closed it — every file is now ≤150 LOC.
 7. Comments required: per the source-comments-required preference, add explanatory
    comments at module, function, and macro-decision scopes.
 8. At every pause gate: list failures / unfinished items with
    blocker / debt / nice-to-have verdicts.
 9. At every pause gate: include manual-verification commands the user can run themselves.
-10. Before declaring a multi-file split "compiles", check that the Anchor SDK
-    macros resolve all helper identifiers at the crate root (no E0365). If
-    `pub(crate)` items re-export fails, abandon split and revert.
+10. The Anchor macro hygiene caveat is **closed by ADR 0004's `[patch.crates-io]`
+    entry on `anchor-syn`**. If you ever need to revert the split (e.g. to
+    chase an upstream macro fix), `rm` the `[patch.crates-io] anchor-syn`
+    line in `Cargo.toml` and `git checkout -- programs/conviction/src/lib.rs`;
+    the build will fail in its split form and the flat layout returns.

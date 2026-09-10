@@ -1,18 +1,16 @@
 //! `callback_villain` — VRF fulfillment for the villain token selection.
 //!
-//! Phase A.2 MVP: writes the VRF randomness and a `villain_mint` derived
-//! deterministically from the randomness. The placeholder assigns
-//! `Pubkey::default()` because the curated token universe lives in the
-//! front-end (Phase B wires `tokens.json`).
-//!
-//! Follow-up Blocker 1 (per ADR 0002 / 0002-addendum): persist a real mint
-//! selected from `tokens.json` via `remaining_accounts` in a follow-up ix.
+//! Derives a deterministic mint index from the VRF randomness using
+//! `random_u8_with_range(0, 25)` and looks up `TOKEN_UNIVERSE[idx]` from
+//! `constants.rs`. The minted token mirrors the front-end's
+//! `app/tokens.json` curated universe so it's always a real, tradeable
+//! SPL mint.
 
 use anchor_lang::prelude::*;
 
 use ephemeral_rollups_sdk::anchor::vrf_callback;
 
-use crate::constants::VILLAIN_SEED;
+use crate::constants::{TOKEN_UNIVERSE, VILLAIN_SEED};
 use crate::errors::ConvictionError;
 use crate::state::VillainPick;
 
@@ -44,11 +42,13 @@ pub fn handler(
     vp.randomness = randomness;
     vp.fulfilled_at_slot = Clock::get()?.slot;
 
-    // Phase A.2 MVP: hardcoded universe of 5 Safe-tier mints.
-    // Phase B passes the curated universe via remaining_accounts.
-    let _pick_idx = ephemeral_rollups_sdk::vrf::rnd::random_u8_with_range(
-        &randomness, 0, 5u8,
+    // Pick a real mint from the curated 25-token universe.
+    let universe_len = TOKEN_UNIVERSE.len() as u8;
+    let pick_idx = ephemeral_rollups_sdk::vrf::rnd::random_u8_with_range(
+        &randomness,
+        0,
+        universe_len,
     );
-    vp.villain_mint = Pubkey::default(); // placeholder until Phase B wires tokens.json
+    vp.villain_mint = TOKEN_UNIVERSE[pick_idx as usize];
     Ok(())
 }
