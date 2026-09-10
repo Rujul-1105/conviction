@@ -14,15 +14,16 @@ Stack locked in breif.md (Anchor, Next.js 14, Tailwind+shadcn, Framer Motion,
 wallet-adapter-react, Zustand+React Query, Birdeye, Helius, Vercel).
 
 ## Current phase
-**Phase 5 — E2E demo bootstrap (source-only, uncommitted).** Phase 4
-committed at `99144d6`. On-chain bootstrap complete: `GameConfig` +
-`RoundCounter` + FTR mint initialised on devnet. Config PDA:
-`54Lyv5mQqUm2z5hCp4nzDWSWwRZUViohvRt82kkgeti2`. FTR mint:
-`21Rki1gfiUYbM4bdyhma4TRWjYeS1SCXNb8ENKqsTr7V` (decimals 6). Round counter:
-`7tizNzRh66ah4jB4HzEG7nHryNv2hvyV38fb4BPdTkwS`. Bootstrap script
-`programs/conviction/migrations/deploy.ts` is idempotent; re-runs detect
-existing PDAs and skip. Demo flow documented in `docs/demo-script.md`
-(round 1 15min, governance vote, round 2 10min per new rule). Plan: `/home/rujul/.claude/plans/what-all-are-the-velvet-umbrella.md`.
+**Phase 6 — Vercel deploy (source-only, uncommitted).** Phase 5 committed
+at `7b10a95`. Vercel CLI verified available (`npx vercel --version` → 59.15.1)
+but the deploy itself needs interactive login from you — see
+`docs/deploy.md` for the 5-step manual flow (login → link → set 4 env vars
+→ deploy → update CLAUDE.md with the URL). All Phase 6 source artifacts
+are in place: `app/vercel.json` (Next.js framework, pnpm install/build,
+iad1 region), `app/.env.example` (4 required vars documented),
+`docs/deploy.md` (manual steps + smoke test). After you run the deploy,
+update the "Vercel preview" pointer in this file with the URL.
+Plan: `/home/rujul/.claude/plans/what-all-are-the-velvet-umbrella.md`.
 
 > **Phase A.2 correction:** the bytecode deployed at `Fh6b…` had the *old* MVP
 > program ID baked in as `declare_id`, so every instruction reverted with

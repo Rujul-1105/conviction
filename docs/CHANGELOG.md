@@ -5,6 +5,8 @@ listing what shipped, what's known-bad, and ADR pointers. Newest entries first.
 
 ---
 
+- [Phase 6 source-only, uncommitted] 2026-09-10 — Vercel deploy artifacts ready. Vercel CLI verified (npx vercel@latest → 59.15.1); deploy itself needs interactive login. `app/vercel.json` (Next.js + pnpm + iad1), `app/.env.example` (4 required env vars), `docs/deploy.md` (5-step manual flow + smoke test).
+
 - [Phase 5 source-only, uncommitted] 2026-09-10 — On-chain bootstrap complete. `GameConfig` + `RoundCounter` + FTR mint initialised on devnet. Bootstrap script at `programs/conviction/migrations/deploy.ts` (idempotent). FTR mint keypair persisted to `programs/conviction/migrations/.ftr-mint.json` (gitignored). New conviction-crate `package.json` + `tsconfig.json` added so the bootstrap script can run via `pnpm --filter conviction run init-devnet`. Demo flow documented in `docs/demo-script.md`.
 
 - [Phase 4 source-only, uncommitted] 2026-09-10 — Birdeye live prices wired into `price-chart.tsx`. `useBirdeyePrices` polls every 10s for every mint across team baskets; P&L derived from basket weights × price change vs entry. Chart header shows "Birdeye live" / "Mock walk" pill. Sonner toast on 401 / missing key, with seeded walk fallback. `pnpm typecheck` + `pnpm build` clean.
