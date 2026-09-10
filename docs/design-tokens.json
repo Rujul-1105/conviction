@@ -1,0 +1,93 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "color": {
+    "bg": {
+      "base": "#0A0E13",
+      "surface": "#10151C",
+      "surfaceAlt": "#161D27",
+      "elevated": "#1C2530"
+    },
+    "border": {
+      "default": "#222D3D",
+      "strong": "#3A4A60",
+      "event": "#3A4A60"
+    },
+    "text": {
+      "primary": "#E5E7EB",
+      "secondary": "#94A3B8",
+      "muted": "#475569",
+      "inverse": "#0A0E13"
+    },
+    "accent": {
+      "up": "#22C55E",
+      "down": "#F97316",
+      "villain": "#EF4444",
+      "ftr": "#FCD34D",
+      "chaos": "#A78BFA",
+      "live": "#22D3EE",
+      "warning": "#F59E0B"
+    },
+    "match": {
+      "teamA": "rgba(34,197,94,0.08)",
+      "teamB": "rgba(249,115,22,0.08)",
+      "villain": "rgba(239,68,68,0.10)",
+      "chaos": "rgba(167,139,250,0.10)"
+    }
+  },
+  "font": {
+    "sans": "Geist, ui-sans-serif, system-ui, -apple-system, sans-serif",
+    "mono": "JetBrains Mono, ui-monospace, SFMono-Regular, monospace",
+    "display": "Geist, ui-sans-serif, system-ui, -apple-system, sans-serif"
+  },
+  "radius": {
+    "sm": "6px",
+    "md": "12px",
+    "lg": "24px",
+    "full": "9999px"
+  },
+  "spacing": {
+    "grid": 4
+  },
+  "maxContentWidth": "1200px",
+  "outerPadding": "16px",
+  "sectionGap": "32px",
+  "motion": {
+    "tickFlashMs": 120,
+    "revealCardMs": 600,
+    "revealStaggerMs": 80,
+    "livePulseMs": 1500,
+    "menuEase": "cubic-bezier(0.16, 1, 0.3, 1)"
+  },
+  "tailwindTheme": {
+    "extend": {
+      "colors": {
+        "bg-base": "#0A0E13",
+        "bg-surface": "#10151C",
+        "bg-surface-alt": "#161D27",
+        "bg-elevated": "#1C2530",
+        "border-default": "#222D3D",
+        "border-strong": "#3A4A60",
+        "text-primary": "#E5E7EB",
+        "text-secondary": "#94A3B8",
+        "text-muted": "#475569",
+        "text-inverse": "#0A0E13",
+        "accent-up": "#22C55E",
+        "accent-down": "#F97316",
+        "accent-villain": "#EF4444",
+        "accent-ftr": "#FCD34D",
+        "accent-chaos": "#A78BFA",
+        "accent-live": "#22D3EE",
+        "accent-warning": "#F59E0B"
+      },
+      "fontFamily": {
+        "sans": ["Geist", "ui-sans-serif", "system-ui", "sans-serif"],
+        "mono": ["JetBrains Mono", "ui-monospace", "monospace"]
+      },
+      "borderRadius": {
+        "sm": "6px",
+        "md": "12px",
+        "lg": "24px"
+      }
+    }
+  }
+}

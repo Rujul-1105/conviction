@@ -1,0 +1,3487 @@
+{
+  "address": "Fh6bQUgE35Hq7nP22GZ1Youwnph2UaiEh9xTtDJuHJbH",
+  "metadata": {
+    "name": "conviction",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Path A mini-season — team vs team chicken game (Stonk Battles) on ER/PER/VRF"
+  },
+  "instructions": [
+    {
+      "name": "callback_chaos",
+      "discriminator": [
+        254,
+        183,
+        221,
+        67,
+        162,
+        0,
+        104,
+        204
+      ],
+      "accounts": [
+        {
+          "name": "vrf_program_identity",
+          "docs": [
+            "Scoped VRF identity PDA, bound to this program. Its presence as a signer proves",
+            "the callback was issued by the VRF program for this program."
+          ],
+          "signer": true
+        },
+        {
+          "name": "chaos_event",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  104,
+                  97,
+                  111,
+                  115
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "match_account"
+              },
+              {
+                "kind": "arg",
+                "path": "sequence"
+              }
+            ]
+          }
+        },
+        {
+          "name": "match_account",
+          "writable": true
+        }
+      ],
+      "args": [
+        {
+          "name": "_match_id",
+          "type": "u32"
+        },
+        {
+          "name": "_sequence",
+          "type": "u32"
+        },
+        {
+          "name": "randomness",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "callback_villain",
+      "discriminator": [
+        48,
+        230,
+        218,
+        146,
+        51,
+        89,
+        146,
+        214
+      ],
+      "accounts": [
+        {
+          "name": "vrf_program_identity",
+          "docs": [
+            "Scoped VRF identity PDA, bound to this program. Its presence as a signer proves",
+            "the callback was issued by the VRF program for this program."
+          ],
+          "signer": true
+        },
+        {
+          "name": "villain_pick",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  105,
+                  108,
+                  108,
+                  97,
+                  105,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "match_account"
+              }
+            ]
+          }
+        },
+        {
+          "name": "match_account",
+          "writable": true
+        }
+      ],
+      "args": [
+        {
+          "name": "_match_id",
+          "type": "u32"
+        },
+        {
+          "name": "randomness",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "commit_match_state",
+      "discriminator": [
+        121,
+        197,
+        28,
+        20,
+        169,
+        39,
+        227,
+        33
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "match_account",
+          "writable": true
+        },
+        {
+          "name": "magic_program",
+          "address": "Magic11111111111111111111111111111111111111"
+        },
+        {
+          "name": "magic_context",
+          "writable": true,
+          "address": "MagicContext1111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "create_match",
+      "discriminator": [
+        107,
+        2,
+        184,
+        145,
+        70,
+        142,
+        17,
+        165
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "match_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  116,
+                  99,
+                  104
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "match_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "round_counter",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  111,
+                  117,
+                  110,
+                  100
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "match_id",
+          "type": "u32"
+        },
+        {
+          "name": "pot",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "delegate_basket",
+      "discriminator": [
+        196,
+        119,
+        186,
+        43,
+        197,
+        234,
+        15,
+        178
+      ],
+      "accounts": [
+        {
+          "name": "player",
+          "signer": true
+        },
+        {
+          "name": "buffer_basket",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  117,
+                  102,
+                  102,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "basket"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                218,
+                73,
+                44,
+                110,
+                232,
+                150,
+                102,
+                212,
+                239,
+                202,
+                74,
+                215,
+                147,
+                203,
+                19,
+                225,
+                89,
+                28,
+                132,
+                98,
+                59,
+                127,
+                178,
+                134,
+                120,
+                30,
+                219,
+                39,
+                72,
+                37,
+                35,
+                8
+              ]
+            }
+          }
+        },
+        {
+          "name": "delegation_record_basket",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  101,
+                  108,
+                  101,
+                  103,
+                  97,
+                  116,
+                  105,
+                  111,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "basket"
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "delegation_program"
+            }
+          }
+        },
+        {
+          "name": "delegation_metadata_basket",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  101,
+                  108,
+                  101,
+                  103,
+                  97,
+                  116,
+                  105,
+                  111,
+                  110,
+                  45,
+                  109,
+                  101,
+                  116,
+                  97,
+                  100,
+                  97,
+                  116,
+                  97
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "basket"
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "delegation_program"
+            }
+          }
+        },
+        {
+          "name": "basket",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  97,
+                  115,
+                  107,
+                  101,
+                  116
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "match_id"
+              },
+              {
+                "kind": "account",
+                "path": "player"
+              }
+            ]
+          }
+        },
+        {
+          "name": "owner_program",
+          "address": "Fh6bQUgE35Hq7nP22GZ1Youwnph2UaiEh9xTtDJuHJbH"
+        },
+        {
+          "name": "delegation_program",
+          "address": "DELeGGvXpWV2fqJUhqcF5ZSYMS4JTLjteaAMARRSaeSh"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "match_id",
+          "type": "u32"
+        },
+        {
+          "name": "side",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "delegate_match",
+      "discriminator": [
+        30,
+        116,
+        9,
+        69,
+        147,
+        61,
+        133,
+        238
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "signer": true
+        },
+        {
+          "name": "buffer_match_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  117,
+                  102,
+                  102,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "match_account"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                218,
+                73,
+                44,
+                110,
+                232,
+                150,
+                102,
+                212,
+                239,
+                202,
+                74,
+                215,
+                147,
+                203,
+                19,
+                225,
+                89,
+                28,
+                132,
+                98,
+                59,
+                127,
+                178,
+                134,
+                120,
+                30,
+                219,
+                39,
+                72,
+                37,
+                35,
+                8
+              ]
+            }
+          }
+        },
+        {
+          "name": "delegation_record_match_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  101,
+                  108,
+                  101,
+                  103,
+                  97,
+                  116,
+                  105,
+                  111,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "match_account"
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "delegation_program"
+            }
+          }
+        },
+        {
+          "name": "delegation_metadata_match_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  101,
+                  108,
+                  101,
+                  103,
+                  97,
+                  116,
+                  105,
+                  111,
+                  110,
+                  45,
+                  109,
+                  101,
+                  116,
+                  97,
+                  100,
+                  97,
+                  116,
+                  97
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "match_account"
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "delegation_program"
+            }
+          }
+        },
+        {
+          "name": "match_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  116,
+                  99,
+                  104
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "match_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "owner_program",
+          "address": "Fh6bQUgE35Hq7nP22GZ1Youwnph2UaiEh9xTtDJuHJbH"
+        },
+        {
+          "name": "delegation_program",
+          "address": "DELeGGvXpWV2fqJUhqcF5ZSYMS4JTLjteaAMARRSaeSh"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "match_id",
+          "type": "u32"
+        }
+      ]
+    },
+    {
+      "name": "delegate_spectator_bid",
+      "discriminator": [
+        223,
+        245,
+        103,
+        9,
+        98,
+        52,
+        217,
+        9
+      ],
+      "accounts": [
+        {
+          "name": "spectator",
+          "signer": true
+        },
+        {
+          "name": "buffer_bid",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  117,
+                  102,
+                  102,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "bid"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                218,
+                73,
+                44,
+                110,
+                232,
+                150,
+                102,
+                212,
+                239,
+                202,
+                74,
+                215,
+                147,
+                203,
+                19,
+                225,
+                89,
+                28,
+                132,
+                98,
+                59,
+                127,
+                178,
+                134,
+                120,
+                30,
+                219,
+                39,
+                72,
+                37,
+                35,
+                8
+              ]
+            }
+          }
+        },
+        {
+          "name": "delegation_record_bid",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  101,
+                  108,
+                  101,
+                  103,
+                  97,
+                  116,
+                  105,
+                  111,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "bid"
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "delegation_program"
+            }
+          }
+        },
+        {
+          "name": "delegation_metadata_bid",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  101,
+                  108,
+                  101,
+                  103,
+                  97,
+                  116,
+                  105,
+                  111,
+                  110,
+                  45,
+                  109,
+                  101,
+                  116,
+                  97,
+                  100,
+                  97,
+                  116,
+                  97
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "bid"
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "delegation_program"
+            }
+          }
+        },
+        {
+          "name": "bid",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  112,
+                  101,
+                  99
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "match_id"
+              },
+              {
+                "kind": "account",
+                "path": "spectator"
+              }
+            ]
+          }
+        },
+        {
+          "name": "owner_program",
+          "address": "Fh6bQUgE35Hq7nP22GZ1Youwnph2UaiEh9xTtDJuHJbH"
+        },
+        {
+          "name": "delegation_program",
+          "address": "DELeGGvXpWV2fqJUhqcF5ZSYMS4JTLjteaAMARRSaeSh"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "match_id",
+          "type": "u32"
+        }
+      ]
+    },
+    {
+      "name": "delegate_stop_loss",
+      "discriminator": [
+        150,
+        182,
+        8,
+        159,
+        90,
+        251,
+        119,
+        185
+      ],
+      "accounts": [
+        {
+          "name": "player",
+          "signer": true
+        },
+        {
+          "name": "buffer_stop_loss",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  117,
+                  102,
+                  102,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "stop_loss"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                218,
+                73,
+                44,
+                110,
+                232,
+                150,
+                102,
+                212,
+                239,
+                202,
+                74,
+                215,
+                147,
+                203,
+                19,
+                225,
+                89,
+                28,
+                132,
+                98,
+                59,
+                127,
+                178,
+                134,
+                120,
+                30,
+                219,
+                39,
+                72,
+                37,
+                35,
+                8
+              ]
+            }
+          }
+        },
+        {
+          "name": "delegation_record_stop_loss",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  101,
+                  108,
+                  101,
+                  103,
+                  97,
+                  116,
+                  105,
+                  111,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "stop_loss"
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "delegation_program"
+            }
+          }
+        },
+        {
+          "name": "delegation_metadata_stop_loss",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  101,
+                  108,
+                  101,
+                  103,
+                  97,
+                  116,
+                  105,
+                  111,
+                  110,
+                  45,
+                  109,
+                  101,
+                  116,
+                  97,
+                  100,
+                  97,
+                  116,
+                  97
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "stop_loss"
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "delegation_program"
+            }
+          }
+        },
+        {
+          "name": "stop_loss",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  111,
+                  112,
+                  45,
+                  108,
+                  111,
+                  115,
+                  115
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "match_id"
+              },
+              {
+                "kind": "account",
+                "path": "player"
+              }
+            ]
+          }
+        },
+        {
+          "name": "owner_program",
+          "address": "Fh6bQUgE35Hq7nP22GZ1Youwnph2UaiEh9xTtDJuHJbH"
+        },
+        {
+          "name": "delegation_program",
+          "address": "DELeGGvXpWV2fqJUhqcF5ZSYMS4JTLjteaAMARRSaeSh"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "match_id",
+          "type": "u32"
+        },
+        {
+          "name": "side",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "delegate_team",
+      "discriminator": [
+        90,
+        104,
+        162,
+        209,
+        15,
+        255,
+        115,
+        50
+      ],
+      "accounts": [
+        {
+          "name": "leader",
+          "signer": true
+        },
+        {
+          "name": "buffer_team",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  117,
+                  102,
+                  102,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "team"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                218,
+                73,
+                44,
+                110,
+                232,
+                150,
+                102,
+                212,
+                239,
+                202,
+                74,
+                215,
+                147,
+                203,
+                19,
+                225,
+                89,
+                28,
+                132,
+                98,
+                59,
+                127,
+                178,
+                134,
+                120,
+                30,
+                219,
+                39,
+                72,
+                37,
+                35,
+                8
+              ]
+            }
+          }
+        },
+        {
+          "name": "delegation_record_team",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  101,
+                  108,
+                  101,
+                  103,
+                  97,
+                  116,
+                  105,
+                  111,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "team"
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "delegation_program"
+            }
+          }
+        },
+        {
+          "name": "delegation_metadata_team",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  101,
+                  108,
+                  101,
+                  103,
+                  97,
+                  116,
+                  105,
+                  111,
+                  110,
+                  45,
+                  109,
+                  101,
+                  116,
+                  97,
+                  100,
+                  97,
+                  116,
+                  97
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "team"
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "delegation_program"
+            }
+          }
+        },
+        {
+          "name": "team",
+          "writable": true
+        },
+        {
+          "name": "owner_program",
+          "address": "Fh6bQUgE35Hq7nP22GZ1Youwnph2UaiEh9xTtDJuHJbH"
+        },
+        {
+          "name": "delegation_program",
+          "address": "DELeGGvXpWV2fqJUhqcF5ZSYMS4JTLjteaAMARRSaeSh"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "match_id",
+          "type": "u32"
+        },
+        {
+          "name": "side",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "finalize_round",
+      "discriminator": [
+        239,
+        160,
+        254,
+        11,
+        254,
+        144,
+        53,
+        148
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "match_account",
+          "writable": true
+        },
+        {
+          "name": "magic_program",
+          "address": "Magic11111111111111111111111111111111111111"
+        },
+        {
+          "name": "magic_context",
+          "writable": true,
+          "address": "MagicContext1111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "_match_id",
+          "type": "u32"
+        }
+      ]
+    },
+    {
+      "name": "init_basket_permission",
+      "discriminator": [
+        169,
+        231,
+        200,
+        62,
+        211,
+        101,
+        77,
+        126
+      ],
+      "accounts": [
+        {
+          "name": "player",
+          "signer": true
+        },
+        {
+          "name": "basket",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  97,
+                  115,
+                  107,
+                  101,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "basket"
+              }
+            ]
+          }
+        },
+        {
+          "name": "permission",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  101,
+                  114,
+                  109,
+                  105,
+                  115,
+                  115,
+                  105,
+                  111,
+                  110,
+                  58
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "basket"
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "permission_program"
+            }
+          }
+        },
+        {
+          "name": "ephemeral_vault",
+          "writable": true,
+          "address": "MagicVau1t999999999999999999999999999999999"
+        },
+        {
+          "name": "magic_program",
+          "address": "Magic11111111111111111111111111111111111111"
+        },
+        {
+          "name": "permission_program"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "init_config",
+      "discriminator": [
+        23,
+        235,
+        115,
+        232,
+        168,
+        96,
+        1,
+        231
+      ],
+      "accounts": [
+        {
+          "name": "config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "ftr_authority",
+          "docs": [
+            "`init_ftr_mint` (separate instruction) using this key."
+          ]
+        },
+        {
+          "name": "admin",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "base_pot",
+          "type": "u64"
+        },
+        {
+          "name": "round_duration_secs",
+          "type": "u32"
+        },
+        {
+          "name": "chaos_event_max",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "init_ftr_mint",
+      "discriminator": [
+        42,
+        103,
+        151,
+        15,
+        16,
+        227,
+        231,
+        223
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "admin",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "config"
+          ]
+        },
+        {
+          "name": "config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "ftr_authority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  116,
+                  114,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "ftr_mint",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "rent",
+          "address": "SysvarRent111111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "decimals",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "init_spectator_bid_permission",
+      "discriminator": [
+        168,
+        13,
+        137,
+        238,
+        179,
+        135,
+        126,
+        98
+      ],
+      "accounts": [
+        {
+          "name": "spectator",
+          "signer": true
+        },
+        {
+          "name": "bid",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  112,
+                  101,
+                  99
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "bid"
+              }
+            ]
+          }
+        },
+        {
+          "name": "permission",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  101,
+                  114,
+                  109,
+                  105,
+                  115,
+                  115,
+                  105,
+                  111,
+                  110,
+                  58
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "bid"
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "permission_program"
+            }
+          }
+        },
+        {
+          "name": "ephemeral_vault",
+          "writable": true,
+          "address": "MagicVau1t999999999999999999999999999999999"
+        },
+        {
+          "name": "magic_program",
+          "address": "Magic11111111111111111111111111111111111111"
+        },
+        {
+          "name": "permission_program"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "init_stop_loss_permission",
+      "discriminator": [
+        35,
+        197,
+        82,
+        69,
+        101,
+        153,
+        62,
+        201
+      ],
+      "accounts": [
+        {
+          "name": "player",
+          "signer": true
+        },
+        {
+          "name": "stop_loss",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  111,
+                  112,
+                  45,
+                  108,
+                  111,
+                  115,
+                  115
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "stop_loss"
+              }
+            ]
+          }
+        },
+        {
+          "name": "permission",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  101,
+                  114,
+                  109,
+                  105,
+                  115,
+                  115,
+                  105,
+                  111,
+                  110,
+                  58
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "stop_loss"
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "permission_program"
+            }
+          }
+        },
+        {
+          "name": "ephemeral_vault",
+          "writable": true,
+          "address": "MagicVau1t999999999999999999999999999999999"
+        },
+        {
+          "name": "magic_program",
+          "address": "Magic11111111111111111111111111111111111111"
+        },
+        {
+          "name": "permission_program"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "lock_in_pre_round",
+      "discriminator": [
+        179,
+        94,
+        133,
+        72,
+        116,
+        240,
+        223,
+        189
+      ],
+      "accounts": [
+        {
+          "name": "player",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "match_account",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  116,
+                  99,
+                  104
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "match_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "basket",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  97,
+                  115,
+                  107,
+                  101,
+                  116
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "match_id"
+              },
+              {
+                "kind": "account",
+                "path": "player"
+              }
+            ]
+          }
+        },
+        {
+          "name": "stop_loss",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  111,
+                  112,
+                  45,
+                  108,
+                  111,
+                  115,
+                  115
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "match_id"
+              },
+              {
+                "kind": "account",
+                "path": "player"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "_match_id",
+          "type": "u32"
+        },
+        {
+          "name": "side",
+          "type": "u8"
+        },
+        {
+          "name": "mints",
+          "type": {
+            "array": [
+              "pubkey",
+              3
+            ]
+          }
+        },
+        {
+          "name": "weights",
+          "type": {
+            "array": [
+              "u16",
+              3
+            ]
+          }
+        },
+        {
+          "name": "range",
+          "type": {
+            "defined": {
+              "name": "StopLossRange"
+            }
+          }
+        },
+        {
+          "name": "per_member_pubkeys",
+          "type": {
+            "array": [
+              "pubkey",
+              8
+            ]
+          }
+        },
+        {
+          "name": "per_member_flags",
+          "type": {
+            "array": [
+              "u8",
+              8
+            ]
+          }
+        },
+        {
+          "name": "per_member_count",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "place_spectator_bid",
+      "discriminator": [
+        57,
+        114,
+        231,
+        126,
+        187,
+        180,
+        249,
+        36
+      ],
+      "accounts": [
+        {
+          "name": "spectator",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "match_account",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  116,
+                  99,
+                  104
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "match_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "bid",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  112,
+                  101,
+                  99
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "match_id"
+              },
+              {
+                "kind": "account",
+                "path": "spectator"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "_match_id",
+          "type": "u32"
+        },
+        {
+          "name": "prediction_hash",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        },
+        {
+          "name": "amount",
+          "type": "u64"
+        },
+        {
+          "name": "per_member_pubkeys",
+          "type": {
+            "array": [
+              "pubkey",
+              8
+            ]
+          }
+        },
+        {
+          "name": "per_member_flags",
+          "type": {
+            "array": [
+              "u8",
+              8
+            ]
+          }
+        },
+        {
+          "name": "per_member_count",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "process_undelegation",
+      "discriminator": [
+        196,
+        28,
+        41,
+        206,
+        48,
+        37,
+        51,
+        167
+      ],
+      "accounts": [
+        {
+          "name": "base_account",
+          "writable": true
+        },
+        {
+          "name": "buffer",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  117,
+                  110,
+                  100,
+                  101,
+                  108,
+                  101,
+                  103,
+                  97,
+                  116,
+                  101,
+                  45,
+                  98,
+                  117,
+                  102,
+                  102,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "base_account"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                181,
+                183,
+                0,
+                225,
+                242,
+                87,
+                58,
+                192,
+                204,
+                6,
+                34,
+                1,
+                52,
+                74,
+                207,
+                151,
+                184,
+                53,
+                6,
+                235,
+                140,
+                229,
+                25,
+                152,
+                204,
+                98,
+                126,
+                24,
+                147,
+                128,
+                167,
+                62
+              ]
+            }
+          }
+        },
+        {
+          "name": "payer",
+          "writable": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "account_seeds",
+          "type": {
+            "vec": "bytes"
+          }
+        }
+      ]
+    },
+    {
+      "name": "propose_param_change",
+      "discriminator": [
+        83,
+        77,
+        9,
+        159,
+        203,
+        217,
+        134,
+        156
+      ],
+      "accounts": [
+        {
+          "name": "proposer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "proposal",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  114,
+                  111,
+                  112,
+                  111,
+                  115,
+                  97,
+                  108
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "proposal_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "proposal_id",
+          "type": "u32"
+        },
+        {
+          "name": "param_name",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        },
+        {
+          "name": "new_value",
+          "type": "u32"
+        }
+      ]
+    },
+    {
+      "name": "register_team",
+      "discriminator": [
+        12,
+        29,
+        209,
+        52,
+        168,
+        44,
+        109,
+        66
+      ],
+      "accounts": [
+        {
+          "name": "leader",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "match_account",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  116,
+                  99,
+                  104
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "match_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "team",
+          "writable": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "match_id",
+          "type": "u32"
+        },
+        {
+          "name": "side",
+          "type": "u8"
+        },
+        {
+          "name": "members",
+          "type": {
+            "vec": {
+              "defined": {
+                "name": "TeamMember"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "request_chaos_vrf",
+      "discriminator": [
+        39,
+        251,
+        171,
+        254,
+        17,
+        106,
+        156,
+        213
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "chaos_event",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  104,
+                  97,
+                  111,
+                  115
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "match_account"
+              },
+              {
+                "kind": "arg",
+                "path": "sequence"
+              }
+            ]
+          }
+        },
+        {
+          "name": "match_account",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  116,
+                  99,
+                  104
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "match_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "oracle_queue",
+          "writable": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "program_identity",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  105,
+                  100,
+                  101,
+                  110,
+                  116,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "vrf_program",
+          "address": "Vrf1RNUjXmQGjmQrQLvJHs9SNkvDJEsRVFPkfSQUwGz"
+        },
+        {
+          "name": "slot_hashes",
+          "address": "SysvarS1otHashes111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "_match_id",
+          "type": "u32"
+        },
+        {
+          "name": "sequence",
+          "type": "u32"
+        }
+      ]
+    },
+    {
+      "name": "request_villain_vrf",
+      "discriminator": [
+        253,
+        111,
+        127,
+        159,
+        184,
+        118,
+        114,
+        101
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "villain_pick",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  105,
+                  108,
+                  108,
+                  97,
+                  105,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "match_account"
+              }
+            ]
+          }
+        },
+        {
+          "name": "match_account",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  116,
+                  99,
+                  104
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "match_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "oracle_queue",
+          "writable": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "program_identity",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  105,
+                  100,
+                  101,
+                  110,
+                  116,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "vrf_program",
+          "address": "Vrf1RNUjXmQGjmQrQLvJHs9SNkvDJEsRVFPkfSQUwGz"
+        },
+        {
+          "name": "slot_hashes",
+          "address": "SysvarS1otHashes111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "_match_id",
+          "type": "u32"
+        }
+      ]
+    },
+    {
+      "name": "reveal_round",
+      "discriminator": [
+        146,
+        249,
+        2,
+        210,
+        169,
+        145,
+        120,
+        6
+      ],
+      "accounts": [
+        {
+          "name": "caller",
+          "signer": true
+        },
+        {
+          "name": "match_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  116,
+                  99,
+                  104
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "match_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "ftr_authority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  116,
+                  114,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "ftr_mint"
+        },
+        {
+          "name": "winner_ftr_account",
+          "writable": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "magic_program",
+          "address": "Magic11111111111111111111111111111111111111"
+        },
+        {
+          "name": "magic_context",
+          "writable": true,
+          "address": "MagicContext1111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "_match_id",
+          "type": "u32"
+        }
+      ]
+    },
+    {
+      "name": "tally_proposal",
+      "discriminator": [
+        20,
+        91,
+        72,
+        31,
+        245,
+        129,
+        245,
+        40
+      ],
+      "accounts": [
+        {
+          "name": "caller",
+          "signer": true
+        },
+        {
+          "name": "config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "proposal",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  114,
+                  111,
+                  112,
+                  111,
+                  115,
+                  97,
+                  108
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "proposal_id"
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "_proposal_id",
+          "type": "u32"
+        }
+      ]
+    },
+    {
+      "name": "tick_price",
+      "discriminator": [
+        237,
+        206,
+        163,
+        122,
+        103,
+        44,
+        37,
+        112
+      ],
+      "accounts": [
+        {
+          "name": "crank",
+          "signer": true
+        },
+        {
+          "name": "match_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  116,
+                  99,
+                  104
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "match_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "magic_program",
+          "address": "Magic11111111111111111111111111111111111111"
+        },
+        {
+          "name": "magic_context",
+          "writable": true,
+          "address": "MagicContext1111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "_match_id",
+          "type": "u32"
+        },
+        {
+          "name": "_mint",
+          "type": "pubkey"
+        },
+        {
+          "name": "_price_e6",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "vote_on_proposal",
+      "discriminator": [
+        188,
+        239,
+        13,
+        88,
+        119,
+        199,
+        251,
+        119
+      ],
+      "accounts": [
+        {
+          "name": "voter",
+          "signer": true
+        },
+        {
+          "name": "ftr_account"
+        },
+        {
+          "name": "config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "proposal",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  114,
+                  111,
+                  112,
+                  111,
+                  115,
+                  97,
+                  108
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "proposal_id"
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "_proposal_id",
+          "type": "u32"
+        },
+        {
+          "name": "support_yes",
+          "type": "bool"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Basket",
+      "discriminator": [
+        219,
+        79,
+        107,
+        135,
+        231,
+        243,
+        218,
+        248
+      ]
+    },
+    {
+      "name": "ChaosEvent",
+      "discriminator": [
+        248,
+        210,
+        149,
+        16,
+        167,
+        133,
+        212,
+        221
+      ]
+    },
+    {
+      "name": "GameConfig",
+      "discriminator": [
+        45,
+        146,
+        146,
+        33,
+        170,
+        69,
+        96,
+        133
+      ]
+    },
+    {
+      "name": "Match",
+      "discriminator": [
+        236,
+        63,
+        169,
+        38,
+        15,
+        56,
+        196,
+        162
+      ]
+    },
+    {
+      "name": "Proposal",
+      "discriminator": [
+        26,
+        94,
+        189,
+        187,
+        116,
+        136,
+        53,
+        33
+      ]
+    },
+    {
+      "name": "RoundCounter",
+      "discriminator": [
+        244,
+        2,
+        165,
+        240,
+        168,
+        10,
+        1,
+        238
+      ]
+    },
+    {
+      "name": "SpectatorBid",
+      "discriminator": [
+        118,
+        250,
+        202,
+        35,
+        99,
+        198,
+        176,
+        116
+      ]
+    },
+    {
+      "name": "StopLoss",
+      "discriminator": [
+        251,
+        211,
+        91,
+        132,
+        59,
+        107,
+        142,
+        94
+      ]
+    },
+    {
+      "name": "Team",
+      "discriminator": [
+        140,
+        218,
+        177,
+        140,
+        193,
+        241,
+        199,
+        106
+      ]
+    },
+    {
+      "name": "VillainPick",
+      "discriminator": [
+        223,
+        75,
+        49,
+        127,
+        65,
+        83,
+        134,
+        62
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "NotPermitted",
+      "msg": "Signer is not in the PER member set for this account"
+    },
+    {
+      "code": 6001,
+      "name": "NotAuthority",
+      "msg": "Authority must match the recorded authority"
+    },
+    {
+      "code": 6002,
+      "name": "StopLossTriggered",
+      "msg": "StopLoss is in triggered state"
+    },
+    {
+      "code": 6003,
+      "name": "TooManyMembers",
+      "msg": "Permission member count exceeds MAX_PERMISSION_MEMBERS"
+    },
+    {
+      "code": 6004,
+      "name": "MatchNotLive",
+      "msg": "Match is not in the Live phase"
+    },
+    {
+      "code": 6005,
+      "name": "InvalidPhaseTransition",
+      "msg": "Match phase transition is invalid"
+    },
+    {
+      "code": 6006,
+      "name": "VillainAlreadyFulfilled",
+      "msg": "Villain VRF already fulfilled"
+    },
+    {
+      "code": 6007,
+      "name": "ChaosAlreadyFulfilled",
+      "msg": "Chaos VRF already fulfilled for this sequence"
+    },
+    {
+      "code": 6008,
+      "name": "VillainRequestPending",
+      "msg": "Villain VRF request already pending"
+    },
+    {
+      "code": 6009,
+      "name": "InvalidOracleQueue",
+      "msg": "Oracle queue is not a MagicBlock default queue"
+    },
+    {
+      "code": 6010,
+      "name": "FtrMintNotInitialized",
+      "msg": "FTR mint not yet initialized"
+    },
+    {
+      "code": 6011,
+      "name": "NoVoterFtrAccount",
+      "msg": "No FTR token account provided for voter weight snapshot"
+    },
+    {
+      "code": 6012,
+      "name": "MatchNotDelegated",
+      "msg": "Cannot reveal a match whose Match account is not delegated to ER"
+    }
+  ],
+  "types": [
+    {
+      "name": "Basket",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "match_id",
+            "type": "u32"
+          },
+          {
+            "name": "side",
+            "type": "u8"
+          },
+          {
+            "name": "player",
+            "type": "pubkey"
+          },
+          {
+            "name": "mints",
+            "type": {
+              "array": [
+                "pubkey",
+                3
+              ]
+            }
+          },
+          {
+            "name": "weights",
+            "type": {
+              "array": [
+                "u16",
+                3
+              ]
+            }
+          },
+          {
+            "name": "per_members",
+            "type": {
+              "array": [
+                "pubkey",
+                8
+              ]
+            }
+          },
+          {
+            "name": "per_flags",
+            "type": {
+              "array": [
+                "u8",
+                8
+              ]
+            }
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ChaosEvent",
+      "docs": [
+        "VRF-driven chaos event. Created on the ER; never committed back to base."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "match_id",
+            "type": "u32"
+          },
+          {
+            "name": "sequence",
+            "type": "u32"
+          },
+          {
+            "name": "kind",
+            "type": {
+              "defined": {
+                "name": "ChaosKind"
+              }
+            }
+          },
+          {
+            "name": "randomness",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "fired_at_slot",
+            "type": "u64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ChaosKind",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Rug"
+          },
+          {
+            "name": "Pump"
+          },
+          {
+            "name": "FakeNews"
+          }
+        ]
+      }
+    },
+    {
+      "name": "GameConfig",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "admin",
+            "type": "pubkey"
+          },
+          {
+            "name": "ftr_authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "ftr_mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "base_pot",
+            "type": "u64"
+          },
+          {
+            "name": "round_duration_secs",
+            "type": "u32"
+          },
+          {
+            "name": "chaos_event_max",
+            "type": "u8"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Match",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "match_id",
+            "type": "u32"
+          },
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "teams",
+            "type": {
+              "array": [
+                "pubkey",
+                2
+              ]
+            }
+          },
+          {
+            "name": "pot",
+            "type": "u64"
+          },
+          {
+            "name": "phase",
+            "type": {
+              "defined": {
+                "name": "MatchPhase"
+              }
+            }
+          },
+          {
+            "name": "deadline_slot",
+            "type": "u64"
+          },
+          {
+            "name": "villain_pubkey",
+            "type": {
+              "option": "pubkey"
+            }
+          },
+          {
+            "name": "chaos_count",
+            "type": "u8"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "MatchPhase",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Created"
+          },
+          {
+            "name": "LockedIn"
+          },
+          {
+            "name": "Live"
+          },
+          {
+            "name": "Revealed"
+          },
+          {
+            "name": "Finalized"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Proposal",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "proposal_id",
+            "type": "u32"
+          },
+          {
+            "name": "proposer",
+            "type": "pubkey"
+          },
+          {
+            "name": "param_name",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "new_value",
+            "type": "u32"
+          },
+          {
+            "name": "ftr_yes",
+            "type": "u64"
+          },
+          {
+            "name": "ftr_no",
+            "type": "u64"
+          },
+          {
+            "name": "deadline_slot",
+            "type": "u64"
+          },
+          {
+            "name": "status",
+            "type": {
+              "defined": {
+                "name": "ProposalStatus"
+              }
+            }
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ProposalStatus",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Open"
+          },
+          {
+            "name": "Tallied"
+          }
+        ]
+      }
+    },
+    {
+      "name": "RoundCounter",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "current_round",
+            "type": "u32"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "SpectatorBid",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "match_id",
+            "type": "u32"
+          },
+          {
+            "name": "spectator",
+            "type": "pubkey"
+          },
+          {
+            "name": "prediction_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "placed_at_slot",
+            "type": "u64"
+          },
+          {
+            "name": "per_members",
+            "type": {
+              "array": [
+                "pubkey",
+                8
+              ]
+            }
+          },
+          {
+            "name": "per_flags",
+            "type": {
+              "array": [
+                "u8",
+                8
+              ]
+            }
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "StopLoss",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "match_id",
+            "type": "u32"
+          },
+          {
+            "name": "side",
+            "type": "u8"
+          },
+          {
+            "name": "player",
+            "type": "pubkey"
+          },
+          {
+            "name": "basket_pda",
+            "type": "pubkey"
+          },
+          {
+            "name": "range",
+            "type": {
+              "defined": {
+                "name": "StopLossRange"
+              }
+            }
+          },
+          {
+            "name": "hit",
+            "type": "u8"
+          },
+          {
+            "name": "per_members",
+            "type": {
+              "array": [
+                "pubkey",
+                8
+              ]
+            }
+          },
+          {
+            "name": "per_flags",
+            "type": {
+              "array": [
+                "u8",
+                8
+              ]
+            }
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "StopLossRange",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "min_bps",
+            "type": "u16"
+          },
+          {
+            "name": "max_bps",
+            "type": "u16"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Team",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "match_id",
+            "type": "u32"
+          },
+          {
+            "name": "side",
+            "type": "u8"
+          },
+          {
+            "name": "leader",
+            "type": "pubkey"
+          },
+          {
+            "name": "members",
+            "type": {
+              "vec": {
+                "defined": {
+                  "name": "TeamMember"
+                }
+              }
+            }
+          },
+          {
+            "name": "score",
+            "type": "u64"
+          },
+          {
+            "name": "alive",
+            "type": "u8"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "TeamMember",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "player",
+            "type": "pubkey"
+          },
+          {
+            "name": "basket_pda",
+            "type": "pubkey"
+          },
+          {
+            "name": "stop_loss_pda",
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "VillainPick",
+      "docs": [
+        "VRF-driven villain token selection. Pre-created by `request_villain_vrf`;",
+        "`callback_villain` writes the randomness on fulfillment."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "match_id",
+            "type": "u32"
+          },
+          {
+            "name": "randomness",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "villain_mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "fulfilled_at_slot",
+            "type": "u64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    }
+  ]
+}

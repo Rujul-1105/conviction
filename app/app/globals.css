@@ -1,0 +1,174 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Global styles for Conviction.
+ *
+ * The palette is mirrored here as CSS variables so that third-party CSS we
+ * don't control (notably wallet-adapter-react-ui) can be themed to match.
+ * Application code should use the Tailwind tokens, never these variables
+ * directly — see DESIGN.md §14.
+ */
+:root {
+  --ink: #0a0a0a;
+  --paper: #f5f5f0;
+  --surface: #161616;
+  --surface-elevated: #1f1f1f;
+  --border: #2a2a2a;
+  --whisper: #6b6b6b;
+  --text-muted: #a0a0a0;
+  --conviction: #00ff85;
+  --fold: #ff3d5a;
+  --hold: #4a9eff;
+  --chaos: #ffd23f;
+  --volatility: #9d4edd;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    /* Dark is the default, not a toggle. Light mode is an a11y alt only. */
+    color-scheme: dark;
+  }
+
+  body {
+    @apply bg-ink text-paper font-sans antialiased;
+    /* Prevent horizontal scroll from wide data tables on the live screen. */
+    overflow-x: hidden;
+  }
+
+  /* Numbers get tabular figures everywhere, unconditionally. DESIGN.md §1
+   * requires prices/timers/P&L to line up vertically in their own lane. */
+  .font-mono {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Keyboard focus is visible but uses hold-blue, not conviction-green —
+   * green is reserved for CTA / in-the-money semantics. */
+  :focus-visible {
+    @apply outline-none ring-2 ring-hold ring-offset-2 ring-offset-ink;
+  }
+
+  ::selection {
+    background-color: rgb(0 255 133 / 0.2);
+  }
+}
+
+@layer utilities {
+  /* Thin scrollbars for the dense panels (event feed, leaderboard). */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: var(--border);
+    border-radius: 9999px;
+  }
+}
+
+/*
+ * Wallet-adapter restyle. Its defaults are rounded, shadowed and PURPLE —
+ * all three violate DESIGN.md, and purple specifically is reserved for the
+ * spectator class (§1), so it must never appear on a connect button.
+ * We override rather than fork.
+ */
+
+/* The trigger button itself. Styled as our primary CTA: conviction green,
+ * ink text, 6px radius, no shadow. */
+.wallet-adapter-button-trigger,
+.wallet-adapter-button.wallet-adapter-button-trigger {
+  background-color: var(--conviction) !important;
+  background-image: none !important;
+  color: var(--ink) !important;
+  border-radius: 6px !important;
+  box-shadow: none !important;
+  height: 40px !important;
+  padding: 0 16px !important;
+  font-family: var(--font-display), system-ui, sans-serif !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  line-height: 40px !important;
+  transition: background-color 150ms ease !important;
+}
+
+.wallet-adapter-button-trigger:not([disabled]):hover {
+  background-color: #00cc6a !important;
+}
+
+/* Dropdown shown once connected. */
+.wallet-adapter-dropdown-list {
+  background-color: var(--surface-elevated) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 6px !important;
+  box-shadow: none !important;
+  font-family: var(--font-sans), system-ui, sans-serif !important;
+}
+
+.wallet-adapter-dropdown-list-item {
+  border-radius: 4px !important;
+  color: var(--paper) !important;
+  font-size: 14px !important;
+}
+
+.wallet-adapter-dropdown-list-item:not([disabled]):hover {
+  background-color: var(--surface) !important;
+}
+
+.wallet-adapter-modal-wrapper {
+  background-color: var(--surface-elevated) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  font-family: var(--font-sans), system-ui, sans-serif !important;
+}
+
+.wallet-adapter-modal-title {
+  color: var(--paper) !important;
+  font-family: var(--font-display), system-ui, sans-serif !important;
+  font-size: 18px !important;
+}
+
+.wallet-adapter-modal-list li,
+.wallet-adapter-modal-list .wallet-adapter-button {
+  background-color: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 6px !important;
+  color: var(--paper) !important;
+  font-family: var(--font-sans), system-ui, sans-serif !important;
+}
+
+.wallet-adapter-modal-list .wallet-adapter-button:hover {
+  background-color: var(--surface-elevated) !important;
+}
+
+.wallet-adapter-modal-button-close {
+  background-color: var(--surface) !important;
+  border-radius: 6px !important;
+}
+
+/*
+ * Global reduced-motion kill switch. Components additionally gate Framer
+ * Motion via useReducedMotion(); this handles CSS animations (live pulse,
+ * tick flash) that Framer never sees.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
