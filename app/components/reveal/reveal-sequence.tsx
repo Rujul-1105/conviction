@@ -174,29 +174,25 @@ export function ResultsTable({ match }: { match: Match }) {
 
               {team.basket && (
                 <div className="mt-3 border-t border-border pt-3">
-                  <PanelLabel>Basket &amp; thresholds</PanelLabel>
+                  <PanelLabel>Basket &amp; band</PanelLabel>
                   <div className="mt-2 space-y-1">
-                    {team.basket.tokens.map((token: Token) => {
-                      const stop = team.basket?.stopLosses.find(
-                        (s) => s.tokenMint === token.mint,
-                      )
-                      return (
-                        <div
-                          key={token.mint}
-                          className="flex items-center justify-between gap-3"
-                        >
-                          <span className="text-body-sm text-paper">
-                            {token.symbol}
-                          </span>
-                          <div className="flex items-center gap-3">
-                            <Price value={token.currentPrice} size="sm" />
-                            <Num size="sm" className="text-fold">
-                              stop {stop?.thresholdPct ?? '—'}%
-                            </Num>
-                          </div>
+                    {team.basket.tokens.map((token: Token) => (
+                      <div
+                        key={token.mint}
+                        className="flex items-center justify-between gap-3"
+                      >
+                        <span className="text-body-sm text-paper">
+                          {token.symbol}
+                        </span>
+                        <div className="flex items-center gap-3">
+                          <Price value={token.currentPrice} size="sm" />
+                          <Num size="sm" className="text-fold">
+                            band {(team.basket!.band.minBps / 100).toFixed(1)}%
+                            … {(team.basket!.band.maxBps / 100).toFixed(1)}%
+                          </Num>
                         </div>
-                      )
-                    })}
+                      </div>
+                    ))}
                   </div>
                 </div>
               )}

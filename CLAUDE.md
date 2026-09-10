@@ -14,20 +14,20 @@ Stack locked in breif.md (Anchor, Next.js 14, Tailwind+shadcn, Framer Motion,
 wallet-adapter-react, Zustand+React Query, Birdeye, Helius, Vercel).
 
 ## Current phase
-**Phase 1 — on-chain gap fixes shipped (uncommitted, source-only).** Added
-two instructions: `fold` (player voluntarily folds their team during the
-Live phase; `#[commit]`-tagged so ER commits it) and `leave_match` (player
-abandons pre-round in the Created phase). Fixed two blockers:
-`tick_price` now persists into `Match.last_prices_e6[0..=2]` (slot index
-encoded in the synthetic `_mint` Pubkey's first byte), and
-`callback_villain` writes a real mint from a new `TOKEN_UNIVERSE: [Pubkey; 25]`
-constant in `constants.rs` (mirrors `app/tokens.json`). State additions:
-`Team.folded: bool` (size: 8 + 4 + 1 + 32 + (4 + 4 * 96) + 8 + 1 + 1 + 1) and
-`Match.last_prices_e6: [u64; 3]` (size: +24 bytes). IDL regenerated:
-24 user instructions + 1 ephemeral `process_undelegation` = 25 entries.
-**Not yet deployed to devnet** — that's the next action. **Not yet
-committed** — awaiting user approval on the commit message.
-Plan: `/home/rujul/.claude/plans/what-all-are-the-velvet-umbrella.md`.
+**Phase 2 — basket-band UI fix shipped (uncommitted, source-only).** Frontend
+now matches the on-chain `StopLossRange { min_bps, max_bps }` shape: the
+per-token stop-loss slider is replaced by a single floor/edge band for the
+whole basket. `useRoundUIStore` exposes `basketStopLossBand` (no more
+`stopLosses: Record<mint, number>`). `StopLossSlider` no longer takes a
+`tokens` prop. `PriceChart` accepts a `stopLossBand` prop and renders a
+shaded fold-zone with an "Auto-fold armed" / "Band armed" pill. `mission-control`
+threads `myTeam.basket?.band` through. `Basket` type now uses `band: StopLossBand`
+(not `stopLosses: StopLoss[]`). `StopLossStatus` shows band edges instead
+of per-token thresholds. Hard-coded teammate addresses removed from
+`TeamPicker` (replaced with placeholder "Open slot" entries; real rosters
+land in Phase 3 from `Team.members`). `pnpm typecheck` + `pnpm build` clean.
+**Phase 1 still NOT yet deployed to devnet** — `anchor deploy` is the gate
+before Phase 3 (real.ts wire-up). Plan: `/home/rujul/.claude/plans/what-all-are-the-velvet-umbrella.md`.
 
 > **Phase A.2 correction:** the bytecode deployed at `Fh6b…` had the *old* MVP
 > program ID baked in as `declare_id`, so every instruction reverted with

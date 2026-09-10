@@ -37,15 +37,19 @@ export type Token = {
 
 // ─── Game ────────────────────────────────────────────────────────────────────
 
-/** `thresholdPct` is negative: -8 means "fold if this drops 8%". */
-export type StopLoss = {
-  tokenMint: string
-  thresholdPct: number
+/** Basket-band stop-loss in basis points. Both edges are negative; the
+ *  band lives between `minBps` (deepest allowed loss) and `maxBps`
+ *  (closest-to-zero stop). Mirrors the on-chain `StopLossRange` shape. */
+export type StopLossBand = {
+  minBps: number
+  maxBps: number
 }
 
+/** Per-team basket — the chosen tokens and a single band the whole basket
+ *  is held to. Replaces the older per-token threshold array. */
 export type Basket = {
   tokens: Token[]
-  stopLosses: StopLoss[]
+  band: StopLossBand
 }
 
 export type TeamStatus = 'forming' | 'ready' | 'holding' | 'folded' | 'won'
@@ -173,7 +177,7 @@ export type ConvictionApi = {
 
   // Pre-round
   setBasket: (matchId: string, basket: Basket) => Promise<void>
-  setStopLosses: (matchId: string, stopLosses: StopLoss[]) => Promise<void>
+  setStopLosses: (matchId: string, band: StopLossBand) => Promise<void>
   lockInPicks: (matchId: string) => Promise<void>
 
   // Live round

@@ -115,7 +115,10 @@ export function MissionControl({
 
         <div className="space-y-4">
           <Card className="p-4">
-            <PriceChart teams={match.teams} />
+            <PriceChart
+              teams={match.teams}
+              stopLossBand={myTeam?.basket?.band}
+            />
           </Card>
 
           {isSpectator ? (

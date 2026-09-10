@@ -46,7 +46,7 @@ export default function SetupPage({ params }: { params: { id: string } }) {
   const router = useRouter()
   const { data: match } = useMatch(params.id)
   const { data: tokens } = useTokenUniverse()
-  const { step, setStep, selectedBasketTokens, stopLosses, reset } =
+  const { step, setStep, selectedBasketTokens, basketStopLossBand, reset } =
     useRoundUIStore()
   const [tierFilter, setTierFilter] = useState<TokenTier | 'all'>('all')
 
@@ -71,10 +71,7 @@ export default function SetupPage({ params }: { params: { id: string } }) {
       )
       await api.setBasket(params.id, {
         tokens: chosen,
-        stopLosses: chosen.map((t) => ({
-          tokenMint: t.mint,
-          thresholdPct: stopLosses[t.mint] ?? -10,
-        })),
+        band: basketStopLossBand,
       })
       await api.lockInPicks(params.id)
     },
@@ -153,9 +150,7 @@ export default function SetupPage({ params }: { params: { id: string } }) {
                   onTierChange={setTierFilter}
                 />
               )}
-              {step === 'stoploss' && tokens && (
-                <StopLossSlider tokens={tokens} />
-              )}
+              {step === 'stoploss' && <StopLossSlider />}
               {(step === 'team' || step === 'locked') && <TeamPicker />}
             </Card>
 

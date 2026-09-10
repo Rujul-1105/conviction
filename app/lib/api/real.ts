@@ -71,8 +71,8 @@ export const realApi: ConvictionApi = {
   //   per_members: [Pubkey; 8], per_flags: [u8; 8], per_member_count: u8)
   //   then delegate_basket + delegate_stop_loss + init_basket_permission
   //   + init_stop_loss_permission to seal picks in the ER behind PER.
-  //   NOTE: on-chain stop-loss is a bps RANGE, while the UI models one
-  //   thresholdPct per token. Reconcile before wiring.
+  //   NOTE: on-chain stop-loss is a bps RANGE, while the UI models a single
+  //   basket band { minBps, maxBps }. Reconciled as of Phase 2.
   setBasket: () => notWired('setBasket'),
   setStopLosses: () => notWired('setStopLosses'),
   lockInPicks: () => notWired('lockInPicks'),
@@ -81,9 +81,10 @@ export const realApi: ConvictionApi = {
   // getRound: fetch Match + both Team accounts from the ER connection.
   //   `events` is DERIVED — no event log on chain. Synthesize from
   //   onAccountChange diffs (phase transitions, alive flags, chaos_count).
-  // fold: NO EXPLICIT FOLD INSTRUCTION. Folding happens via the stop-loss
-  //   being hit (StopLoss.hit) or finalize_round. A manual fold needs either a
-  //   new instruction or a stop-loss update. Another real gap.
+  // fold: -> fold(match_id, side). Lands on Phase 1's new instruction.
+  //   Sets Team.folded = true, Team.alive = 0; #[commit]-tagged so ER
+  //   commits the mutation. After the next commit_match_state call, the
+  //   change settles to base.
   // getLeaderboard: Team.score is a u64, not a percentage. P&L is DERIVED from
   //   Basket.mints + Basket.weights against Birdeye prices at round start.
   // subscribeToRound: getErConnection(matchPda) then onAccountChange on

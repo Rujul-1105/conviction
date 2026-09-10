@@ -106,44 +106,40 @@ export function LeaderboardColumn({
 }
 
 /**
- * Stop-loss status for the player's own village.
+ * Stop-loss band status for the player's own village.
  * Amber/fold styling because it's an armed trigger, not a neutral readout.
  */
 export function StopLossStatus({ team }: { team: Team | undefined }) {
-  if (!team?.basket) return null
+  const band = team?.basket?.band
+  if (!band) return null
+
+  const pnl = team?.pnl ?? 0
+  const minPct = band.minBps / 100
+  const maxPct = band.maxBps / 100
+  const headroom = pnl - minPct
+  const triggered = pnl < minPct
+  const close = !triggered && headroom <= 3
 
   return (
     <Card className="p-4">
-      <PanelLabel>Your stop-losses</PanelLabel>
+      <PanelLabel>Your basket band</PanelLabel>
       <div className="mt-3 space-y-2">
-        {team.basket.stopLosses.map((stop) => {
-          const token = tokenByMint(stop.tokenMint)
-          // Distance to trigger is what the player actually needs to see.
-          const headroom = team.pnl - stop.thresholdPct
-          const close = headroom <= 3
-
-          return (
-            <div
-              key={stop.tokenMint}
-              className="flex items-center justify-between gap-3 rounded-md border border-border px-3 py-2"
+        <div className="flex items-center justify-between gap-3 rounded-md border border-border px-3 py-2">
+          <span className="text-body-sm text-paper">Auto-fold at</span>
+          <div className="flex items-center gap-3">
+            <Num size="sm" className="text-fold">
+              {minPct.toFixed(1)}% … {maxPct.toFixed(1)}%
+            </Num>
+            <Num
+              size="sm"
+              className={triggered || close ? 'text-fold' : 'text-text-muted'}
             >
-              <span className="text-body-sm text-paper">
-                {token?.symbol ?? 'Unknown'}
-              </span>
-              <div className="flex items-center gap-3">
-                <Num size="sm" className="text-fold">
-                  {stop.thresholdPct}%
-                </Num>
-                <Num
-                  size="sm"
-                  className={close ? 'text-fold' : 'text-text-muted'}
-                >
-                  {headroom > 0 ? `${headroom.toFixed(1)}% away` : 'triggered'}
-                </Num>
-              </div>
-            </div>
-          )
-        })}
+              {triggered
+                ? 'triggered'
+                : `${headroom.toFixed(1)}% to floor`}
+            </Num>
+          </div>
+        </div>
       </div>
     </Card>
   )

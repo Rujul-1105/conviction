@@ -129,7 +129,8 @@ export function TokenGrid({
 
 /** Running summary of the current basket. Shown alongside every wizard step. */
 export function BasketTray({ tokens }: { tokens: Token[] }) {
-  const { selectedBasketTokens, stopLosses, toggleToken } = useRoundUIStore()
+  const { selectedBasketTokens, basketStopLossBand, toggleToken } =
+    useRoundUIStore()
   const selected = selectedBasketTokens
     .map((mint) => tokens.find((t) => t.mint === mint))
     .filter((t): t is Token => Boolean(t))
@@ -154,7 +155,7 @@ export function BasketTray({ tokens }: { tokens: Token[] }) {
             )
           }
 
-          const stop = stopLosses[token.mint]
+          const band = basketStopLossBand
           return (
             <div
               key={token.mint}
@@ -166,11 +167,10 @@ export function BasketTray({ tokens }: { tokens: Token[] }) {
                 </span>
                 <div className="flex items-center gap-2">
                   <Price value={token.currentPrice} size="sm" />
-                  {stop !== undefined && (
-                    <Num size="sm" className="text-fold">
-                      stop {stop}%
-                    </Num>
-                  )}
+                  <Num size="sm" className="text-whisper">
+                    band {(band.minBps / 100).toFixed(1)}% …
+                    {(band.maxBps / 100).toFixed(1)}%
+                  </Num>
                 </div>
               </div>
               <button

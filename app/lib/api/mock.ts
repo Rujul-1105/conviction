@@ -5,7 +5,7 @@ import type {
   Proposal,
   RoundEvent,
   SpectatorBet,
-  StopLoss,
+  StopLossBand,
   Team,
   Token,
   WalletInfo,
@@ -93,9 +93,9 @@ function tickRound(matchId: string): RoundEvent | null {
   // Track the worst position so the reveal screen has something to show.
   if (delta < 0) team.worstPerformerMint = token.mint
 
-  // Auto-fold when the position breaches its own stop-loss threshold.
-  const stop = team.basket?.stopLosses.find((s) => s.tokenMint === token.mint)
-  if (stop && team.pnl <= stop.thresholdPct) {
+  // Auto-fold when the basket P&L breaches the basket band's floor.
+  const band = team.basket?.band
+  if (band && team.pnl <= band.minBps / 100) {
     team.status = 'folded'
     team.foldTime = Date.now()
     return {
@@ -104,7 +104,7 @@ function tickRound(matchId: string): RoundEvent | null {
       type: 'fold',
       teamId: team.id,
       tokenMint: token.mint,
-      message: `${team.name} auto-folded — ${token.symbol} tripped the stop-loss at ${stop.thresholdPct}%`,
+      message: `${team.name} auto-folded — basket crossed the ${band.minBps / 100}% floor`,
     }
   }
 
@@ -207,10 +207,10 @@ export const mockApi: ConvictionApi = {
     pendingBaskets[matchId] = basket
   },
 
-  async setStopLosses(matchId, stopLosses: StopLoss[]) {
+  async setStopLosses(matchId, band: StopLossBand) {
     await latency(150)
     const existing = pendingBaskets[matchId]
-    pendingBaskets[matchId] = { tokens: existing?.tokens ?? [], stopLosses }
+    pendingBaskets[matchId] = { tokens: existing?.tokens ?? [], band }
   },
 
   async lockInPicks(matchId) {

@@ -42,16 +42,13 @@ export const T0 = Date.now()
 export const sec = 1000
 export const min = 60 * sec
 
-/** Build a basket from symbols plus matching stop-loss thresholds. */
-function basket(symbols: string[], thresholds: number[]): Basket {
+/** Build a basket from symbols plus a single bps stop-loss band. */
+function basket(
+  symbols: string[],
+  band: { minBps: number; maxBps: number },
+): Basket {
   const tokens = symbols.map(tok)
-  return {
-    tokens,
-    stopLosses: tokens.map((t, i) => ({
-      tokenMint: t.mint,
-      thresholdPct: thresholds[i],
-    })),
-  }
+  return { tokens, band }
 }
 
 let teamSeq = 0
@@ -147,10 +144,10 @@ export const LIVE_MATCHES: Match[] = [
     duration: 15 * 60,
     teams: [
       team('Exit Liquidity Provider', 0.4, 'holding', {
-        basket: basket(['WIF', 'BONK', 'POPCAT'], [-8, -12, -10]),
+        basket: basket(['WIF', 'BONK', 'POPCAT'], { minBps: -1200, maxBps: -300 }),
       }),
       team('Terminal Velocity', -0.2, 'holding', {
-        basket: basket(['PNUT', 'MEW', 'GOAT'], [-6, -15, -9]),
+        basket: basket(['PNUT', 'MEW', 'GOAT'], { minBps: -1500, maxBps: -400 }),
       }),
     ],
     status: 'live',
@@ -169,10 +166,10 @@ export const LIVE_MATCHES: Match[] = [
     duration: 15 * 60,
     teams: [
       team('Village of Conviction', 4.2, 'holding', {
-        basket: basket(['SOL', 'JUP', 'WIF'], [-10, -8, -14]),
+        basket: basket(['SOL', 'JUP', 'WIF'], { minBps: -1400, maxBps: -500 }),
       }),
       team('Diamond Hand Syndicate', -8.1, 'holding', {
-        basket: basket(['BOME', 'SLERF', 'GIGA'], [-18, -20, -15]),
+        basket: basket(['BOME', 'SLERF', 'GIGA'], { minBps: -2000, maxBps: -600 }),
         worstPerformerMint: tok('BOME').mint,
       }),
     ],
@@ -192,10 +189,10 @@ export const LIVE_MATCHES: Match[] = [
     duration: 15 * 60,
     teams: [
       team('Unrealized Gains', 11.7, 'holding', {
-        basket: basket(['MOTHER', 'FWOG', 'SLERF'], [-25, -20, -22]),
+        basket: basket(['MOTHER', 'FWOG', 'SLERF'], { minBps: -2500, maxBps: -800 }),
       }),
       team('The Paper Tigers', -14.3, 'folded', {
-        basket: basket(['CHILLGUY', 'MYRO', 'BOME'], [-12, -15, -18]),
+        basket: basket(['CHILLGUY', 'MYRO', 'BOME'], { minBps: -1800, maxBps: -500 }),
         foldTime: T0 - 90 * sec,
         worstPerformerMint: tok('CHILLGUY').mint,
       }),
@@ -216,10 +213,10 @@ export const LIVE_MATCHES: Match[] = [
     duration: 15 * 60,
     teams: [
       team('Rug Resistant', -3.8, 'holding', {
-        basket: basket(['BONK', 'WEN', 'PONKE'], [-10, -12, -14]),
+        basket: basket(['BONK', 'WEN', 'PONKE'], { minBps: -1400, maxBps: -400 }),
       }),
       team('Late To Every Pump', -6.9, 'holding', {
-        basket: basket(['ACT', 'MOODENG', 'GOAT'], [-8, -10, -12]),
+        basket: basket(['ACT', 'MOODENG', 'GOAT'], { minBps: -1200, maxBps: -300 }),
         worstPerformerMint: tok('MOODENG').mint,
       }),
     ],
@@ -243,10 +240,10 @@ export const ENDED_MATCHES: Match[] = [
     duration: 15 * 60,
     teams: [
       team('Village of Conviction', 6.8, 'won', {
-        basket: basket(['SOL', 'JTO', 'PNUT'], [-10, -8, -12]),
+        basket: basket(['SOL', 'JTO', 'PNUT'], { minBps: -1200, maxBps: -400 }),
       }),
       team('Diamond Hand Syndicate', -11.2, 'folded', {
-        basket: basket(['BOME', 'GIGA', 'MYRO'], [-15, -18, -20]),
+        basket: basket(['BOME', 'GIGA', 'MYRO'], { minBps: -2000, maxBps: -700 }),
         foldTime: T0 - 20 * min,
         worstPerformerMint: tok('GIGA').mint,
       }),

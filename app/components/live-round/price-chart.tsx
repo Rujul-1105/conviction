@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { PanelLabel } from '@/components/ui/card'
 import { Num, Pnl } from '@/components/ui/num'
 import { colors } from '@/lib/colors'
-import type { Team } from '@/lib/api'
+import type { StopLossBand, Team } from '@/lib/api'
 
 /**
  * Live P&L chart (DESIGN.md §10 priority 5).
@@ -15,6 +15,11 @@ import type { Team } from '@/lib/api'
  *
  * Stroke colours come from lib/colors.ts because SVG `stroke` can't take a
  * Tailwind class — that's the documented escape hatch, not a rule violation.
+ *
+ * `stopLossBand` (bps) renders as a shaded fold-zone spanning
+ * `minBps/100`% … `maxBps/100`%. If any line crosses out of the zone,
+ * the chart annotates "Auto-fold armed" — this is the visual reminder
+ * that the basket-level band decides survival.
  */
 
 const WIDTH = 600
@@ -25,7 +30,13 @@ const MAX_POINTS = 60
 
 type Series = { teamId: string; name: string; points: number[]; color: string }
 
-export function PriceChart({ teams }: { teams: Team[] }) {
+export function PriceChart({
+  teams,
+  stopLossBand,
+}: {
+  teams: Team[]
+  stopLossBand?: StopLossBand
+}) {
   // History accumulates client-side. The program never stores price history
   // (tick_price persists nothing), so this is the only place it exists.
   const [series, setSeries] = useState<Series[]>([])
@@ -82,13 +93,36 @@ export function PriceChart({ teams }: { teams: Team[] }) {
   }, [])
 
   // Symmetric domain around zero so the midline is always the break-even line.
+  // When a stop-loss band is provided, expand the domain to include it so the
+  // shaded fold-zone renders fully and never gets clipped.
   const allValues = series.flatMap((s) => s.points)
-  const extent = Math.max(4, ...allValues.map(Math.abs)) * 1.15
+  const bandValues = stopLossBand
+    ? [stopLossBand.minBps / 100, stopLossBand.maxBps / 100]
+    : []
+  const extent = Math.max(4, ...allValues.map(Math.abs), ...bandValues.map(Math.abs)) * 1.15
 
   const toX = (i: number, len: number) =>
     PAD + (i / Math.max(1, len - 1)) * (WIDTH - PAD * 2)
   const toY = (v: number) =>
     HEIGHT / 2 - (v / extent) * (HEIGHT / 2 - PAD)
+
+  // Band overlay geometry (computed in the same coord space as the polylines).
+  const bandRect = stopLossBand
+    ? {
+        yTop: toY(stopLossBand.maxBps / 100),
+        yBottom: toY(stopLossBand.minBps / 100),
+      }
+    : null
+
+  // Auto-fold fires the moment a team's latest P&L crosses the band's
+  // floor (the deepest allowed loss). Pre-reveal this is silent; during a
+  // live round it triggers the team's `fold` ix.
+  const anyTeamFolded = stopLossBand
+    ? series.some((s) => {
+        const last = s.points[s.points.length - 1]
+        return typeof last === 'number' && last < stopLossBand.minBps / 100
+      })
+    : false
 
   return (
     <div>
@@ -109,6 +143,18 @@ export function PriceChart({ teams }: { teams: Team[] }) {
               <Pnl value={s.points[s.points.length - 1] ?? 0} size="sm" />
             </div>
           ))}
+          {stopLossBand && (
+            <span
+              className={
+                'rounded-md border px-2 py-0.5 text-label ' +
+                (anyTeamFolded
+                  ? 'border-fold bg-fold/15 text-fold'
+                  : 'border-volatility/40 bg-volatility/10 text-volatility')
+              }
+            >
+              {anyTeamFolded ? 'Auto-fold armed' : 'Band armed'}
+            </span>
+          )}
         </div>
       </div>
 
@@ -118,6 +164,31 @@ export function PriceChart({ teams }: { teams: Team[] }) {
         role="img"
         aria-label="Team profit and loss over the round"
       >
+        {/* Stop-loss band overlay (basket-level rule). Drawn first so the
+            polylines sit on top. */}
+        {bandRect && (
+          <rect
+            x={PAD}
+            y={bandRect.yTop}
+            width={WIDTH - PAD * 2}
+            height={Math.max(2, bandRect.yBottom - bandRect.yTop)}
+            fill={colors.volatility}
+            opacity={0.12}
+          />
+        )}
+        {bandRect && (
+          <line
+            x1={PAD}
+            x2={WIDTH - PAD}
+            y1={bandRect.yTop}
+            y2={bandRect.yTop}
+            stroke={colors.volatility}
+            strokeWidth="1"
+            strokeDasharray="2 2"
+            opacity={0.55}
+          />
+        )}
+
         {/* Break-even rule. Dashed so it reads as a reference, not data. */}
         <line
           x1={PAD}
