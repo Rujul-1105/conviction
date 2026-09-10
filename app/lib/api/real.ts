@@ -201,55 +201,66 @@ export const realApi: ConvictionApi = {
 
   async getOpenMatches(): Promise<Match[]> {
     const program = getCurrentProgram() as any
-    if (!program) return []
+    if (!program) return mockOpenMatches()
     try {
       const all = (await program.account.match.all()) as Array<{
         account: AnchorMatch
       }>
-      return all
+      const live = all
         .filter(({ account }) =>
           Boolean(account.phase.created || account.phase.lockedIn),
         )
         .map(({ account }) => anchorMatchToUi(account, []))
+      // Fall back to mock fixtures when devnet is empty so the lobby +
+      // spectator pages render before any real matches exist. The Phase 5
+      // demo bootstrap script can seed devnet to populate this.
+      return live.length > 0 ? live : mockOpenMatches()
     } catch {
-      return []
+      return mockOpenMatches()
     }
   },
 
   async getLiveMatches(): Promise<Match[]> {
     const program = getCurrentProgram() as any
-    if (!program) return []
+    if (!program) return mockLiveMatches()
     try {
       const all = (await program.account.match.all()) as Array<{
         account: AnchorMatch
       }>
-      return all
+      const live = all
         .filter(({ account }) => Boolean(account.phase.live))
         .map(({ account }) => anchorMatchToUi(account, []))
+      return live.length > 0 ? live : mockLiveMatches()
     } catch {
-      return []
+      return mockLiveMatches()
     }
   },
 
   async getMatch(id: string): Promise<Match> {
     const matchId = Number(id)
     const program = getCurrentProgram() as any
-    if (!program) throw new Error('Wallet not connected')
-    const am = (await program.account.match.fetch(
-      findMatchPda(matchId),
-    )) as AnchorMatch
-    const [t0, t1] = await Promise.all([
-      program.account.team
-        .fetch(findTeamPda(matchId, 0))
-        .catch(() => null),
-      program.account.team
-        .fetch(findTeamPda(matchId, 1))
-        .catch(() => null),
-    ])
-    const teams: Team[] = []
-    if (t0) teams.push(anchorTeamToUi(t0 as AnchorTeam, matchId, 0))
-    if (t1) teams.push(anchorTeamToUi(t1 as AnchorTeam, matchId, 1))
-    return anchorMatchToUi(am, teams)
+    if (!program) return mockMatchById(id)
+    try {
+      const am = (await program.account.match.fetch(
+        findMatchPda(matchId),
+      )) as AnchorMatch
+      const [t0, t1] = await Promise.all([
+        program.account.team
+          .fetch(findTeamPda(matchId, 0))
+          .catch(() => null),
+        program.account.team
+          .fetch(findTeamPda(matchId, 1))
+          .catch(() => null),
+      ])
+      const teams: Team[] = []
+      if (t0) teams.push(anchorTeamToUi(t0 as AnchorTeam, matchId, 0))
+      if (t1) teams.push(anchorTeamToUi(t1 as AnchorTeam, matchId, 1))
+      return anchorMatchToUi(am, teams)
+    } catch {
+      // No on-chain match found — fall through to the mock fixture so the
+      // spectator page can be reached by id without a real match existing.
+      return mockMatchById(id)
+    }
   },
 
   async createMatch(params): Promise<Match> {
@@ -622,5 +633,82 @@ function readPendingBasket(_matchId: number): {
 
 export { readPendingBasket }
 
-// Suppress lint warning for unused findProposalPda import — used in createMatch.
-void findProposalPda
+// ─── Mock fallbacks ─────────────────────────────────────────────────────────
+// When devnet has no matches yet, fall back to the cinematic fixtures the
+// mock layer used before. Keeps the demo narrative intact without forcing
+// the user to seed devnet with real matches first.
+
+// Inline mock fixture (mirror of mock-data.ts LIVE_MATCHES first entry) so
+// the spectator page can render even when devnet is empty. Kept short —
+// full cinematic data lives in `lib/api/mock-data.ts`.
+const SPECTATOR_FALLBACK: Match = {
+  id: 'spectate-demo',
+  roundNumber: 7,
+  mode: 'classic',
+  tier: 'mixed',
+  pot: 18.2,
+  duration: 15 * 60,
+  teams: [
+    {
+      id: 'team-1',
+      name: 'Village of Conviction',
+      walletAddresses: ['So1Fallback111111111111111111111111111111111'],
+      pnl: 4.2,
+      status: 'holding',
+      basket: {
+        tokens: [
+          {
+            mint: 'So11111111111111111111111111111111111111112',
+            symbol: 'SOL',
+            name: 'Solana',
+            decimals: 9,
+            tier: 'safe',
+            currentPrice: 214.32,
+            priceChange24h: 2.4,
+          },
+        ],
+        band: { minBps: -1400, maxBps: -500 },
+      },
+    },
+    {
+      id: 'team-2',
+      name: 'Diamond Hand Syndicate',
+      walletAddresses: ['So2Fallback222222222222222222222222222222222'],
+      pnl: -8.1,
+      status: 'holding',
+      basket: {
+        tokens: [
+          {
+            mint: 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263',
+            symbol: 'BONK',
+            name: 'Bonk',
+            decimals: 5,
+            tier: 'wild',
+            currentPrice: 0.00003142,
+            priceChange24h: -6.8,
+          },
+        ],
+        band: { minBps: -2000, maxBps: -600 },
+      },
+    },
+  ],
+  status: 'live',
+  startTime: Date.now() - 6 * 60 * 1000,
+  endTime: Date.now() + 9 * 60 * 1000,
+  chaosEventCount: 1,
+  spectatorCount: 217,
+}
+
+// Override the empty stubs above with the cinematic fallback so the spectator
+// page actually renders. Kept local so this file doesn't depend on
+// ./mock (which would create a circular import: real.ts → mock → real).
+function mockOpenMatches(): Match[] {
+  return [SPECTATOR_FALLBACK]
+}
+function mockLiveMatches(): Match[] {
+  return [SPECTATOR_FALLBACK]
+}
+function mockMatchById(id: string): Match {
+  if (id === SPECTATOR_FALLBACK.id) return SPECTATOR_FALLBACK
+  return { ...SPECTATOR_FALLBACK, id, teams: [] }
+}

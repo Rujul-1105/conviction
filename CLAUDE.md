@@ -14,16 +14,13 @@ Stack locked in breif.md (Anchor, Next.js 14, Tailwind+shadcn, Framer Motion,
 wallet-adapter-react, Zustand+React Query, Birdeye, Helius, Vercel).
 
 ## Current phase
-**Phase 6 — Vercel deploy (source-only, uncommitted).** Phase 5 committed
-at `7b10a95`. Vercel CLI verified available (`npx vercel --version` → 59.15.1)
-but the deploy itself needs interactive login from you — see
-`docs/deploy.md` for the 5-step manual flow (login → link → set 4 env vars
-→ deploy → update CLAUDE.md with the URL). All Phase 6 source artifacts
-are in place: `app/vercel.json` (Next.js framework, pnpm install/build,
-iad1 region), `app/.env.example` (4 required vars documented),
-`docs/deploy.md` (manual steps + smoke test). After you run the deploy,
-update the "Vercel preview" pointer in this file with the URL.
-Plan: `/home/rujul/.claude/plans/what-all-are-the-velvet-umbrella.md`.
+**Phase 7 — Spectator mock-data fallback (source-only, uncommitted).**
+Phase 6 committed at `708f298`. `real.ts` now falls back to a cinematic
+inline fixture (`SPECTATOR_FALLBACK`) when devnet has no matches yet, so
+the `/spectate/spectate-demo` route renders the demo narrative without
+the user having to seed devnet first. Same fallback applies to
+`getOpenMatches` / `getLiveMatches` / `getMatch`. No new dependencies.
+`pnpm typecheck` + `pnpm build` clean. Plan: `/home/rujul/.claude/plans/what-all-are-the-velvet-umbrella.md`.
 
 > **Phase A.2 correction:** the bytecode deployed at `Fh6b…` had the *old* MVP
 > program ID baked in as `declare_id`, so every instruction reverted with

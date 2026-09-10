@@ -5,6 +5,8 @@ listing what shipped, what's known-bad, and ADR pointers. Newest entries first.
 
 ---
 
+- [Phase 7 source-only, uncommitted] 2026-09-10 — Spectator mock-data fallback. `real.ts` `getOpenMatches`/`getLiveMatches`/`getMatch` fall back to a cinematic inline fixture (`SPECTATOR_FALLBACK`) when no on-chain matches exist. Lets `/spectate/spectate-demo` render the demo narrative without seeding devnet first. No new dependencies. `pnpm typecheck` + `pnpm build` clean.
+
 - [Phase 6 source-only, uncommitted] 2026-09-10 — Vercel deploy artifacts ready. Vercel CLI verified (npx vercel@latest → 59.15.1); deploy itself needs interactive login. `app/vercel.json` (Next.js + pnpm + iad1), `app/.env.example` (4 required env vars), `docs/deploy.md` (5-step manual flow + smoke test).
 
 - [Phase 5 source-only, uncommitted] 2026-09-10 — On-chain bootstrap complete. `GameConfig` + `RoundCounter` + FTR mint initialised on devnet. Bootstrap script at `programs/conviction/migrations/deploy.ts` (idempotent). FTR mint keypair persisted to `programs/conviction/migrations/.ftr-mint.json` (gitignored). New conviction-crate `package.json` + `tsconfig.json` added so the bootstrap script can run via `pnpm --filter conviction run init-devnet`. Demo flow documented in `docs/demo-script.md`.
