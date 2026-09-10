@@ -14,14 +14,15 @@ Stack locked in breif.md (Anchor, Next.js 14, Tailwind+shadcn, Framer Motion,
 wallet-adapter-react, Zustand+React Query, Birdeye, Helius, Vercel).
 
 ## Current phase
-**Phase 4 — Birdeye live prices (source-only, uncommitted).** Phase 3
-committed at `020fafc`. Phase 4 wires `useBirdeyePrices` into
-`price-chart.tsx`: every 10s, prices are pulled for every mint across all
-team baskets, P&L is derived from basket weights × price change vs entry,
-and a "Birdeye live" / "Mock walk" pill in the chart header signals the
-data source. When the key is missing or Birdeye 401s, the chart falls
-back to its seeded mock walk and a Sonner toast warns the operator.
-`pnpm typecheck` + `pnpm build` clean. Plan: `/home/rujul/.claude/plans/what-all-are-the-velvet-umbrella.md`.
+**Phase 5 — E2E demo bootstrap (source-only, uncommitted).** Phase 4
+committed at `99144d6`. On-chain bootstrap complete: `GameConfig` +
+`RoundCounter` + FTR mint initialised on devnet. Config PDA:
+`54Lyv5mQqUm2z5hCp4nzDWSWwRZUViohvRt82kkgeti2`. FTR mint:
+`21Rki1gfiUYbM4bdyhma4TRWjYeS1SCXNb8ENKqsTr7V` (decimals 6). Round counter:
+`7tizNzRh66ah4jB4HzEG7nHryNv2hvyV38fb4BPdTkwS`. Bootstrap script
+`programs/conviction/migrations/deploy.ts` is idempotent; re-runs detect
+existing PDAs and skip. Demo flow documented in `docs/demo-script.md`
+(round 1 15min, governance vote, round 2 10min per new rule). Plan: `/home/rujul/.claude/plans/what-all-are-the-velvet-umbrella.md`.
 
 > **Phase A.2 correction:** the bytecode deployed at `Fh6b…` had the *old* MVP
 > program ID baked in as `declare_id`, so every instruction reverted with
