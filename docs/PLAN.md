@@ -24,7 +24,7 @@ Project root: **`/home/rujul/projects/conviction/`** (sibling of `blitz-v8/`). I
 | `/home/rujul/projects/conviction/docs/PLAN.md` | Full implementation plan (this file's content). No cap. Read when entering a phase or after a long gap. | none |
 | `/home/rujul/projects/conviction/docs/CHANGELOG.md` | Append-only log: phase boundary entries (Phase X start/end, what shipped, what's known-bad). | none |
 | `/home/rujul/projects/conviction/docs/decisions/` | One ADR per material architectural choice (spike outcome, ORACLE source, VRF queue choice, etc.). | none |
-| `/home/rujul/projects/conviction/programs/` | Anchor workspace (one program: `stonk_battles`). | n/a |
+| `/home/rujul/projects/conviction/programs/` | Anchor workspace (one program: `conviction`). | n/a |
 | `/home/rujul/projects/conviction/app/` | Next.js 14 App Router app. | n/a |
 | `/home/rujul/projects/conviction/supabase/` | `schema.sql`, RLS, Realtime config. | n/a |
 | `/home/rujul/projects/conviction/tokens.json` | Locked 25-SPL curated universe (Safe/Wild/Moonshot). | n/a |
@@ -85,23 +85,23 @@ If after 4–6 hours any of the above fails, surface the failure mode to the use
 
 ## Phase A — Anchor Program (pause before Phase B)
 
-One Anchor program (`stonk_battles`) owning game state, FTR mint, and governance. Uses ER for live state, PER for hidden commitments, VRF for villain + chaos events, L1 for settlement.
+One Anchor program (`conviction`) owning game state, FTR mint, and governance. Uses ER for live state, PER for hidden commitments, VRF for villain + chaos events, L1 for settlement.
 
 ### Architecture (Path A scope)
 
 | Account | Owner / derivation | Authority | Created on | Persistence | ER role | Privacy | Commit/close policy |
 |---|---|---|---|---|---|---|---|
-| `GameConfig` | `stonk_battles`, PDA `[b"config"]` | Admin | Base | Base-settled | none | public | n/a |
+| `GameConfig` | `conviction`, PDA `[b"config"]` | Admin | Base | Base-settled | none | public | n/a |
 | `FTRMint` | SPL Token | `ftr_authority` PDA | Base | Base-settled | none | public | n/a |
-| `Match` | `stonk_battles`, PDA `[b"match", match_id]` | Match creator | Base | Base-settled | delegated | public | commit-on-round-end, then undelegate |
-| `Team` (×2 per match) | `stonk_battles`, PDA `[b"team", match_id, side]` | Team leader | Base | Base-settled | delegated (read+write during round) | public | commit-on-round-end |
-| `Basket` | `stonk_battles`, PDA `[b"basket", match_id, side]` | Team leader | Base | Base-settled | delegated (write on ER during round) | **PER-private until reveal** | commit-on-reveal, then undelegate |
-| `StopLoss` | `stonk_battles`, PDA `[b"stop", match_id, side, player]` | Player | Base | Base-settled | delegated | **PER-private until reveal** | commit-on-reveal, then undelegate |
-| `SpectatorBid` | `stonk_battles`, PDA `[b"spec", match_id, spectator]` | Spectator | Base | Base-settled | delegated | **PER-private until reveal** | commit-on-reveal, then undelegate |
-| `VillainPick` | `stonk_battles`, PDA `[b"villain", match_id]` | Program (VRF callback) | Base | Base-settled | delegated (ER during round) | public | commit-on-reveal |
-| `ChaosEvent` (Ephemeral Account) | `stonk_battles`, PDA `[b"chaos", match_id, n]` | Sponsor PDA | ER-only | **ER-only ephemeral** | write | public | close at round end |
-| `Proposal` | `stonk_battles`, PDA `[b"prop", proposal_id]` | Proposer (FTR-weighted) | Base | Base-settled | none | public | n/a |
-| `RoundCounter` | `stonk_battles`, PDA `[b"round"]` | Admin | Base | Base-settled | none | public | n/a |
+| `Match` | `conviction`, PDA `[b"match", match_id]` | Match creator | Base | Base-settled | delegated | public | commit-on-round-end, then undelegate |
+| `Team` (×2 per match) | `conviction`, PDA `[b"team", match_id, side]` | Team leader | Base | Base-settled | delegated (read+write during round) | public | commit-on-round-end |
+| `Basket` | `conviction`, PDA `[b"basket", match_id, side]` | Team leader | Base | Base-settled | delegated (write on ER during round) | **PER-private until reveal** | commit-on-reveal, then undelegate |
+| `StopLoss` | `conviction`, PDA `[b"stop", match_id, side, player]` | Player | Base | Base-settled | delegated | **PER-private until reveal** | commit-on-reveal, then undelegate |
+| `SpectatorBid` | `conviction`, PDA `[b"spec", match_id, spectator]` | Spectator | Base | Base-settled | delegated | **PER-private until reveal** | commit-on-reveal, then undelegate |
+| `VillainPick` | `conviction`, PDA `[b"villain", match_id]` | Program (VRF callback) | Base | Base-settled | delegated (ER during round) | public | commit-on-reveal |
+| `ChaosEvent` (Ephemeral Account) | `conviction`, PDA `[b"chaos", match_id, n]` | Sponsor PDA | ER-only | **ER-only ephemeral** | write | public | close at round end |
+| `Proposal` | `conviction`, PDA `[b"prop", proposal_id]` | Proposer (FTR-weighted) | Base | Base-settled | none | public | n/a |
+| `RoundCounter` | `conviction`, PDA `[b"round"]` | Admin | Base | Base-settled | none | public | n/a |
 
 ### Instruction set
 
@@ -140,17 +140,17 @@ One Anchor program (`stonk_battles`) owning game state, FTR mint, and governance
 - Two pre-funded lamport top-ups: pre-fund `Basket` and `StopLoss` PDAs with `EphemeralPermission::size_of(MAX_PERMISSION_MEMBERS=8)` rent during `lock_in_pre_round`.
 
 ### Critical files (under `/home/rujul/projects/conviction/`, repo-relative below)
-- `programs/stonk_battles/Cargo.toml` — `ephemeral-rollups-sdk = { version = "0.16.2", features = ["anchor", "access-control", "vrf"] }`, `anchor-lang = "1.0.2"`, `anchor-spl`.
-- `programs/stonk_battles/src/lib.rs` — `#[ephemeral] #[program]` module with all instructions.
-- `programs/stonk_battles/src/state/mod.rs` — `GameConfig`, `Match`, `Team`, `Basket`, `StopLoss`, `SpectatorBid`, `VillainPick`, `Proposal`.
-- `programs/stonk_battles/src/instructions/delegate.rs` — per-account delegation + PER pre-funding.
-- `programs/stonk_battles/src/instructions/permission.rs` — `CreateEphemeralPermissionCpi` / `UpdateEphemeralPermissionCpi` / `CloseEphemeralPermissionCpi` wrappers.
-- `programs/stonk_battles/src/instructions/vrf.rs` — `#[vrf]` + `#[vrf_callback]` request/callback pair.
-- `programs/stonk_battles/src/instructions/reveal.rs` — closes PER, computes outcomes, mints FTR.
-- `programs/stonk_battles/src/instructions/governance.rs` — propose / vote / tally.
-- `programs/stonk_battles/tests/spike_e2e.ts` — full anchor-counter + VRF + PER round-trip on `mb-stack`.
+- `programs/conviction/Cargo.toml` — `ephemeral-rollups-sdk = { version = "0.16.2", features = ["anchor", "access-control", "vrf"] }`, `anchor-lang = "1.0.2"`, `anchor-spl`.
+- `programs/conviction/src/lib.rs` — `#[ephemeral] #[program]` module with all instructions.
+- `programs/conviction/src/state/mod.rs` — `GameConfig`, `Match`, `Team`, `Basket`, `StopLoss`, `SpectatorBid`, `VillainPick`, `Proposal`.
+- `programs/conviction/src/instructions/delegate.rs` — per-account delegation + PER pre-funding.
+- `programs/conviction/src/instructions/permission.rs` — `CreateEphemeralPermissionCpi` / `UpdateEphemeralPermissionCpi` / `CloseEphemeralPermissionCpi` wrappers.
+- `programs/conviction/src/instructions/vrf.rs` — `#[vrf]` + `#[vrf_callback]` request/callback pair.
+- `programs/conviction/src/instructions/reveal.rs` — closes PER, computes outcomes, mints FTR.
+- `programs/conviction/src/instructions/governance.rs` — propose / vote / tally.
+- `programs/conviction/tests/spike_e2e.ts` — full anchor-counter + VRF + PER round-trip on `mb-stack`.
 - `tokens.json` — Safe/Wild/Moonshot curated SPL list (locked 25 tokens per breif.md).
-- `app/lib/idl/stonk_battles.json` — generated IDL.
+- `app/lib/idl/conviction.json` — generated IDL.
 
 ### Reuse from skills
 - `ephemeral_rollups_sdk::anchor::{vrf, vrf_callback, ephemeral, delegate, commit}` from `~/.claude/skills/magicblock/SKILL.md`.
@@ -197,7 +197,7 @@ Next.js 14 App Router app. Mission-control feel. Realtime via MagicBlock SDK web
 - `app/store/user.ts` — wallet, FTR balance, win rate, auto-generated team name.
 - `app/components/mission-control/PriceTicker.tsx`, `Leaderboard.tsx`, `EventFeed.tsx`, `HoldFold.tsx`, `ChaosBanner.tsx`, `RevealSequence.tsx`.
 - `app/components/ui/*` — shadcn/ui primitives + Framer Motion wrappers.
-- `app/lib/idl/stonk_battles.json` — symlink or copied from program build.
+- `app/lib/idl/conviction.json` — symlink or copied from program build.
 
 ### Realtime flow
 - Subscribe to `Match`, `Team`, `Basket` (public view of commitments after reveal only), `VillainPick`, `ChaosEvent` on the ER FQDN via `connection.onAccountChange`.
@@ -239,7 +239,7 @@ Single Next.js Route Handler + a Supabase project + one Vercel cron. No full ind
 3. **Governance tally cron** — `/api/cron/tally-proposals` (scheduled in `vercel.json`) finds proposals past their deadline, calls `tally_proposal` on chain, writes the updated `GameConfig` value to Supabase so the lobby reflects the new parameter without waiting for the next ER commit.
 
 ### Critical files (under `/home/rujul/projects/conviction/`, repo-relative below)
-- `app/api/webhooks/helius/route.ts` — Helius webhook handler; signature verify; allowlist `stonk_battles` program ID; insert into `events`.
+- `app/api/webhooks/helius/route.ts` — Helius webhook handler; signature verify; allowlist `conviction` program ID; insert into `events`.
 - `app/api/cron/tally-proposals/route.ts` — cron-triggered proposal tally.
 - `supabase/schema.sql` — tables: `events` (event_type, match_id, payload jsonb, created_at), `proposals` (id, param_name, new_value, deadline), `game_config_cache` (key, value, updated_at). Postgres trigger on `events` insert → `pg_notify` → Supabase Realtime.
 - `app/lib/supabase/client.ts` — browser + server Supabase clients (anon key for read, service role for cron only).
@@ -389,7 +389,7 @@ conviction/
 │   ├── CHANGELOG.md         # append-only phase log
 │   └── decisions/           # one ADR per material choice
 ├── programs/
-│   └── stonk_battles/       # one Anchor program (Phase A)
+│   └── conviction/       # one Anchor program (Phase A)
 ├── app/                     # Next.js 14 (Phase B + C routes)
 ├── supabase/                # schema.sql, RLS, Realtime config
 ├── spike/                   # throwaway Phase 0 work, deleted after Phase A

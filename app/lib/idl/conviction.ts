@@ -10,7 +10,7 @@ export type Conviction = {
     "name": "conviction",
     "version": "0.1.0",
     "spec": "0.1.0",
-    "description": "Path A mini-season — team vs team chicken game (Stonk Battles) on ER/PER/VRF"
+    "description": "Path A mini-season — team vs team game (Stonk Battles) on ER/PER/VRF"
   },
   "instructions": [
     {
@@ -642,199 +642,6 @@ export type Conviction = {
               {
                 "kind": "arg",
                 "path": "matchId"
-              }
-            ]
-          }
-        },
-        {
-          "name": "ownerProgram",
-          "address": "Fh6bQUgE35Hq7nP22GZ1Youwnph2UaiEh9xTtDJuHJbH"
-        },
-        {
-          "name": "delegationProgram",
-          "address": "DELeGGvXpWV2fqJUhqcF5ZSYMS4JTLjteaAMARRSaeSh"
-        },
-        {
-          "name": "systemProgram",
-          "address": "11111111111111111111111111111111"
-        }
-      ],
-      "args": [
-        {
-          "name": "matchId",
-          "type": "u32"
-        }
-      ]
-    },
-    {
-      "name": "delegateSpectatorBid",
-      "discriminator": [
-        223,
-        245,
-        103,
-        9,
-        98,
-        52,
-        217,
-        9
-      ],
-      "accounts": [
-        {
-          "name": "spectator",
-          "signer": true
-        },
-        {
-          "name": "bufferBid",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  98,
-                  117,
-                  102,
-                  102,
-                  101,
-                  114
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "bid"
-              }
-            ],
-            "program": {
-              "kind": "const",
-              "value": [
-                218,
-                73,
-                44,
-                110,
-                232,
-                150,
-                102,
-                212,
-                239,
-                202,
-                74,
-                215,
-                147,
-                203,
-                19,
-                225,
-                89,
-                28,
-                132,
-                98,
-                59,
-                127,
-                178,
-                134,
-                120,
-                30,
-                219,
-                39,
-                72,
-                37,
-                35,
-                8
-              ]
-            }
-          }
-        },
-        {
-          "name": "delegationRecordBid",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  100,
-                  101,
-                  108,
-                  101,
-                  103,
-                  97,
-                  116,
-                  105,
-                  111,
-                  110
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "bid"
-              }
-            ],
-            "program": {
-              "kind": "account",
-              "path": "delegationProgram"
-            }
-          }
-        },
-        {
-          "name": "delegationMetadataBid",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  100,
-                  101,
-                  108,
-                  101,
-                  103,
-                  97,
-                  116,
-                  105,
-                  111,
-                  110,
-                  45,
-                  109,
-                  101,
-                  116,
-                  97,
-                  100,
-                  97,
-                  116,
-                  97
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "bid"
-              }
-            ],
-            "program": {
-              "kind": "account",
-              "path": "delegationProgram"
-            }
-          }
-        },
-        {
-          "name": "bid",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  115,
-                  112,
-                  101,
-                  99
-                ]
-              },
-              {
-                "kind": "arg",
-                "path": "matchId"
-              },
-              {
-                "kind": "account",
-                "path": "spectator"
               }
             ]
           }
@@ -1520,90 +1327,6 @@ export type Conviction = {
       ]
     },
     {
-      "name": "initSpectatorBidPermission",
-      "discriminator": [
-        168,
-        13,
-        137,
-        238,
-        179,
-        135,
-        126,
-        98
-      ],
-      "accounts": [
-        {
-          "name": "spectator",
-          "signer": true
-        },
-        {
-          "name": "bid",
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  115,
-                  112,
-                  101,
-                  99
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "bid"
-              }
-            ]
-          }
-        },
-        {
-          "name": "permission",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  112,
-                  101,
-                  114,
-                  109,
-                  105,
-                  115,
-                  115,
-                  105,
-                  111,
-                  110,
-                  58
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "bid"
-              }
-            ],
-            "program": {
-              "kind": "account",
-              "path": "permissionProgram"
-            }
-          }
-        },
-        {
-          "name": "ephemeralVault",
-          "writable": true,
-          "address": "MagicVau1t999999999999999999999999999999999"
-        },
-        {
-          "name": "magicProgram",
-          "address": "Magic11111111111111111111111111111111111111"
-        },
-        {
-          "name": "permissionProgram"
-        }
-      ],
-      "args": []
-    },
-    {
       "name": "initStopLossPermission",
       "discriminator": [
         35,
@@ -1827,117 +1550,6 @@ export type Conviction = {
               "name": "stopLossRange"
             }
           }
-        },
-        {
-          "name": "perMemberPubkeys",
-          "type": {
-            "array": [
-              "pubkey",
-              8
-            ]
-          }
-        },
-        {
-          "name": "perMemberFlags",
-          "type": {
-            "array": [
-              "u8",
-              8
-            ]
-          }
-        },
-        {
-          "name": "perMemberCount",
-          "type": "u8"
-        }
-      ]
-    },
-    {
-      "name": "placeSpectatorBid",
-      "discriminator": [
-        57,
-        114,
-        231,
-        126,
-        187,
-        180,
-        249,
-        36
-      ],
-      "accounts": [
-        {
-          "name": "spectator",
-          "writable": true,
-          "signer": true
-        },
-        {
-          "name": "matchAccount",
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  109,
-                  97,
-                  116,
-                  99,
-                  104
-                ]
-              },
-              {
-                "kind": "arg",
-                "path": "matchId"
-              }
-            ]
-          }
-        },
-        {
-          "name": "bid",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  115,
-                  112,
-                  101,
-                  99
-                ]
-              },
-              {
-                "kind": "arg",
-                "path": "matchId"
-              },
-              {
-                "kind": "account",
-                "path": "spectator"
-              }
-            ]
-          }
-        },
-        {
-          "name": "systemProgram",
-          "address": "11111111111111111111111111111111"
-        }
-      ],
-      "args": [
-        {
-          "name": "matchId",
-          "type": "u32"
-        },
-        {
-          "name": "predictionHash",
-          "type": {
-            "array": [
-              "u8",
-              32
-            ]
-          }
-        },
-        {
-          "name": "amount",
-          "type": "u64"
         },
         {
           "name": "perMemberPubkeys",
@@ -2823,19 +2435,6 @@ export type Conviction = {
       ]
     },
     {
-      "name": "spectatorBid",
-      "discriminator": [
-        118,
-        250,
-        202,
-        35,
-        99,
-        198,
-        176,
-        116
-      ]
-    },
-    {
       "name": "stopLoss",
       "discriminator": [
         251,
@@ -3005,9 +2604,6 @@ export type Conviction = {
     },
     {
       "name": "chaosEvent",
-      "docs": [
-        "VRF-driven chaos event. Created on the ER; never committed back to base."
-      ],
       "type": {
         "kind": "struct",
         "fields": [
@@ -3262,61 +2858,6 @@ export type Conviction = {
       }
     },
     {
-      "name": "spectatorBid",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "matchId",
-            "type": "u32"
-          },
-          {
-            "name": "spectator",
-            "type": "pubkey"
-          },
-          {
-            "name": "predictionHash",
-            "type": {
-              "array": [
-                "u8",
-                32
-              ]
-            }
-          },
-          {
-            "name": "amount",
-            "type": "u64"
-          },
-          {
-            "name": "placedAtSlot",
-            "type": "u64"
-          },
-          {
-            "name": "perMembers",
-            "type": {
-              "array": [
-                "pubkey",
-                8
-              ]
-            }
-          },
-          {
-            "name": "perFlags",
-            "type": {
-              "array": [
-                "u8",
-                8
-              ]
-            }
-          },
-          {
-            "name": "bump",
-            "type": "u8"
-          }
-        ]
-      }
-    },
-    {
       "name": "stopLoss",
       "type": {
         "kind": "struct",
@@ -3454,10 +2995,6 @@ export type Conviction = {
     },
     {
       "name": "villainPick",
-      "docs": [
-        "VRF-driven villain token selection. Pre-created by `request_villain_vrf`;",
-        "`callback_villain` writes the randomness on fulfillment."
-      ],
       "type": {
         "kind": "struct",
         "fields": [

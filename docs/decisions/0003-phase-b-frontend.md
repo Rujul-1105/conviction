@@ -76,9 +76,9 @@ constructed explicitly.
 ## Decision 5 — Anchor workspace restored, and the A.2 deploy defect fixed
 
 The program crate was a non-standard standalone project (`Anchor.toml` and the
-package manifest both inside `programs/stonk_battles/`), so `anchor build` never
+package manifest both inside `programs/conviction/`), so `anchor build` never
 emitted an IDL. Restored the standard layout: root `Anchor.toml`, root Cargo
-workspace, crate at `programs/stonk_battles/`. `src/lib.rs` remains one flat
+workspace, crate at `programs/conviction/`. `src/lib.rs` remains one flat
 compile unit — ADR 0002's macro-hygiene blocker is unchanged and no module split
 was attempted.
 

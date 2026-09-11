@@ -3,10 +3,10 @@ package_manager = "yarn"
 
 # Phase B: standard workspace layout restored so `anchor build` can emit
 # target/idl/conviction.json + target/types/conviction.ts. The crate lives at
-# programs/stonk_battles but its [lib] name is "conviction", which is the key
+# programs/conviction but its [lib] name is "conviction", which is the key
 # used under [programs.devnet] below.
 [workspace]
-members = ["programs/stonk_battles"]
+members = ["programs/conviction"]
 
 [features]
 resolution = true

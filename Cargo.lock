@@ -279,8 +279,6 @@ dependencies = [
 [[package]]
 name = "anchor-syn"
 version = "1.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1ef87b1d3ae59fbf265a9157a9082308af220b4ef5a64a360d8820dcf25b5a86"
 dependencies = [
  "bs58",
  "cargo_toml",

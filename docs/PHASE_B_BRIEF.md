@@ -186,7 +186,7 @@ shadcn primitives to install:
 
 ## Phase B1 task sequence (recommended)
 
-1. Restore `programs/stonk_battles/` to standard `programs/<name>/` workspace
+1. Restore `programs/conviction/` to standard `programs/<name>/` workspace
    layout — Anchor CLI + `anchor deploy` then writes the IDL account on chain.
 2. `anchor idl fetch Fh6bQUgE35Hq7nP22GZ1Youwnph2UaiEh9xTtDJuHJbH -o app/lib/idl.json`
 3. `pnpm create next-app app` with TypeScript + Tailwind + App Router.

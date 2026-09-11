@@ -108,7 +108,7 @@ A focused follow-up session should:
 4. Wire `vote_on_proposal` via `anchor-spl::token::accessor`.
 5. Make `reveal_round` walk rosters, close PER, mint FTR via SPL CPI.
 6. Initialize on-chain IDL via `anchor deploy` once the workspace layout is restored.
-7. Add a `tests/stonk_battles.ts` round-trip (init → create_match → register_team → lock_in → reveal → finalize).
+7. Add a `tests/conviction.ts` round-trip (init → create_match → register_team → lock_in → reveal → finalize).
 
 ## Phase A pause gate
 
@@ -255,9 +255,20 @@ and CLAUDE.md so future references resolve correctly.
 
 - Restore standard `programs/<name>/` workspace layout → unblocks
   `anchor deploy` + `anchor idl fetch`.
-- Build a `tests/stonk_battles.ts` integration test on devnet that runs
+- Build a `tests/conviction.ts` integration test on devnet that runs
   the full lifecycle (init → create → register × 2 → lock_in × 2 →
   delegate × 5 → init_perm × 3 → request_villain_vrf → reveal →
   finalize).
 - Improve `reveal_round` to walk rosters and mint per-member.
 - Vendor or patch `anchor-derive-accounts` to enable the file split.
+
+### Closure (2026-09-10 — Phase B+)
+
+The carry-forward is closed by [ADR 0004](0004-program-refactor.md):
+
+- ✅ Standard workspace layout (Phase B restored it).
+- ✅ Full file split via vendored `anchor-syn 1.2.0` patch — see ADR 0004.
+- ⏳ Tests + per-member reveal walk remain outstanding (carried into a
+  future session; not blocking the split itself).
+- ⏳ Per-member `reveal_round` improvement remains outstanding as
+  Blocker 7 in the wire-map carry-forward.
