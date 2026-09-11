@@ -78,7 +78,7 @@ and rationale. Plan: `/home/rujul/.claude/plans/create-a-plan-for-immutable-metc
   `https://devnet-as.magicblock.app/`.
 - MagicBlock devnet RPC: `https://rpc.magicblock.app/devnet`
 - Router: `https://devnet-router.magicblock.app/`
-- Vercel preview: TBD — set in Phase B.
+- Vercel preview: https://conviction-nine.vercel.app
 - Supabase project: TBD — set in Phase C.
 - Helius webhook: TBD — set in Phase C.
 - Plan file: docs/PLAN.md.
