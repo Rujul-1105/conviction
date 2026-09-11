@@ -4,10 +4,22 @@ import { useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { motion, useReducedMotion } from 'framer-motion'
 import { toast } from 'sonner'
-import { Button } from '@/components/ui/button'
+import { Button, MotionButton } from '@/components/ui/button'
 import { Card, PanelLabel } from '@/components/ui/card'
 import { Pnl } from '@/components/ui/num'
-import { Dialog, DialogContent } from '@/components/ui/dialog'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 import { api, type Team } from '@/lib/api'
 import { foldFlash, motionSafe } from '@/lib/motion'
 
@@ -18,6 +30,13 @@ import { foldFlash, motionSafe } from '@/lib/motion'
  * dialog. "Hold" is deliberately NOT a button that does anything: holding is
  * the default state, and giving it a button would imply an action is required.
  * It's a readout instead.
+ *
+ * Phase 8 polish:
+ *  - Fold button is now a `MotionButton` (80ms whileTap scale 0.98) so the
+ *    press lands with weight — folding is a moment, not a tap.
+ *  - The Hold readout gets a `<Tooltip>` so first-time players know that
+ *    "Still holding" means they're already in the play.
+ *  - `foldFlash` ring pulse on the Card when `hasFolded` becomes true.
  *
  * NOTE: there is no fold instruction on chain (see lib/api/real.ts) — folding
  * currently only happens via stop-loss or finalize_round. A manual fold needs
@@ -73,18 +92,29 @@ export function ActionBar({
             ) : (
               <>
                 <div className="text-right">
-                  <p className="text-body-md text-hold">Still holding</p>
+                  <TooltipProvider delayDuration={150}>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <p className="text-body-md text-hold">Still holding</p>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        Holding continues to round end
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                   <p className="text-body-sm text-text-muted">
                     Doing nothing is the play.
                   </p>
                 </div>
-                <Button
+                {/* MotionButton gives the fold tap a deliberate 0.98 press
+                    scale — folding is a moment of intent, not a typo. */}
+                <MotionButton
                   variant="danger"
                   size="lg"
                   onClick={() => setConfirmOpen(true)}
                 >
                   Fold
-                </Button>
+                </MotionButton>
               </>
             )}
           </div>
@@ -92,10 +122,14 @@ export function ActionBar({
       </motion.div>
 
       <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
-        <DialogContent
-          title="Fold your position?"
-          description="This cannot be undone. You forfeit your share of the pot and your round ends immediately."
-        >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Fold your position?</DialogTitle>
+            <DialogDescription>
+              This cannot be undone. You forfeit your share of the pot and your
+              round ends immediately.
+            </DialogDescription>
+          </DialogHeader>
           <div className="space-y-4">
             <div className="rounded-md border border-fold/30 bg-fold/10 p-3">
               <PanelLabel>Locking in a loss of</PanelLabel>
@@ -115,10 +149,10 @@ export function ActionBar({
                 variant="danger"
                 size="lg"
                 className="flex-1"
-                disabled={fold.isPending}
+                loading={fold.isPending}
                 onClick={() => fold.mutate()}
               >
-                {fold.isPending ? 'Folding…' : 'Fold for real'}
+                {fold.isPending ? 'Folding' : 'Fold for real'}
               </Button>
             </div>
           </div>

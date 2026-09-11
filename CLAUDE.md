@@ -14,13 +14,24 @@ Stack locked in breif.md (Anchor, Next.js 14, Tailwind+shadcn, Framer Motion,
 wallet-adapter-react, Zustand+React Query, Birdeye, Helius, Vercel).
 
 ## Current phase
-**Phase 7 — Spectator mock-data fallback (source-only, uncommitted).**
-Phase 6 committed at `708f298`. `real.ts` now falls back to a cinematic
-inline fixture (`SPECTATOR_FALLBACK`) when devnet has no matches yet, so
-the `/spectate/spectate-demo` route renders the demo narrative without
-the user having to seed devnet first. Same fallback applies to
-`getOpenMatches` / `getLiveMatches` / `getMatch`. No new dependencies.
-`pnpm typecheck` + `pnpm build` clean. Plan: `/home/rujul/.claude/plans/what-all-are-the-velvet-umbrella.md`.
+**Phase 8 — Frontend visual redesign pass (source-only, uncommitted).**
+Phase 7 committed the mock-first demo; Phase 8 wraps it in a senior-agency
+visual pass — three signature screens (Landing, Live round Mission Control,
+Reveal sequence) plus global chrome (TopNav, LeftRail, Footer, Providers).
+Motto "HOLD . RESIST . SURVIVE." integrated at 8+ touchpoints. Display
+scale extended to 96/128px (display-2xl/3xl) for the landing marquee.
+shadcn layer added — 9 components (Tooltip, Command, ScrollArea, Skeleton,
+Tabs, Popover, Progress, Avatar, DropdownMenu) + cmdk + 7 Radix peers =
+9 new packages. Hardened hand-rolled primitives: MotionButton (whileTap),
+Card winner tone, Dialog ink/85 backdrop + subcomponents, Num tone prop,
+Slider fold/30 fill, StatusPill dot size. New in-repo extras: Countdown,
+Kbd, Sparkline, Marquee. Global cross-screen additions: CommandPalette
+(⌘K / Ctrl-K / `/`) + NavUserMenu (DropdownMenu wrapping wallet) +
+`useRecentsStore` (Zustand + persist). Agency-grade copy replaces
+generic "Loading…" / "No data" everywhere. Palette unchanged (DESIGN.md
+§1 already on-spec). SVG conversion of logos deferred. Favicon +
+icon.png + logo_icon@2x generated. ADR 0005 records the design direction
+and rationale. Plan: `/home/rujul/.claude/plans/create-a-plan-for-immutable-metcalfe.md`.
 
 > **Phase A.2 correction:** the bytecode deployed at `Fh6b…` had the *old* MVP
 > program ID baked in as `declare_id`, so every instruction reverted with

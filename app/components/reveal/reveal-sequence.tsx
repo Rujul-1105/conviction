@@ -1,30 +1,61 @@
 'use client'
 
 import { motion, useReducedMotion } from 'framer-motion'
-import { Crown, EyeOff, Skull } from 'lucide-react'
+import { Crown, Skull } from 'lucide-react'
 import { Card, PanelLabel } from '@/components/ui/card'
-import { Ftr, Num, Pnl, Price, SolAmount } from '@/components/ui/num'
-import { StatusPill, teamStatusVariant } from '@/components/ui/status-pill'
-import type { Match, Token } from '@/lib/api'
+import { Pnl } from '@/components/ui/num'
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@/components/ui/tabs'
+import type { Match } from '@/lib/api'
 import { tokenByMint } from '@/lib/api/mock-data'
 import { motionSafe, revealSequence } from '@/lib/motion'
-import { cn, timeAgo } from '@/lib/utils'
+import { cn } from '@/lib/utils'
+import { NextMatchCta } from './next-match-cta'
+import { PotDistribution } from './pot-distribution'
+import { ResultsTable } from './results-table'
 
 /**
  * Reveal cascade (DESIGN.md §10 priority 6).
  *
- * Staggered entrance via the revealSequence variants — `custom` carries the row
- * index so each panel lands 0.2s after the previous one. This is the one place
- * DESIGN.md sanctions a theatrical sequence; with reduced motion it renders
- * instantly in final position.
+ * Staggered entrance via the revealSequence variants — `custom` carries the
+ * row index so each panel lands 0.2s after the previous one. This is the one
+ * place DESIGN.md sanctions a theatrical sequence; with reduced motion the
+ * cascade collapses to a no-op and the panels render in final position.
+ *
+ * Wrapped in a Tabs (defaultValue="auto") that runs the cascade on first paint
+ * and lets the user jump back to any step via the tab list. The tab list uses
+ * an underline indicator in `bg-conviction` — the active step is the one with
+ * conviction-green underline, matching the palette rule that conviction is
+ * reserved for in-the-money / primary state.
+ *
+ * Step ordering (5 total — step 4 is the new "next match" CTA card):
+ *   0  Winner crown
+ *   1  Villain reveal
+ *   2  Results table
+ *   3  Pot distribution
+ *   4  Next match CTA
  */
+
+const STEP_LABELS = [
+  'Winner crown',
+  'Villain reveal',
+  'Results',
+  'Pot distribution',
+  'Next match',
+]
+
 export function RevealSequence({ match }: { match: Match }) {
   const reduced = useReducedMotion()
   const villain = match.villainTokenMint
     ? tokenByMint(match.villainTokenMint)
     : undefined
 
-  // Winner is the best P&L among teams that never folded.
+  // Winner is the best P&L among teams that never folded. Folding trumps loss
+  // — a team that held to the bell beats one that fled, even at -100%.
   const ranked = [...match.teams].sort((a, b) => {
     const aFolded = a.status === 'folded' ? 1 : 0
     const bFolded = b.status === 'folded' ? 1 : 0
@@ -33,8 +64,133 @@ export function RevealSequence({ match }: { match: Match }) {
   })
   const winner = ranked[0]
 
-  /** Each panel is one step in the cascade; `i` drives its delay. */
-  const Step = ({ i, children }: { i: number; children: React.ReactNode }) => (
+  /**
+   * Each step panel is defined once and reused in the cascade (with stagger)
+   * and in the manual-jump tabs (without stagger). Defining as variables
+   * rather than sub-components keeps the markup co-located so the file
+   * stays under the 300-LOC cap.
+   */
+  const stepPanels: React.ReactNode[] = [
+    // 0 — winner crown.
+    <div key="step-0" className="text-center">
+      <PanelLabel>Round {match.roundNumber} · settled</PanelLabel>
+      <h1 className="mt-2 font-display text-display-lg font-bold text-paper">
+        {winner?.name}
+      </h1>
+      <div className="mt-2 flex items-center justify-center gap-3">
+        <Crown className="h-5 w-5 text-conviction" />
+        <Pnl value={winner?.pnl ?? 0} size="xl" />
+      </div>
+    </div>,
+
+    // 1 — villain reveal. Hidden all round, so it lands second.
+    <Card key="step-1" className="border-fold/30 p-4">
+      <div className="flex items-center gap-3">
+        <Skull className="h-5 w-5 shrink-0 text-fold" />
+        <div className="min-w-0">
+          <PanelLabel className="text-fold">
+            The villain was drawn by VRF
+          </PanelLabel>
+          {villain ? (
+            <p className="mt-0.5 text-body-lg text-paper">
+              <span className="font-display font-bold">{villain.symbol}</span>{' '}
+              <span className="text-text-muted">— {villain.name}</span>
+            </p>
+          ) : (
+            <p className="mt-0.5 text-body-md text-text-muted">
+              No villain was drawn this round.
+            </p>
+          )}
+        </div>
+        {villain && (
+          <div className="ml-auto text-right">
+            <PanelLabel>24h</PanelLabel>
+            <Pnl value={villain.priceChange24h} />
+          </div>
+        )}
+      </div>
+    </Card>,
+
+    // 2 — results table.
+    <ResultsTable key="step-2" match={match} />,
+
+    // 3 — pot distribution.
+    <PotDistribution
+      key="step-3"
+      match={match}
+      winnerName={winner?.name}
+    />,
+
+    // 4 — next-match CTA (new in this phase).
+    <NextMatchCta key="step-4" />,
+  ]
+
+  return (
+    <Tabs defaultValue="auto" className="w-full">
+      <TabsList className="h-auto w-full justify-start gap-0 rounded-none border-b border-border bg-transparent p-0">
+        <TabTrigger value="auto" label="Auto" />
+        {STEP_LABELS.map((label, i) => (
+          <TabTrigger key={i} value={String(i)} label={label} />
+        ))}
+      </TabsList>
+
+      {/*
+        Auto: cascade every step with the standard revealSequence stagger.
+        Manual jumps: render the chosen step alone, no stagger.
+      */}
+      <TabsContent
+        value="auto"
+        className="mt-4 space-y-4 ring-offset-0 focus-visible:ring-0"
+      >
+        {stepPanels.map((panel, i) => (
+          <CascadeStep key={i} i={i}>
+            {panel}
+          </CascadeStep>
+        ))}
+      </TabsContent>
+
+      {stepPanels.map((panel, i) => (
+        <TabsContent
+          key={i}
+          value={String(i)}
+          className="mt-4 ring-offset-0 focus-visible:ring-0"
+        >
+          {panel}
+        </TabsContent>
+      ))}
+    </Tabs>
+  )
+}
+
+/** Tab trigger with the underline indicator (DESIGN.md §6). */
+function TabTrigger({ value, label }: { value: string; label: string }) {
+  return (
+    <TabsTrigger
+      value={value}
+      className={cn(
+        'rounded-none border-b-2 border-transparent bg-transparent',
+        'px-3 py-2 font-mono text-body-sm uppercase',
+        'text-whisper transition-colors duration-150',
+        'hover:text-paper',
+        'data-[state=active]:border-conviction data-[state=active]:text-paper',
+        'focus-visible:ring-conviction/40',
+      )}
+    >
+      {label}
+    </TabsTrigger>
+  )
+}
+
+/** One panel in the cascade. `i` drives its stagger delay. */
+function CascadeStep({
+  i,
+  children,
+}: {
+  i: number
+  children: React.ReactNode
+}) {
+  const reduced = useReducedMotion()
+  return (
     <motion.div
       custom={i}
       variants={motionSafe(revealSequence, reduced)}
@@ -43,207 +199,5 @@ export function RevealSequence({ match }: { match: Match }) {
     >
       {children}
     </motion.div>
-  )
-
-  return (
-    <div className="space-y-4">
-      <Step i={0}>
-        <div className="text-center">
-          <PanelLabel>Round {match.roundNumber} · settled</PanelLabel>
-          <h1 className="mt-2 font-display text-display-lg font-bold text-paper">
-            {winner?.name}
-          </h1>
-          <div className="mt-2 flex items-center justify-center gap-3">
-            <Crown className="h-5 w-5 text-conviction" />
-            <Pnl value={winner?.pnl ?? 0} size="xl" />
-          </div>
-        </div>
-      </Step>
-
-      {/* Villain reveal — hidden all round, so it lands second. */}
-      <Step i={1}>
-        <Card className="border-fold/30 p-4">
-          <div className="flex items-center gap-3">
-            <Skull className="h-5 w-5 shrink-0 text-fold" />
-            <div className="min-w-0">
-              <PanelLabel className="text-fold">
-                The villain was drawn by VRF
-              </PanelLabel>
-              {villain ? (
-                <p className="mt-0.5 text-body-lg text-paper">
-                  <span className="font-display font-bold">
-                    {villain.symbol}
-                  </span>{' '}
-                  <span className="text-text-muted">— {villain.name}</span>
-                </p>
-              ) : (
-                <p className="mt-0.5 text-body-md text-text-muted">
-                  No villain was drawn this round.
-                </p>
-              )}
-            </div>
-            {villain && (
-              <div className="ml-auto text-right">
-                <PanelLabel>24h</PanelLabel>
-                <Pnl value={villain.priceChange24h} />
-              </div>
-            )}
-          </div>
-        </Card>
-      </Step>
-
-      <Step i={2}>
-        <ResultsTable match={match} />
-      </Step>
-
-      <Step i={3}>
-        <PotDistribution match={match} winnerName={winner?.name} />
-      </Step>
-    </div>
-  )
-}
-
-/**
- * Results table — the payoff of the whole sealed-picks mechanic.
- * Baskets and thresholds were private all round; this is where they surface.
- */
-export function ResultsTable({ match }: { match: Match }) {
-  const ranked = [...match.teams].sort((a, b) => {
-    const aFolded = a.status === 'folded' ? 1 : 0
-    const bFolded = b.status === 'folded' ? 1 : 0
-    if (aFolded !== bFolded) return aFolded - bFolded
-    return b.pnl - a.pnl
-  })
-
-  return (
-    <Card className="p-4">
-      <div className="flex items-center gap-2">
-        <EyeOff className="h-4 w-4 text-whisper" />
-        <PanelLabel>Sealed picks, now public</PanelLabel>
-      </div>
-
-      <div className="mt-3 space-y-3">
-        {ranked.map((team, i) => {
-          const worst = team.worstPerformerMint
-            ? tokenByMint(team.worstPerformerMint)
-            : undefined
-
-          return (
-            <div
-              key={team.id}
-              className={cn(
-                'rounded-md border p-3',
-                i === 0 ? 'border-conviction/30 bg-conviction/[0.06]' : 'border-border',
-              )}
-            >
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <div className="flex items-center gap-2">
-                  <Num size="sm" className="text-whisper">
-                    {i + 1}
-                  </Num>
-                  <span className="font-display text-body-md font-bold text-paper">
-                    {team.name}
-                  </span>
-                  <StatusPill variant={teamStatusVariant(team.status)}>
-                    {team.status}
-                  </StatusPill>
-                </div>
-                <Pnl value={team.pnl} size="xl" />
-              </div>
-
-              <div className="mt-3 grid gap-3 sm:grid-cols-3">
-                <div>
-                  <PanelLabel>Folded</PanelLabel>
-                  <Num size="sm" className="mt-0.5 block text-paper">
-                    {team.foldTime ? timeAgo(team.foldTime) : 'Never'}
-                  </Num>
-                </div>
-                <div>
-                  <PanelLabel>Worst position</PanelLabel>
-                  <Num size="sm" className="mt-0.5 block text-fold">
-                    {worst?.symbol ?? '—'}
-                  </Num>
-                </div>
-                <div>
-                  <PanelLabel>Players</PanelLabel>
-                  <Num size="sm" className="mt-0.5 block text-paper">
-                    {team.walletAddresses.length}
-                  </Num>
-                </div>
-              </div>
-
-              {team.basket && (
-                <div className="mt-3 border-t border-border pt-3">
-                  <PanelLabel>Basket &amp; band</PanelLabel>
-                  <div className="mt-2 space-y-1">
-                    {team.basket.tokens.map((token: Token) => (
-                      <div
-                        key={token.mint}
-                        className="flex items-center justify-between gap-3"
-                      >
-                        <span className="text-body-sm text-paper">
-                          {token.symbol}
-                        </span>
-                        <div className="flex items-center gap-3">
-                          <Price value={token.currentPrice} size="sm" />
-                          <Num size="sm" className="text-fold">
-                            band {(team.basket!.band.minBps / 100).toFixed(1)}%
-                            … {(team.basket!.band.maxBps / 100).toFixed(1)}%
-                          </Num>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          )
-        })}
-      </div>
-    </Card>
-  )
-}
-
-/**
- * Pot distribution.
- * NOTE: reveal_round currently mints a fixed 1 FTR to a single winner (Phase
- * A.2 debt), so the per-member split shown here is the intended design, not
- * what the program does yet.
- */
-function PotDistribution({
-  match,
-  winnerName,
-}: {
-  match: Match
-  winnerName?: string
-}) {
-  const winner = match.teams.find((t) => t.name === winnerName)
-  const members = winner?.walletAddresses.length ?? 1
-  const perMember = match.pot / members
-
-  return (
-    <Card className="p-4">
-      <PanelLabel>Pot distribution</PanelLabel>
-
-      <div className="mt-3 grid gap-3 sm:grid-cols-3">
-        <div>
-          <PanelLabel>Total pot</PanelLabel>
-          <SolAmount value={match.pot} size="xl" className="mt-0.5 block" />
-        </div>
-        <div>
-          <PanelLabel>Per member</PanelLabel>
-          <SolAmount value={perMember} size="xl" className="mt-0.5 block" decimals={2} />
-        </div>
-        <div>
-          <PanelLabel>FTR minted</PanelLabel>
-          <Ftr value={members} size="xl" className="mt-0.5 block" />
-        </div>
-      </div>
-
-      <p className="mt-3 text-body-sm text-text-muted">
-        FTR is the governance token. Holding it lets your village propose and
-        vote on the rules of the next round.
-      </p>
-    </Card>
   )
 }

@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { LeftRail } from '@/components/layout/left-rail'
 import { TopNav } from '@/components/layout/top-nav'
+import { PageBackdrop } from '@/components/layout/page-backdrop'
 import { Button } from '@/components/ui/button'
 import { Num } from '@/components/ui/num'
 import { RevealSequence } from '@/components/reveal/reveal-sequence'
@@ -34,6 +35,7 @@ export default function RevealPage({ params }: { params: { id: string } }) {
   return (
     <div className="flex min-h-screen flex-col">
       <TopNav />
+      <PageBackdrop>
       <div className="mx-auto flex w-full max-w-content flex-1 gap-6 px-4">
         <LeftRail />
 
@@ -78,6 +80,7 @@ export default function RevealPage({ params }: { params: { id: string } }) {
           )}
         </main>
       </div>
+      </PageBackdrop>
     </div>
   )
 }

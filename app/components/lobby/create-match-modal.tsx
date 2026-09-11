@@ -5,7 +5,14 @@ import { useRouter } from 'next/navigation'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
 import { PanelLabel } from '@/components/ui/card'
 import { api, type Match, type MatchMode, type TokenTier } from '@/lib/api'
 import { useMatchStore } from '@/lib/store/match-store'
@@ -92,10 +99,13 @@ export function CreateMatchModal() {
         <Button variant="primary">Create match</Button>
       </DialogTrigger>
 
-      <DialogContent
-        title="Create a match"
-        description="Two villages, one pot. Settings are locked once the round starts."
-      >
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Create a match</DialogTitle>
+          <DialogDescription>
+            Two villages, one pot. Settings are locked once the round starts.
+          </DialogDescription>
+        </DialogHeader>
         <div className="space-y-5">
           <Choice
             label="Mode"

@@ -53,6 +53,9 @@ volatility: '#9D4EDD'    // spectator class ONLY
 ### Vibe
 Linear × Vercel × Phantom × Polymarket × PokerStars. Premium founder-coded, esports-meets-YC. Never meme-casino.
 
+### Wordmark exception
+The shipped wordmark `app/logo/banner_with_logo.png` is an intentional brand-mark exception. Display typography throughout the app is Space Grotesk Bold, body is Inter, numbers are JetBrains Mono — but the wordmark, designed and shipped before the type system was locked, is treated as a finished asset and used verbatim at 28px in the nav, at hero scale on `/`, and at 320px on the 404. Do not recreate it in Space Grotesk. The icon mark `app/logo/logo_icon.png` is the same treatment.
+
 ---
 
 ## 2. File / Folder Structure

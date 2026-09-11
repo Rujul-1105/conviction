@@ -7,6 +7,7 @@ import { toast } from 'sonner'
 import { Check } from 'lucide-react'
 import { LeftRail } from '@/components/layout/left-rail'
 import { TopNav } from '@/components/layout/top-nav'
+import { PageBackdrop } from '@/components/layout/page-backdrop'
 import { Button } from '@/components/ui/button'
 import { Card, PanelLabel } from '@/components/ui/card'
 import { SolAmount } from '@/components/ui/num'
@@ -88,6 +89,7 @@ export default function SetupPage({ params }: { params: { id: string } }) {
   return (
     <div className="flex min-h-screen flex-col">
       <TopNav />
+      <PageBackdrop>
       <div className="mx-auto flex w-full max-w-content flex-1 gap-6 px-4">
         <LeftRail />
 
@@ -219,6 +221,7 @@ export default function SetupPage({ params }: { params: { id: string } }) {
           </div>
         </main>
       </div>
+      </PageBackdrop>
     </div>
   )
 }

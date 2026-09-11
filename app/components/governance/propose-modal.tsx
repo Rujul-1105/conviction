@@ -3,7 +3,14 @@
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
 import { PanelLabel } from '@/components/ui/card'
 import { Num } from '@/components/ui/num'
 import type { ProposalParameter } from '@/lib/api'
@@ -76,10 +83,13 @@ export function ProposeModal({ ftrBalance }: { ftrBalance: number }) {
         </Button>
       </DialogTrigger>
 
-      <DialogContent
-        title="Propose a rule change"
-        description="If it passes by FTR weight, it applies to every round in the season."
-      >
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Propose a rule change</DialogTitle>
+          <DialogDescription>
+            If it passes by FTR weight, it applies to every round in the season.
+          </DialogDescription>
+        </DialogHeader>
         <div className="space-y-5">
           <div>
             <PanelLabel>Parameter</PanelLabel>

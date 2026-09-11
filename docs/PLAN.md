@@ -228,6 +228,8 @@ Next.js 14 App Router app. Mission-control feel. Realtime via MagicBlock SDK web
 ### Pause gate
 Stop and confirm with the user before opening Phase C. Surface: which UI risks remain (especially the 15-min live round observability), what mock data is still used, and whether the demo flow stitches both rounds convincingly.
 
+> **Phase 8 visual-hardening note (2026-09-11):** The Phase B functional surface is now wrapped in a Phase 8 visual redesign pass — three signature screens (Landing, Live round, Reveal) plus global chrome hardened per ADR 0005. Motto "HOLD . RESIST . SURVIVE." integrated at 8+ touchpoints. Display scale extended to 96/128px for the landing marquee. shadcn layer added (9 components). The data layer, on-chain program, and API contract are unchanged.
+
 ---
 
 ## Phase C — Backend (thin; Supabase Realtime as fallback only)

@@ -2,6 +2,7 @@
 
 import { LeftRail } from '@/components/layout/left-rail'
 import { TopNav, WalletIdentity } from '@/components/layout/top-nav'
+import { PageBackdrop } from '@/components/layout/page-backdrop'
 import { CreateMatchModal } from '@/components/lobby/create-match-modal'
 import { LiveNowColumn, TopVillages } from '@/components/lobby/live-now-column'
 import { MatchCard } from '@/components/lobby/match-card'
@@ -21,7 +22,8 @@ export default function LobbyPage() {
   return (
     <div className="flex min-h-screen flex-col">
       <TopNav />
-      <div className="mx-auto flex w-full max-w-content flex-1 gap-6 px-4">
+      <PageBackdrop>
+      <div className="mx-auto flex w-full max-w-[1600px] flex-1 gap-6 px-4 lg:px-8">
         <LeftRail />
 
         <main className="flex-1 py-8">
@@ -73,6 +75,7 @@ export default function LobbyPage() {
           </div>
         </main>
       </div>
+      </PageBackdrop>
     </div>
   )
 }

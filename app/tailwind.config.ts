@@ -11,6 +11,12 @@ import type { Config } from 'tailwindcss'
  * DESIGN.md §14 forbids hardcoded hex in components — that rule only works if
  * every colour the UI needs is named here. If a screen wants a colour that
  * isn't in this file, that's a design question, not a Tailwind question.
+ *
+ * Phase 8 — Frontend visual redesign (ADR 0005) additions:
+ *  - fontSize display-2xl (96px) + display-3xl (128px) + display-4xl (160px)
+ *  - surface.overlay (one shade above ink, for dialog backdrops)
+ *  - marquee-ticker, countdown-tick, nrft-rise keyframes + animation entries
+ *  - tailwindcss-animate plugin (required by shadcn primitives)
  */
 const config: Config = {
   darkMode: 'class',
@@ -28,6 +34,7 @@ const config: Config = {
         surface: {
           DEFAULT: '#161616',
           elevated: '#1F1F1F',
+          overlay: '#0F0F0F',
         },
         border: '#2A2A2A',
         whisper: '#6B6B6B',
@@ -50,15 +57,24 @@ const config: Config = {
 
       fontFamily: {
         // Wired to next/font CSS variables in app/layout.tsx.
+        // Display = Oxanium (techno-grotesque, esports-broadcast character).
+        // Dirt = Rubik Dirt (graffiti woodtype) — accent on FOLD + the motto.
+        // Body = Inter. Mono = JetBrains Mono with tabular figures.
         display: ['var(--font-display)', 'system-ui', 'sans-serif'],
+        dirt: ['var(--font-dirt)', 'system-ui', 'sans-serif'],
         sans: ['var(--font-sans)', 'system-ui', 'sans-serif'],
         mono: ['var(--font-mono)', 'ui-monospace', 'monospace'],
       },
 
       fontSize: {
-        // Type scale from PHASE_B_BRIEF (it doesn't contradict DESIGN.md here).
-        'display-xl': ['64px', { lineHeight: '72px', letterSpacing: '-0.02em' }],
-        'display-lg': ['48px', { lineHeight: '56px', letterSpacing: '-0.02em' }],
+        // Editorial scale jumps — agency-grade display earns 96-160px when the
+        // surface is the landing marquee. Oxanium's sharp terminals read
+        // confidently at every step. Mobile caps at display-xl (64px).
+        'display-4xl': ['160px', { lineHeight: '152px', letterSpacing: '-0.04em' }],
+        'display-3xl': ['128px', { lineHeight: '124px', letterSpacing: '-0.035em' }],
+        'display-2xl': ['96px', { lineHeight: '96px', letterSpacing: '-0.03em' }],
+        'display-xl': ['64px', { lineHeight: '68px', letterSpacing: '-0.02em' }],
+        'display-lg': ['48px', { lineHeight: '52px', letterSpacing: '-0.02em' }],
         'heading-lg': ['32px', { lineHeight: '40px', letterSpacing: '-0.01em' }],
         'heading-md': ['24px', { lineHeight: '32px' }],
         'heading-sm': ['18px', { lineHeight: '24px' }],
@@ -83,10 +99,30 @@ const config: Config = {
           '0%': { backgroundColor: 'rgb(31 31 31)' },
           '100%': { backgroundColor: 'transparent' },
         },
+        // Live ticker marquee. Two copies of children translate by 50% so the
+        // loop is seamless. Paused on group-hover via Tailwind variant.
+        'marquee-ticker': {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-50%)' },
+        },
+        // Timer tick — semantically distinct from tick-flash so callers can
+        // hook a different listener if they ever need to.
+        'countdown-tick': {
+          '0%': { backgroundColor: 'rgb(31 31 31)' },
+          '100%': { backgroundColor: 'transparent' },
+        },
+        // FTR counter reveal — gentle rise + fade. For reveal-sequence winners.
+        'nrft-rise': {
+          '0%': { opacity: '0', transform: 'translateY(8px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
       },
       animation: {
         'live-pulse': 'live-pulse 1.5s ease-in-out infinite',
         'tick-flash': 'tick-flash 120ms ease-out',
+        'marquee-ticker': 'marquee-ticker 50s linear infinite',
+        'countdown-tick': 'countdown-tick 120ms ease-out',
+        'nrft-rise': 'nrft-rise 400ms cubic-bezier(0.16, 1, 0.3, 1)',
       },
 
       transitionTimingFunction: {
@@ -95,7 +131,7 @@ const config: Config = {
       },
     },
   },
-  plugins: [],
+  plugins: [require('tailwindcss-animate')],
 }
 
 export default config

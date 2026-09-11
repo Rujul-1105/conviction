@@ -11,6 +11,7 @@ import {
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { clusterApiUrl } from '@solana/web3.js'
 import { Toaster } from 'sonner'
+import { TooltipProvider } from '@/components/ui/tooltip'
 
 import '@solana/wallet-adapter-react-ui/styles.css'
 import { setConnection, setWallet, invalidateProgram } from '@/lib/anchor/context'
@@ -110,17 +111,21 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <WalletProvider wallets={wallets} autoConnect>
         <WalletModalProvider>
           <QueryClientProvider client={queryClient}>
-            <WalletContextBridge>{children}</WalletContextBridge>
-            <Toaster
-              theme="dark"
-              position="bottom-right"
-              toastOptions={{
-                // Match the design system: flat, bordered, 6px, no shadow.
-                className:
-                  'bg-surface-elevated border border-border rounded-md text-paper font-sans text-body-sm',
-                style: { boxShadow: 'none' },
-              }}
-            />
+            {/* Global TooltipProvider so any shadcn Tooltip anywhere in the
+                tree can render — components don't have to wrap themselves. */}
+            <TooltipProvider delayDuration={150}>
+              <WalletContextBridge>{children}</WalletContextBridge>
+              <Toaster
+                theme="dark"
+                position="bottom-right"
+                toastOptions={{
+                  // Match the design system: flat, bordered, 6px, no shadow.
+                  className:
+                    'bg-surface-elevated border border-border rounded-md text-paper font-sans text-body-sm',
+                  style: { boxShadow: 'none' },
+                }}
+              />
+            </TooltipProvider>
           </QueryClientProvider>
         </WalletModalProvider>
       </WalletProvider>

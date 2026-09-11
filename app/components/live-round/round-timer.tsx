@@ -6,18 +6,40 @@ import { Zap } from 'lucide-react'
 import { Num } from '@/components/ui/num'
 import { PanelLabel } from '@/components/ui/card'
 import { StatusPill } from '@/components/ui/status-pill'
-import { useCountdown } from '@/lib/hooks/use-countdown'
+import { Countdown } from '@/components/ui/countdown'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 import { chaosPulse, motionSafe } from '@/lib/motion'
 import { useMatchStore } from '@/lib/store/match-store'
-import { cn } from '@/lib/utils'
 
 /**
  * Hero round timer (DESIGN.md §10 priority 5).
  *
- * The single largest number on the screen. Mono, tabular, and with NO
- * transition — it snaps each second (DESIGN.md §14). Shifts to fold red in the
- * final minute, which is the only colour change; the digits never animate.
+ * Phase 8 polish: the timer body now delegates to the shared `<Countdown>`
+ * primitive (snap digits, container tick-flash when urgent, fold-red final
+ * minute). A `<Tooltip>` wraps it so hovering shows the absolute end time —
+ * the digits still snap, the tooltip is the only place a human-readable
+ * clock lives.
+ *
+ * The Round label + Live/Settled pill stay as siblings so the timer still
+ * reads as a labelled control, not a free-floating number.
  */
+
+function formatAbsoluteTime(endTime: number | undefined): string {
+  if (!endTime) return '—'
+  const d = new Date(endTime)
+  return d.toLocaleTimeString('en-US', {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+  })
+}
+
 export function RoundTimer({
   endTime,
   roundNumber,
@@ -27,38 +49,42 @@ export function RoundTimer({
   roundNumber: number
   status: 'forming' | 'live' | 'ended'
 }) {
-  const { clock, urgent, expired } = useCountdown(endTime)
-
   return (
-    <div className="flex flex-col items-center">
-      <div className="flex items-center gap-3">
-        <PanelLabel>Round {roundNumber}</PanelLabel>
-        {status === 'live' && !expired ? (
-          <StatusPill variant="holding" dot pulse>
-            Live
-          </StatusPill>
-        ) : (
-          <StatusPill variant="pending">
-            {status === 'ended' || expired ? 'Settled' : 'Forming'}
-          </StatusPill>
-        )}
-      </div>
+    <TooltipProvider delayDuration={150}>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div className="flex flex-col items-center">
+            <div className="flex items-center gap-3">
+              <PanelLabel>Round {roundNumber}</PanelLabel>
+              {status === 'live' && endTime && endTime > Date.now() ? (
+                <StatusPill variant="holding" dot pulse>
+                  Live
+                </StatusPill>
+              ) : (
+                <StatusPill variant="pending">
+                  {status === 'ended' || (endTime && endTime <= Date.now())
+                    ? 'Settled'
+                    : 'Forming'}
+                </StatusPill>
+              )}
+            </div>
 
-      <span
-        className={cn(
-          'mt-1 font-mono tabular-nums text-display-lg font-bold leading-none',
-          urgent ? 'text-fold' : 'text-paper',
-        )}
-      >
-        {clock}
-      </span>
-
-      {urgent && !expired && (
-        <span className="mt-1 font-mono text-label uppercase text-fold">
-          Final minute
-        </span>
-      )}
-    </div>
+            {/* Countdown handles urgent colouring + container flash; we just
+                hand it the absolute end time. */}
+            {endTime ? (
+              <div className="mt-1">
+                <Countdown endTime={endTime} />
+              </div>
+            ) : (
+              <span className="mt-1 font-mono text-display-lg font-bold tabular-nums leading-none text-whisper">
+                --:--
+              </span>
+            )}
+          </div>
+        </TooltipTrigger>
+        <TooltipContent>Round ends at {formatAbsoluteTime(endTime)}</TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   )
 }
 

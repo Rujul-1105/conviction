@@ -5,6 +5,7 @@ import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Card, PanelLabel } from '@/components/ui/card'
 import { Ftr, Num } from '@/components/ui/num'
+import { Progress } from '@/components/ui/progress'
 import { StatusPill, type StatusVariant } from '@/components/ui/status-pill'
 import type { Proposal, ProposalParameter, ProposalStatus } from '@/lib/api'
 import { useVote } from '@/lib/hooks/use-proposals'
@@ -15,6 +16,11 @@ import { cn, timeAgo } from '@/lib/utils'
  *
  * Votes are FTR-weighted, not one-per-wallet, so the tally renders as a
  * proportional bar rather than a count — weight is the thing that matters.
+ *
+ * Phase 8 polish: tally bar replaces the hand-drawn two-block <div> with a
+ * single shadcn <Progress> (conviction-green fill). The visual language is
+ * the same as the lobby match-fill bar — fills never animate, never carry
+ * a gradient, just snap to the final position.
  */
 
 const PARAM_LABEL: Record<ProposalParameter, string> = {
@@ -76,7 +82,8 @@ export function ProposalCard({ proposal }: { proposal: Proposal }) {
         </StatusPill>
       </div>
 
-      {/* Tally bar. Green for yes, red for no — no gradient, just two blocks. */}
+      {/* Tally bar. shadcn <Progress> in conviction-green — same primitive
+          as the lobby match-fill bar, so the affordance is consistent. */}
       <div className="mt-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1.5">
@@ -97,10 +104,10 @@ export function ProposalCard({ proposal }: { proposal: Proposal }) {
           </div>
         </div>
 
-        <div className="mt-1.5 flex h-1.5 overflow-hidden rounded-sm bg-border">
-          <div className="bg-conviction" style={{ width: `${yesPct}%` }} />
-          <div className="flex-1 bg-fold" />
-        </div>
+        <Progress
+          value={yesPct}
+          className="mt-1.5 h-1.5 bg-border"
+        />
 
         <div className="mt-1.5 flex items-center justify-between">
           <Num size="sm" className="text-whisper">

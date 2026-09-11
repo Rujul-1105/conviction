@@ -2,8 +2,10 @@
 
 import { LeftRail } from '@/components/layout/left-rail'
 import { TopNav } from '@/components/layout/top-nav'
+import { PageBackdrop } from '@/components/layout/page-backdrop'
 import { Card, PanelLabel } from '@/components/ui/card'
-import { Num } from '@/components/ui/num'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { Skeleton } from '@/components/ui/skeleton'
 import {
   FtrBalancePanel,
   ProposalCard,
@@ -17,6 +19,12 @@ import { useGameWallet } from '@/lib/hooks/use-wallet'
  *
  * FTR balance leads in large conviction green, then the proposal list. Open
  * proposals sort first — those are the only ones a player can act on.
+ *
+ * Phase 8 polish:
+ *  - Empty state copy becomes agency-grade: "HOLD . RESIST . SURVIVE.
+ *    — propose the first rule change."
+ *  - Proposal list wrapped in <ScrollArea> so a long history doesn't push
+ *    the page; Skeleton rows render during the initial fetch.
  */
 export default function GovernancePage() {
   const { data: proposals, isLoading } = useProposals()
@@ -31,7 +39,8 @@ export default function GovernancePage() {
   return (
     <div className="flex min-h-screen flex-col">
       <TopNav />
-      <div className="mx-auto flex w-full max-w-content flex-1 gap-6 px-4">
+      <PageBackdrop>
+      <div className="mx-auto flex w-full max-w-[1600px] flex-1 gap-6 px-4 lg:px-8">
         <LeftRail />
 
         <main className="min-w-0 flex-1 py-8">
@@ -50,28 +59,41 @@ export default function GovernancePage() {
           <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_320px]">
             <section>
               <PanelLabel>Proposals</PanelLabel>
-              <div className="mt-3 space-y-3">
-                {isLoading && (
-                  <Card className="p-6">
-                    <Num className="text-text-muted">Loading proposals…</Num>
-                  </Card>
-                )}
 
-                {!isLoading && !sorted.length && (
-                  <Card className="p-6">
-                    <p className="text-body-md text-paper">
-                      No proposals yet.
-                    </p>
-                    <p className="mt-1 text-body-sm text-text-muted">
-                      Win a round to earn FTR, then propose a change.
-                    </p>
-                  </Card>
-                )}
+              {isLoading && (
+                // Three Skeleton rows replace a generic "Loading proposals…".
+                <div className="mt-3 space-y-3">
+                  <Skeleton className="h-[120px] w-full rounded-md" />
+                  <Skeleton className="h-[120px] w-full rounded-md" />
+                  <Skeleton className="h-[120px] w-full rounded-md" />
+                </div>
+              )}
 
-                {sorted.map((proposal) => (
-                  <ProposalCard key={proposal.id} proposal={proposal} />
-                ))}
-              </div>
+              {!isLoading && !sorted.length && (
+                <Card className="mt-3 p-6">
+                  <p className="font-mono text-label uppercase text-whisper">
+                    HOLD . RESIST . SURVIVE.
+                  </p>
+                  <p className="mt-2 text-body-md text-paper">
+                    Propose the first rule change.
+                  </p>
+                  <p className="mt-1 text-body-sm text-text-muted">
+                    Win a round to earn FTR, then propose a change.
+                  </p>
+                </Card>
+              )}
+
+              {!!sorted.length && (
+                // Proposal list in <ScrollArea> so the rail stays in view
+                // even after dozens of settled proposals.
+                <ScrollArea className="mt-3 h-[640px] pr-2">
+                  <div className="space-y-3">
+                    {sorted.map((proposal) => (
+                      <ProposalCard key={proposal.id} proposal={proposal} />
+                    ))}
+                  </div>
+                </ScrollArea>
+              )}
             </section>
 
             <aside className="space-y-4">
@@ -87,6 +109,7 @@ export default function GovernancePage() {
           </div>
         </main>
       </div>
+      </PageBackdrop>
     </div>
   )
 }

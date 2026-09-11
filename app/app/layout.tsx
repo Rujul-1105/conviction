@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Inter, JetBrains_Mono, Space_Grotesk } from 'next/font/google'
+import { Inter, JetBrains_Mono, Oxanium, Rubik_Dirt } from 'next/font/google'
 import { Providers } from './providers'
 import './globals.css'
 
@@ -7,15 +7,25 @@ import './globals.css'
  * Root layout.
  *
  * Fonts are loaded via next/font and exposed as CSS variables that
- * tailwind.config.ts reads (font-display / font-sans / font-mono). Per
- * DESIGN.md §1 there are exactly three: Space Grotesk for display, Inter for
- * body, JetBrains Mono for every number.
+ * tailwind.config.ts reads (font-display / font-sans / font-mono / font-dirt).
+ * Per DESIGN.md §1 + Phase 8 polish the system has four faces:
+ *  - Oxanium (techno-grotesque) — primary display at 96–128px
+ *  - Rubik Dirt (graffiti/woodtype) — accent on FOLD + the motto
+ *  - Inter — body
+ *  - JetBrains Mono — numbers, addresses, timestamps
  */
 
-const spaceGrotesk = Space_Grotesk({
+const oxanium = Oxanium({
   subsets: ['latin'],
-  weight: ['500', '700'],
+  weight: ['500', '600', '700', '800'],
   variable: '--font-display',
+  display: 'swap',
+})
+
+const rubikDirt = Rubik_Dirt({
+  subsets: ['latin'],
+  weight: ['400'],
+  variable: '--font-dirt',
   display: 'swap',
 })
 
@@ -47,7 +57,7 @@ export default function RootLayout({
     // the first client paint can legitimately differ from the server's.
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${spaceGrotesk.variable} ${inter.variable} ${jetbrainsMono.variable}`}
+        className={`${oxanium.variable} ${rubikDirt.variable} ${inter.variable} ${jetbrainsMono.variable}`}
       >
         <Providers>{children}</Providers>
       </body>

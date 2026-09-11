@@ -10,6 +10,11 @@ import type { Variants } from 'framer-motion'
  * nonetheless defines these as animated box-shadows. That is not a
  * contradiction — the shadow is transient feedback that resolves to fully
  * transparent, so nothing glows at rest. Never leave a box-shadow settled.
+ *
+ * Phase 8 additions (ADR 0005):
+ *  - marqueeVariants for the live ticker
+ *  - countdownTickVariants for the timer container flash
+ *  - nrftRise for the reveal-sequence FTR counter
  */
 
 /**
@@ -81,6 +86,41 @@ export const staggerChildren: Variants = {
 export const eventEnter: Variants = {
   hidden: { opacity: 0, x: -8 },
   visible: { opacity: 1, x: 0, transition: { duration: 0.25, ease: entranceEase } },
+}
+
+/**
+ * Live-ticker marquee. Inner track animates by -50% so two side-by-side
+ * copies form a seamless loop. Paused on group-hover via CSS.
+ */
+export const marqueeVariants: Variants = {
+  animate: {
+    x: ['0%', '-50%'],
+    transition: { duration: 50, ease: 'linear', repeat: Infinity },
+  },
+}
+
+/**
+ * Timer container flash — never the digits themselves. Mirrors the CSS
+ * `tick-flash` keyframe but driven by JS for cases that need finer timing.
+ */
+export const countdownTickVariants: Variants = {
+  animate: {
+    backgroundColor: ['rgb(31 31 31)', 'transparent'],
+    transition: { duration: 0.12, ease: 'easeOut' },
+  },
+}
+
+/**
+ * FTR counter reveal. Caller chains a delay via the standard `transition`
+ * prop: <motion.span variants={nrftRise} transition={{ delay: 0.4 }} />
+ */
+export const nrftRise: Variants = {
+  hidden: { opacity: 0, y: 8 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.4, ease: entranceEase },
+  },
 }
 
 /**

@@ -18,19 +18,32 @@ export function Num({
   children,
   className,
   size = 'md',
+  tone = 'paper',
 }: {
   children: React.ReactNode
   className?: string
-  size?: 'sm' | 'md' | 'lg' | 'xl'
+  size?: 'sm' | 'md' | 'lg' | 'xl' | 'display'
+  tone?: 'paper' | 'muted' | 'conviction' | 'fold' | 'hold' | 'chaos'
 }) {
   const sizes = {
     sm: 'text-body-sm',
     md: 'text-body-md',
     lg: 'text-body-lg',
     xl: 'text-heading-md',
+    display: 'text-display-lg',
+  }
+  const toneClasses = {
+    paper: 'text-paper',
+    muted: 'text-text-muted',
+    conviction: 'text-conviction',
+    fold: 'text-fold',
+    hold: 'text-hold',
+    chaos: 'text-chaos',
   }
   return (
-    <span className={cn('font-mono tabular-nums', sizes[size], className)}>
+    <span
+      className={cn('font-mono tabular-nums', sizes[size], toneClasses[tone], className)}
+    >
       {children}
     </span>
   )

@@ -3,6 +3,7 @@
 import { Check } from 'lucide-react'
 import { Num, Pnl, Price } from '@/components/ui/num'
 import { PanelLabel } from '@/components/ui/card'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import type { Token, TokenTier } from '@/lib/api'
 import { MAX_BASKET_TOKENS, useRoundUIStore } from '@/lib/store/round-store'
 import { cn } from '@/lib/utils'
@@ -13,6 +14,10 @@ import { cn } from '@/lib/utils'
  * Selection is capped at 3 to match the on-chain `Basket.mints: [Pubkey; 3]`.
  * Past the cap, unselected tiles go visibly inert rather than silently
  * ignoring clicks — the store refuses the pick, so the UI must explain why.
+ *
+ * Phase 8 polish: the tier filter is now a shadcn <Tabs> strip. The Tabs
+ * underline indicator in `bg-conviction` matches the 1px-border language used
+ * elsewhere on the page (governance tally, leaderboard tabs).
  */
 
 const TIER_LABEL: Record<TokenTier, string> = {
@@ -49,23 +54,27 @@ export function TokenGrid({
           Pick {MAX_BASKET_TOKENS} — {selectedBasketTokens.length} selected
         </PanelLabel>
 
-        <div className="flex gap-2">
-          {(['all', 'safe', 'wild', 'moonshot'] as const).map((tier) => (
-            <button
-              key={tier}
-              type="button"
-              onClick={() => onTierChange(tier)}
-              className={cn(
-                'rounded-md border px-2.5 py-1 font-mono text-label uppercase transition-colors',
-                tier === tierFilter
-                  ? 'border-paper/30 bg-surface-elevated text-paper'
-                  : 'border-border text-whisper hover:text-paper',
-              )}
-            >
-              {tier}
-            </button>
-          ))}
-        </div>
+        {/* Tier filter — shadcn Tabs so the affordance matches the leaderboard. */}
+        <Tabs
+          value={tierFilter}
+          onValueChange={(v) => onTierChange(v as TokenTier | 'all')}
+        >
+          <TabsList className="h-8 bg-transparent p-0">
+            {(['all', 'safe', 'wild', 'moonshot'] as const).map((tier) => (
+              <TabsTrigger
+                key={tier}
+                value={tier}
+                className={cn(
+                  'h-8 rounded-md border px-2.5 font-mono text-label uppercase tracking-[0.06em]',
+                  'data-[state=active]:border-paper/30 data-[state=active]:bg-surface-elevated data-[state=active]:text-paper',
+                  'border-transparent text-whisper hover:text-paper',
+                )}
+              >
+                {tier}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
       </div>
 
       <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">

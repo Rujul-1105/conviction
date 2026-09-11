@@ -1,53 +1,63 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { motion } from 'framer-motion'
 import { toast } from 'sonner'
 import { PanelLabel } from '@/components/ui/card'
 import { Num, Pnl } from '@/components/ui/num'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 import { colors } from '@/lib/colors'
 import type { StopLossBand, Team } from '@/lib/api'
 import { useBirdeyePrices } from '@/lib/hooks/use-token-universe'
+import { usePnlHistory, type PnlPoint } from '@/components/live-round/use-pnl-history'
 
 /**
  * Live P&L chart (DESIGN.md §10 priority 5).
  *
  * Hand-rolled inline SVG rather than a charting library: DESIGN.md §14 bans new
- * dependencies, and this needs exactly two polylines and a zero rule. Fewer
- * bytes than any chart lib and it inherits the palette for free.
+ * dependencies, and this needs exactly two polylines, a stop-loss band, an
+ * entry marker, and a hover crosshair. Fewer bytes than any chart lib and it
+ * inherits the palette for free.
  *
  * Stroke colours come from lib/colors.ts because SVG `stroke` can't take a
  * Tailwind class — that's the documented escape hatch, not a rule violation.
  *
- * `stopLossBand` (bps) renders as a shaded fold-zone spanning
- * `minBps/100`% … `maxBps/100`%. If any line crosses out of the zone,
- * the chart annotates "Auto-fold armed" — this is the visual reminder
- * that the basket-level band decides survival.
+ * Phase 8 polish:
+ *  - Entry P&L marker: hollow circle at the chart's left edge for each team,
+ *    so the line reads as a trajectory from "where they locked in".
+ *  - Hover crosshair: vertical guide + y-axis value tooltip via shadcn
+ *    Tooltip, controlled by mouse position.
+ *  - Scale legend: bottom-right mono min/max read-out.
+ *  - History is now owned by `usePnlHistory` so LeaderboardColumn can render
+ *    a per-row Sparkline from the same rolling series.
  *
- * Phase 4: when `NEXT_PUBLIC_BIRDEYE_API_KEY` is set, prices come from
- * Birdeye at 10s cadence and P&L is derived from basket weights × (now −
- * entry). When Birdeye 401s or no key is configured, we fall back to the
- * seeded mock walk + a Sonner toast so the operator sees the fallback.
+ * `stopLossBand` (bps) renders as a shaded fold-zone spanning
+ * `minBps/100`% … `maxBps/100`%. If any line crosses out of the zone, the
+ * chart annotates "Auto-fold armed" — this is the visual reminder that the
+ * basket-level band decides survival.
  */
 
 const WIDTH = 600
 const HEIGHT = 200
 const PAD = 8
-/** Rolling window: 60 samples at ~3s each ≈ the last 3 minutes. */
-const MAX_POINTS = 60
 
-type Series = { teamId: string; name: string; points: number[]; color: string }
-
-export function PriceChart({
-  teams,
-  stopLossBand,
-}: {
+type Props = {
   teams: Team[]
   stopLossBand?: StopLossBand
-}) {
-  // History accumulates client-side. The program never stores price history
-  // (tick_price persists nothing), so this is the only place it exists.
-  const [series, setSeries] = useState<Series[]>([])
-  const [birdeyeActive, setBirdeyeActive] = useState(false)
+  /** Pre-computed rolling series from usePnlHistory. Falls back to local
+   *  sampling if omitted, so the chart keeps working even when nothing has
+   *  lifted the state yet. */
+  series?: PnlPoint[]
+}
+
+export function PriceChart({ teams, stopLossBand, series: externalSeries }: Props) {
+  const localSeries = usePnlHistory(teams)
+  const series = externalSeries ?? localSeries
   const teamsRef = useRef(teams)
   teamsRef.current = teams
 
@@ -64,10 +74,10 @@ export function PriceChart({
       ? process.env.NEXT_PUBLIC_BIRDEYE_API_KEY
       : undefined,
   )
+  const [birdeyeActive, setBirdeyeActive] = useState(false)
 
   useEffect(() => {
     if (birdeyeError) {
-      // One-time toast per failure cluster — avoids spamming the operator.
       setBirdeyeActive(false)
       toast.warning('Birdeye price feed unavailable', {
         description:
@@ -79,79 +89,7 @@ export function PriceChart({
     }
   }, [birdeyeError, birdeye.data, hasBirdeyeKey])
 
-  // ── P&L derivation ─────────────────────────────────────────────────────────
-  // When Birdeye is active, walk the basket's tokens and compute
-  //   sum(weight_i * (now_i - entry_i) / entry_i) * 100
-  // for each team. When Birdeye is unavailable, fall back to team.pnl as
-  // reported by the api (which is 0 on real.ts until P&L derivation lands
-  // in Phase 5 — so we still seed a walk for visual interest).
-  function derivePnlFromPrices(team: Team): number | null {
-    const basket = team.basket
-    if (!basket || !birdeye.data) return null
-    let weighted = 0
-    let weightTotal = 0
-    basket.tokens.forEach((tk, i) => {
-      const now = birdeye.data?.[tk.mint]
-      if (typeof now !== 'number' || tk.currentPrice <= 0) return
-      // Entry price defaults to currentPrice unless we have a snapshot.
-      // For the MVP we treat currentPrice as both entry and exit so P&L
-      // reads ~0 — the chart's *shape* is what matters; absolute level
-      // lands in Phase 5 once `lockInPicks` snapshots entry prices.
-      const entry = tk.currentPrice
-      const ret = (now - entry) / entry
-      const weight = i === 2 ? 3334 : 3333
-      weighted += ret * weight
-      weightTotal += weight
-    })
-    if (weightTotal === 0) return null
-    return (weighted / weightTotal) * 100
-  }
-
-  useEffect(() => {
-    const palette = [colors.conviction, colors.fold]
-
-    /**
-     * Seed a plausible walk that ends at each team's current P&L.
-     * Used when Birdeye is unavailable (no key, 401, or rate limit).
-     */
-    const seed = (pnl: number, n = 20): number[] => {
-      const points: number[] = []
-      for (let i = 0; i < n; i += 1) {
-        const progress = i / (n - 1)
-        const jitter = (Math.random() - 0.5) * Math.abs(pnl) * 0.35
-        points.push(Number((pnl * progress + jitter * progress).toFixed(2)))
-      }
-      return points
-    }
-
-    setSeries(
-      teamsRef.current.map((team, i) => ({
-        teamId: team.id,
-        name: team.name,
-        points: seed(team.pnl),
-        color: palette[i % palette.length],
-      })),
-    )
-
-    const sample = () => {
-      setSeries((prev) =>
-        teamsRef.current.map((team, i) => {
-          const existing = prev.find((s) => s.teamId === team.id)
-          const points = [...(existing?.points ?? []), team.pnl].slice(-MAX_POINTS)
-          return {
-            teamId: team.id,
-            name: team.name,
-            points,
-            color: palette[i % palette.length],
-          }
-        }),
-      )
-    }
-
-    const id = setInterval(sample, 3000)
-    return () => clearInterval(id)
-  }, [])
-
+  // ── Geometry ───────────────────────────────────────────────────────────────
   // Symmetric domain around zero so the midline is always the break-even line.
   // When a stop-loss band is provided, expand the domain to include it so the
   // shaded fold-zone renders fully and never gets clipped.
@@ -166,7 +104,38 @@ export function PriceChart({
   const toY = (v: number) =>
     HEIGHT / 2 - (v / extent) * (HEIGHT / 2 - PAD)
 
-  // Band overlay geometry (computed in the same coord space as the polylines).
+  // ── Hover crosshair ────────────────────────────────────────────────────────
+  // Track mouseX across the chart so the tooltip can show the y-value at
+  // the cursor. The tooltip itself is a shadcn Tooltip whose open state is
+  // driven by JS, not the trigger's hover — Radix's default hover doesn't
+  // position over SVG cleanly, so we go controlled.
+  const svgRef = useRef<SVGSVGElement | null>(null)
+  const [hover, setHover] = useState<{ x: number; y: number; value: number } | null>(
+    null,
+  )
+
+  function handleMouseMove(e: React.MouseEvent<SVGSVGElement>) {
+    const svg = svgRef.current
+    if (!svg) return
+    const rect = svg.getBoundingClientRect()
+    const ratio = WIDTH / rect.width
+    const xPx = (e.clientX - rect.left) * ratio
+    if (xPx < PAD || xPx > WIDTH - PAD) {
+      setHover(null)
+      return
+    }
+    const refPoints = series[0]?.points ?? []
+    if (refPoints.length < 2) {
+      setHover(null)
+      return
+    }
+    const idx = Math.round(
+      ((xPx - PAD) / (WIDTH - PAD * 2)) * (refPoints.length - 1),
+    )
+    const value = refPoints[Math.max(0, Math.min(refPoints.length - 1, idx))] ?? 0
+    setHover({ x: xPx, y: toY(value), value })
+  }
+
   const bandRect = stopLossBand
     ? {
         yTop: toY(stopLossBand.maxBps / 100),
@@ -185,135 +154,192 @@ export function PriceChart({
     : false
 
   return (
-    <div>
-      {/* Header wraps as a unit: the label must not be squeezed into two lines
-          by the legend, which is what happened when both were flex children. */}
-      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
-        <PanelLabel className="whitespace-nowrap">Position P&amp;L</PanelLabel>
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
-          {series.map((s) => (
-            <div key={s.teamId} className="flex items-center gap-1.5">
+    <TooltipProvider delayDuration={50}>
+      <div>
+        {/* Header wraps as a unit: the label must not be squeezed into two lines
+            by the legend, which is what happened when both were flex children. */}
+        <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
+          <PanelLabel className="whitespace-nowrap">Position P&amp;L</PanelLabel>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+            {series.map((s) => (
+              <div key={s.teamId} className="flex items-center gap-1.5">
+                <span
+                  className="h-1.5 w-1.5 shrink-0 rounded-full"
+                  style={{ backgroundColor: s.color }}
+                />
+                <span className="max-w-[140px] truncate text-body-sm text-text-muted">
+                  {teams.find((t) => t.id === s.teamId)?.name ?? s.teamId}
+                </span>
+                <Pnl
+                  value={s.points[s.points.length - 1] ?? 0}
+                  size="sm"
+                />
+              </div>
+            ))}
+            {stopLossBand && (
               <span
-                className="h-1.5 w-1.5 shrink-0 rounded-full"
-                style={{ backgroundColor: s.color }}
-              />
-              <span className="max-w-[140px] truncate text-body-sm text-text-muted">
-                {s.name}
+                className={
+                  'rounded-md border px-2 py-0.5 text-label ' +
+                  (anyTeamFolded
+                    ? 'border-fold bg-fold/15 text-fold'
+                    : 'border-volatility/40 bg-volatility/10 text-volatility')
+                }
+              >
+                {anyTeamFolded ? 'Auto-fold armed' : 'Band armed'}
               </span>
-              <Pnl value={s.points[s.points.length - 1] ?? 0} size="sm" />
-            </div>
-          ))}
-          {stopLossBand && (
+            )}
             <span
               className={
                 'rounded-md border px-2 py-0.5 text-label ' +
-                (anyTeamFolded
-                  ? 'border-fold bg-fold/15 text-fold'
-                  : 'border-volatility/40 bg-volatility/10 text-volatility')
+                (birdeyeActive
+                  ? 'border-conviction/30 bg-conviction/10 text-conviction'
+                  : 'border-border bg-surface text-whisper')
               }
             >
-              {anyTeamFolded ? 'Auto-fold armed' : 'Band armed'}
+              {birdeyeActive ? 'Birdeye live' : 'Mock walk'}
             </span>
+          </div>
+        </div>
+
+        {/* The chart surface. Wrapped in a controlled Tooltip so the y-value
+            read-out follows the cursor. TooltipTrigger is a div covering the
+            SVG so we get Radix's collision avoidance for free. */}
+        <Tooltip open={hover !== null}>
+          <TooltipTrigger asChild>
+            <div className="relative mt-3">
+              <svg
+                ref={svgRef}
+                viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
+                className="h-[200px] w-full cursor-crosshair"
+                role="img"
+                aria-label="Team profit and loss over the round"
+                onMouseMove={handleMouseMove}
+                onMouseLeave={() => setHover(null)}
+              >
+                {/* Stop-loss band overlay (basket-level rule). Drawn first so the
+                    polylines sit on top. */}
+                {bandRect && (
+                  <rect
+                    x={PAD}
+                    y={bandRect.yTop}
+                    width={WIDTH - PAD * 2}
+                    height={Math.max(2, bandRect.yBottom - bandRect.yTop)}
+                    fill={colors.volatility}
+                    opacity={0.12}
+                  />
+                )}
+                {bandRect && (
+                  <line
+                    x1={PAD}
+                    x2={WIDTH - PAD}
+                    y1={bandRect.yTop}
+                    y2={bandRect.yTop}
+                    stroke={colors.volatility}
+                    strokeWidth="1"
+                    strokeDasharray="2 2"
+                    opacity={0.55}
+                  />
+                )}
+
+                {/* Break-even rule. Dashed so it reads as a reference, not data. */}
+                <line
+                  x1={PAD}
+                  y1={HEIGHT / 2}
+                  x2={WIDTH - PAD}
+                  y2={HEIGHT / 2}
+                  stroke={colors.border}
+                  strokeWidth="1"
+                  strokeDasharray="3 3"
+                />
+
+                {/* Quarter gridlines. */}
+                {[0.25, 0.75].map((f) => (
+                  <line
+                    key={f}
+                    x1={PAD}
+                    y1={HEIGHT * f}
+                    x2={WIDTH - PAD}
+                    y2={HEIGHT * f}
+                    stroke={colors.border}
+                    strokeWidth="1"
+                    opacity="0.4"
+                  />
+                ))}
+
+                {series.map((s) => {
+                  if (s.points.length < 2) return null
+                  const d = s.points
+                    .map((v, i) => `${toX(i, s.points.length)},${toY(v)}`)
+                    .join(' ')
+                  return (
+                    <polyline
+                      key={s.teamId}
+                      points={d}
+                      fill="none"
+                      stroke={s.color}
+                      strokeWidth="1.5"
+                      strokeLinejoin="round"
+                      strokeLinecap="round"
+                    />
+                  )
+                })}
+
+                {/* Entry P&L marker per team — hollow circle at the chart's left
+                    edge so each team's line reads as a trajectory from "where
+                    they locked in". r=2 keeps it a glyph, not a blob. */}
+                {series.map((s) => {
+                  const team = teams.find((t) => t.id === s.teamId)
+                  const value = team?.pnl ?? 0
+                  return (
+                    <circle
+                      key={`entry-${s.teamId}`}
+                      cx={PAD}
+                      cy={toY(value)}
+                      r={2}
+                      fill="none"
+                      stroke={s.color}
+                      strokeWidth={1}
+                    />
+                  )
+                })}
+
+                {/* Hover crosshair. Drawn last so it always sits on top. */}
+                {hover && (
+                  <motion.line
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.08 }}
+                    x1={hover.x}
+                    x2={hover.x}
+                    y1={PAD}
+                    y2={HEIGHT - PAD}
+                    stroke={colors.border}
+                    strokeWidth="1"
+                    strokeDasharray="2 2"
+                  />
+                )}
+              </svg>
+            </div>
+          </TooltipTrigger>
+          {/* The tooltip content is the y-axis value at the cursor. It floats
+              beside the cursor via the side="top" default. */}
+          {hover && (
+            <TooltipContent side="top" className="font-mono text-[11px] tabular-nums">
+              {hover.value > 0 ? '+' : ''}
+              {hover.value.toFixed(2)}%
+            </TooltipContent>
           )}
-          <span
-            className={
-              'rounded-md border px-2 py-0.5 text-label ' +
-              (birdeyeActive
-                ? 'border-conviction/30 bg-conviction/10 text-conviction'
-                : 'border-border bg-surface text-whisper')
-            }
-          >
-            {birdeyeActive ? 'Birdeye live' : 'Mock walk'}
-          </span>
+        </Tooltip>
+
+        {/* Scale legend: left reads the negative extreme, centre confirms
+            break-even, right reads the positive extreme. Min/max in mono so
+            digits don't shift as the domain widens. */}
+        <div className="mt-1 flex justify-between font-mono text-[10px] text-whisper tabular-nums">
+          <span>-{extent.toFixed(0)}%</span>
+          <span>break even</span>
+          <span>+{extent.toFixed(0)}%</span>
         </div>
       </div>
-
-      <svg
-        viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
-        className="mt-3 h-[200px] w-full"
-        role="img"
-        aria-label="Team profit and loss over the round"
-      >
-        {/* Stop-loss band overlay (basket-level rule). Drawn first so the
-            polylines sit on top. */}
-        {bandRect && (
-          <rect
-            x={PAD}
-            y={bandRect.yTop}
-            width={WIDTH - PAD * 2}
-            height={Math.max(2, bandRect.yBottom - bandRect.yTop)}
-            fill={colors.volatility}
-            opacity={0.12}
-          />
-        )}
-        {bandRect && (
-          <line
-            x1={PAD}
-            x2={WIDTH - PAD}
-            y1={bandRect.yTop}
-            y2={bandRect.yTop}
-            stroke={colors.volatility}
-            strokeWidth="1"
-            strokeDasharray="2 2"
-            opacity={0.55}
-          />
-        )}
-
-        {/* Break-even rule. Dashed so it reads as a reference, not data. */}
-        <line
-          x1={PAD}
-          y1={HEIGHT / 2}
-          x2={WIDTH - PAD}
-          y2={HEIGHT / 2}
-          stroke={colors.border}
-          strokeWidth="1"
-          strokeDasharray="3 3"
-        />
-
-        {/* Quarter gridlines. */}
-        {[0.25, 0.75].map((f) => (
-          <line
-            key={f}
-            x1={PAD}
-            y1={HEIGHT * f}
-            x2={WIDTH - PAD}
-            y2={HEIGHT * f}
-            stroke={colors.border}
-            strokeWidth="1"
-            opacity="0.4"
-          />
-        ))}
-
-        {series.map((s) => {
-          if (s.points.length < 2) return null
-          const d = s.points
-            .map((v, i) => `${toX(i, s.points.length)},${toY(v)}`)
-            .join(' ')
-          return (
-            <polyline
-              key={s.teamId}
-              points={d}
-              fill="none"
-              stroke={s.color}
-              strokeWidth="1.5"
-              strokeLinejoin="round"
-              strokeLinecap="round"
-            />
-          )
-        })}
-      </svg>
-
-      <div className="flex justify-between">
-        <Num size="sm" className="text-whisper">
-          -{extent.toFixed(0)}%
-        </Num>
-        <Num size="sm" className="text-whisper">
-          break even
-        </Num>
-        <Num size="sm" className="text-whisper">
-          +{extent.toFixed(0)}%
-        </Num>
-      </div>
-    </div>
+    </TooltipProvider>
   )
 }

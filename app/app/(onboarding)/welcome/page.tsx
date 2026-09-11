@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { motion, useReducedMotion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Card, PanelLabel } from '@/components/ui/card'
+import { PageBackdrop } from '@/components/layout/page-backdrop'
 import { fadeInUp, motionSafe } from '@/lib/motion'
 import { cn } from '@/lib/utils'
 
@@ -16,6 +17,14 @@ import { cn } from '@/lib/utils'
  * understand that folding is both the safe move and the losing move.
  *
  * Lives at /welcome (route group (onboarding) doesn't affect the URL).
+ *
+ * Phase 8 polish:
+ *  - Final slide headline becomes "HOLD . RESIST . SURVIVE." — the motto
+ *    is the brand's signature, so it lands on the last frame before the
+ *    user commits.
+ *  - Final slide CTAs: <Button primary> → /connect,
+ *    <Button secondary> → /spectate/spectate-demo. The spectator path is
+ *    wallet-free, so it reads as "watch first, play second".
  */
 const SLIDES = [
   {
@@ -30,7 +39,7 @@ const SLIDES = [
   },
   {
     label: 'Three of three',
-    title: 'Hold longer than they do',
+    title: 'HOLD . RESIST . SURVIVE.',
     body: 'Prices move, a VRF-drawn villain token drags, and chaos events fire without warning. Fold and you are safe but out. The pot goes to whoever held their nerve.',
   },
 ]
@@ -43,6 +52,7 @@ export default function WelcomePage() {
 
   return (
     <div className="flex min-h-screen flex-col">
+      <PageBackdrop>
       <header className="flex items-center justify-between px-4 py-5">
         <Link href="/" className="flex items-center gap-2">
           <span className="h-2 w-2 rounded-full bg-conviction" />
@@ -99,11 +109,20 @@ export default function WelcomePage() {
                 </Button>
               )}
               {isLast ? (
-                <Link href="/lobby">
-                  <Button variant="primary" size="lg">
-                    Let&apos;s play
-                  </Button>
-                </Link>
+                // Final-slide CTAs: primary to /connect (the wallet path),
+                // secondary to the spectator demo (wallet-free entry).
+                <>
+                  <Link href="/spectate/spectate-demo">
+                    <Button variant="secondary" size="lg">
+                      Spectate first
+                    </Button>
+                  </Link>
+                  <Link href="/connect">
+                    <Button variant="primary" size="lg">
+                      Let&apos;s play
+                    </Button>
+                  </Link>
+                </>
               ) : (
                 <Button
                   variant="primary"
@@ -117,6 +136,7 @@ export default function WelcomePage() {
           </div>
         </div>
       </main>
+      </PageBackdrop>
     </div>
   )
 }
