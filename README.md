@@ -8,6 +8,10 @@
 Built for [MagicBlock Blitz v8](https://www.magicblock.app/). Path A =
 live 2-round mini-season demo with on-chain ER + PER + VRF integration.
 
+**Live demo:** https://conviction-nine.vercel.app
+
+**On-chain program:** [`Fh6bQUgE35Hq7nP22GZ1Youwnph2UaiEh9xTtDJuHJbH`](https://explorer.solana.com/address/Fh6bQUgE35Hq7nP22GZ1Youwnph2UaiEh9xTtDJuHJbH?cluster=devnet) (devnet)
+
 ## What's shipped (MVP)
 
 A deployable, end-to-end demo on MagicBlock devnet:
