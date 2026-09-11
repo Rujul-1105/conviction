@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Conviction — Demo Recording Script</title>
+<style>
+  :root {
+    --ink: #0A0A0A;
+    --ink-2: #161616;
+    --ink-3: #1F1F1F;
+    --paper: #F5F5F0;
+    --muted: #A0A0A0;
+    --whisper: #6B6B6B;
+    --border: #2A2A2A;
+    --conviction: #00FF85;
+    --fold: #FF3D5A;
+    --hold: #4A9EFF;
+    --chaos: #FFD23F;
+    --volatility: #9D4EDD;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 48px 32px 96px; }
+  h1 {
+    font-size: 48px; line-height: 1.05; margin: 0 0 8px;
+    letter-spacing: -0.02em; font-weight: 800;
+  }
+  .sub { color: var(--muted); font-size: 16px; margin-bottom: 48px; }
+  .pill {
+    display: inline-block; padding: 4px 10px; border-radius: 999px;
+    font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+    border: 1px solid var(--border); margin-right: 6px;
+  }
+  .pill-conviction { color: var(--conviction); border-color: var(--conviction); }
+  .pill-fold { color: var(--fold); border-color: var(--fold); }
+  .pill-hold { color: var(--hold); border-color: var(--hold); }
+  .pill-chaos { color: var(--chaos); border-color: var(--chaos); }
+  h2 {
+    font-size: 28px; margin: 56px 0 0; padding-top: 32px;
+    border-top: 1px solid var(--border); letter-spacing: -0.01em;
+    display: flex; align-items: baseline; gap: 16px;
+  }
+  h2 .ts {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 14px; color: var(--whisper);
+    font-variant-numeric: tabular-nums;
+  }
+  h3 {
+    font-size: 16px; margin: 28px 0 8px;
+    color: var(--muted); font-weight: 600;
+    letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  p { margin: 0 0 12px; }
+  .screen {
+    background: var(--ink-3); border: 1px solid var(--border);
+    border-radius: 8px; padding: 12px 16px;
+    margin: 12px 0; font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 13px; color: var(--hold);
+  }
+  .screen::before { content: '▸ '; color: var(--whisper); }
+  .narr {
+    background: var(--ink-2); border-left: 3px solid var(--conviction);
+    padding: 16px 20px; margin: 12px 0; border-radius: 0 6px 6px 0;
+    font-size: 17px; color: var(--paper);
+  }
+  .narr em { color: var(--chaos); font-style: normal; }
+  .narr strong { color: var(--conviction); font-weight: 700; }
+  .note {
+    background: var(--ink-2); border-left: 3px solid var(--chaos);
+    padding: 12px 16px; margin: 12px 0; border-radius: 0 6px 6px 0;
+    font-size: 14px; color: var(--muted);
+  }
+  .stop {
+    background: var(--ink-2); border: 1px solid var(--fold);
+    padding: 12px 16px; margin: 12px 0; border-radius: 6px;
+    font-size: 14px; color: var(--fold);
+  }
+  ul { padding-left: 20px; margin: 8px 0; }
+  li { margin: 4px 0; color: var(--muted); }
+  li strong { color: var(--paper); }
+  code {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    background: var(--ink-3); padding: 1px 6px; border-radius: 4px;
+    font-size: 13px;
+  }
+  .meta {
+    display: flex; flex-wrap: wrap; gap: 16px;
+    color: var(--whisper); font-size: 13px; margin-bottom: 32px;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+  }
+  @media print {
+    body { background: white; color: black; }
+    .wrap { padding: 24px; max-width: none; }
+    h2 { page-break-before: always; }
+    .narr, .note, .screen { background: white; border-color: #ccc; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Conviction — Demo Recording Script</h1>
+<div class="sub">Path A 2-round mini-season · 16 minutes total</div>
+
+<div class="meta">
+  <span><span class="pill pill-conviction">LIVE</span> https://conviction-nine.vercel.app</span>
+  <span>Cluster: devnet</span>
+  <span>Program: Fh6b…JHJbH</span>
+</div>
+
+<div class="note">
+  <strong>Before recording:</strong>
+  <ul>
+    <li>Phantom on <strong>devnet</strong> with ≥0.5 SOL in the operator wallet (winner of round 1)</li>
+    <li>A second Phantom profile (or incognito window) for wallet B / wallet C</li>
+    <li>Browser zoom 100%, dark theme, fullscreen <code>F11</code> for recording</li>
+    <li>Screen capture at 1080p, 30fps minimum</li>
+    <li>Close unrelated tabs — the wallet modal lists detected wallets</li>
+  </ul>
+</div>
+
+<h2><span class="ts">0:00 → 0:30</span> HOOK — what is this thing?</h2>
+
+<div class="screen">https://conviction-nine.vercel.app/</div>
+
+<div class="narr">
+  <em>"Conviction is a real-time risk duel on Solana."</em>
+  Two teams each quietly lock a 2-3 token basket behind a sealed
+  threshold band. Whoever's basket breaks out of the band first
+  auto-folds, the survivor mints the round's governance token, and that
+  token governs the next round. Three MagicBlock primitives carry the
+  design — <strong>PER</strong> seals the threshold, <strong>VRF</strong>
+  fires villain + chaos callbacks mid-round, and <strong>Ephemeral
+  Rollups</strong> keep the per-second ticks cheap and instant.
+</div>
+
+<div class="screen">Scroll: hero → how-it-works → featured-round</div>
+
+<p>Camera: hold on the hero text for 3s, slow-scroll down through
+how-it-works cards, end on the featured-round card. The Oxanium display
+typeface sells the broadcast feel.</p>
+
+<h2><span class="ts">0:30 → 1:30</span> LOBBY — pick a match</h2>
+
+<div class="screen">https://conviction-nine.vercel.app/lobby</div>
+
+<div class="narr">
+  <em>"Three matches forming, two live, one ended. The live-2 match is the
+  demo — Village of Conviction is up 4.2%, Diamond Hand Syndicate is
+  bleeding."</em>
+</div>
+
+<div class="screen">Hover on / open the "live-2" card</div>
+
+<p>Camera: pan over the three forming matches first, then settle on the
+mid-round match card. Pause on the live P&L numbers.</p>
+
+<h2><span class="ts">1:30 → 3:00</span> PRE-ROUND WIZARD — the basket + band</h2>
+
+<div class="screen">https://conviction-nine.vercel.app/match/live-2/setup</div>
+
+<div class="narr">
+  <em>"Step 1: pick your basket. I'll take SOL, JUP, and WIF — a mix of safe
+  + wild. Step 2: set the band. The whole basket is held to a single
+  bps range — if the worst performer drops out of this band, the team
+  auto-folds. I want a balanced band — most villages sit around
+  -14% floor, -5% edge. Step 3: confirm team. Lock in."</em>
+</div>
+
+<div class="screen">Step 1 → Step 2 → Step 3, click Lock in</div>
+
+<p>Camera: medium-slow on the basket grid showing the tiers, slow zoom on
+the band slider, click through the wizard. Stop on "Lock in" for a beat
+before clicking — it triggers the on-chain batch of 4 instructions
+(lock + delegate basket + delegate stop-loss + PER init).</p>
+
+<div class="stop">STOP — confirm Phantom prompts you for 4 separate transactions.
+If you only see one prompt, the bundle didn't compose correctly.</div>
+
+<h2><span class="ts">3:00 → 4:00</span> VILLAIN REVEAL</h2>
+
+<div class="screen">https://conviction-nine.vercel.app/match/live-2/live</div>
+
+<div class="narr">
+  <em>"VRF just landed the villain token — it's POPCAT. POPCAT is now
+  worth 2x if it pumps during the round, but kills our P&L if it dumps.
+  This is sealed until reveal so neither team can plan around it."</em>
+</div>
+
+<p>Camera: the villain banner appears in the top strip. Cut to the
+leaderboard briefly. Settle on the mission control layout.</p>
+
+<h2><span class="ts">4:00 → 7:00</span> CHAOS — VRF callback mid-round</h2>
+
+<div class="screen">https://conviction-nine.vercel.app/match/live-2/live</div>
+
+<div class="narr">
+  <em>"Operator-triggered chaos event — a fake-news rug just hit POPCAT.
+  Watch the chart band: — 14% floor, — 5% edge. POPCAT just dropped
+  6% in the rug — the basket's worst performer is approaching the
+  edge. One more percent and the team folds."</em>
+</div>
+
+<div class="screen">Watch the price chart band overlay; event feed scrolls
+new "rug" entries; P&L numbers flash on the leaderboard</div>
+
+<p>Camera: stay on the live page for 2-3 minutes. Let the chart breathe.
+Zoom in on the band overlay briefly. Zoom out to show event feed
+populating.</p>
+
+<h2><span class="ts">7:00 → 9:00</span> AUTO-FOLD — basket breaks the floor</h2>
+
+<div class="screen">https://conviction-nine.vercel.app/match/live-2/live</div>
+
+<div class="narr">
+  <em>"The basket just crossed the floor — Diamond Hand Syndicate
+  auto-folded. The chart pill flipped to 'Auto-fold armed'; the team
+  status flipped to folded. Now the survivor waits out the round
+  timer."</em>
+</div>
+
+<div class="screen">Camera: leaderboard (Diamond Hand moves to bottom + fades),
+chart pill, stop-loss band</div>
+
+<p>Camera: hold for 1.5s on the auto-fold moment (the pill change is
+the drama), then sweep to the leaderboard showing the fold rank swap.</p>
+
+<h2><span class="ts">9:00 → 10:00</span> ROUND ENDS — countdown to reveal</h2>
+
+<div class="screen">https://conviction-nine.vercel.app/match/live-2/live</div>
+
+<div class="narr">
+  <em>"Round timer hit zero. Settling to Solana. The sealed baskets
+  reveal now."</em>
+</div>
+
+<p>Camera: the RoundTimer card flips to "Round complete". The "Go to
+reveal" button appears. Click it.</p>
+
+<h2><span class="ts">10:00 → 12:00</span> REVEAL — baskets flip</h2>
+
+<div class="screen">https://conviction-nine.vercel.app/reveal/live-2</div>
+
+<div class="narr">
+  <em>"Baskets flip. Both teams picked tier-mixed baskets. Village of
+  Conviction's worst performer was POPCAT — same as the villain token.
+  The rival's worst was BOME, which dropped 18%. Pot distribution goes
+  to the survivor: 1 FTR minted to the winning wallet. FTR is the
+  governance token for round 2."</em>
+</div>
+
+<div class="screen">results-table → pot-distribution → next-match-cta</div>
+
+<p>Camera: scroll the reveal-sequence from top to bottom. The
+results-table is the dramatic beat — pause on the worst-performer
+column for 1s. The pot-distribution card shows FTR being minted (the
+nrft-rise animation).</p>
+
+<h2><span class="ts">12:00 → 13:00</span> GOVERNANCE — propose round duration</h2>
+
+<div class="screen">https://conviction-nine.vercel.app/governance</div>
+
+<div class="narr">
+  <em>"The winner — Village of Conviction — proposes a faster round:
+  10 minutes instead of 15. FTR-weighted vote. Demo runtime: the
+  proposal goes through and round 2 starts with the new timer."</em>
+</div>
+
+<div class="screen">propose-modal → vote → tally</div>
+
+<p>Camera: open the propose-modal, fill in `round_duration_secs =
+600`, submit. Show the vote tally panel.</p>
+
+<h2><span class="ts">13:00 → 16:00</span> ROUND 2 — the rule change</h2>
+
+<div class="screen">Back to https://conviction-nine.vercel.app/match/live-2/setup
+(or new match)</div>
+
+<div class="narr">
+  <em>"Round 2 starts. The round timer reads ten minutes now — the rule
+  change propagated through GameConfig. Same flow, shorter window.
+  Whoever survives this round mints more FTR and proposes round 3.
+  Game-as-startup."</em>
+</div>
+
+<p>Camera: fast-forward through the same flow at compressed speed.
+Highlight the round timer counting down from 10:00 instead of 15:00.
+End on the round-2 reveal screen with the title overlay:</p>
+
+<div style="background:var(--ink-3); border:1px solid var(--conviction); border-radius:8px; padding:24px; margin:24px 0; text-align:center;">
+  <div style="color:var(--whisper); font-size:12px; letter-spacing:0.1em; text-transform:uppercase;">Demo title card</div>
+  <div style="font-size:32px; font-weight:800; letter-spacing:-0.02em; margin:8px 0;">Conviction</div>
+  <div style="color:var(--conviction); font-size:14px;">Risk duel on Solana · PER · VRF · ER</div>
+  <div style="color:var(--muted); font-size:13px; margin-top:12px;">
+    conviction-nine.vercel.app · Fh6b…JHJbH (devnet)
+  </div>
+</div>
+
+<h2>Post-production</h2>
+
+<ul>
+  <li><strong>Cuts:</strong> trim dead air between scenes — 16 min target → 12 min final</li>
+  <li><strong>Captions:</strong> add narration text as captions for muted autoplay on social</li>
+  <li><strong>Music:</strong> low-fi electronic loop, ducked under narration</li>
+  <li><strong>Title card:</strong> first 3s of the recording</li>
+  <li><strong>End card:</strong> URL + GitHub link in the last 3s</li>
+</ul>
+
+<div class="note">
+  <strong>Recap for the editor:</strong>
+  <ul>
+    <li>3 distinct screens shown: landing, live round, reveal</li>
+    <li>2 key dramatic beats: villain reveal, auto-fold</li>
+    <li>1 rule change narration between rounds (governance)</li>
+    <li>Final title card must include the on-chain program ID so judges can verify</li>
+  </ul>
+</div>
+
+</div>
+</body>
+</html>
