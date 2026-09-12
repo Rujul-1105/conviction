@@ -11,3 +11,4 @@ test-ledger/
 
 # conviction program — never commit the FTR mint keypair
 programs/conviction/.ftr-mint.json
+.vercel
