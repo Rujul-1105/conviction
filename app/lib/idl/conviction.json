@@ -1,5 +1,5 @@
 {
-  "address": "Fh6bQUgE35Hq7nP22GZ1Youwnph2UaiEh9xTtDJuHJbH",
+  "address": "EWT7685cosRWNCgW6BeT8FqT68VTRQYmcHBNY6wNaNqh",
   "metadata": {
     "name": "conviction",
     "version": "0.1.0",
@@ -56,6 +56,9 @@
         },
         {
           "name": "match_account",
+          "docs": [
+            "`Match.chaos_count` (P-D8 fix)."
+          ],
           "writable": true
         }
       ],
@@ -312,38 +315,38 @@
             "program": {
               "kind": "const",
               "value": [
-                218,
-                73,
-                44,
-                110,
-                232,
-                150,
-                102,
-                212,
-                239,
-                202,
+                200,
+                179,
                 74,
-                215,
-                147,
-                203,
-                19,
+                93,
+                148,
+                220,
+                58,
+                242,
+                58,
+                94,
+                207,
+                10,
                 225,
-                89,
-                28,
-                132,
-                98,
-                59,
-                127,
-                178,
-                134,
-                120,
-                30,
-                219,
-                39,
-                72,
-                37,
+                218,
+                185,
                 35,
-                8
+                191,
+                190,
+                152,
+                233,
+                216,
+                63,
+                149,
+                207,
+                99,
+                195,
+                9,
+                243,
+                148,
+                49,
+                213,
+                244
               ]
             }
           }
@@ -448,7 +451,7 @@
         },
         {
           "name": "owner_program",
-          "address": "Fh6bQUgE35Hq7nP22GZ1Youwnph2UaiEh9xTtDJuHJbH"
+          "address": "EWT7685cosRWNCgW6BeT8FqT68VTRQYmcHBNY6wNaNqh"
         },
         {
           "name": "delegation_program",
@@ -511,38 +514,38 @@
             "program": {
               "kind": "const",
               "value": [
-                218,
-                73,
-                44,
-                110,
-                232,
-                150,
-                102,
-                212,
-                239,
-                202,
+                200,
+                179,
                 74,
-                215,
-                147,
-                203,
-                19,
+                93,
+                148,
+                220,
+                58,
+                242,
+                58,
+                94,
+                207,
+                10,
                 225,
-                89,
-                28,
-                132,
-                98,
-                59,
-                127,
-                178,
-                134,
-                120,
-                30,
-                219,
-                39,
-                72,
-                37,
+                218,
+                185,
                 35,
-                8
+                191,
+                190,
+                152,
+                233,
+                216,
+                63,
+                149,
+                207,
+                99,
+                195,
+                9,
+                243,
+                148,
+                49,
+                213,
+                244
               ]
             }
           }
@@ -642,7 +645,7 @@
         },
         {
           "name": "owner_program",
-          "address": "Fh6bQUgE35Hq7nP22GZ1Youwnph2UaiEh9xTtDJuHJbH"
+          "address": "EWT7685cosRWNCgW6BeT8FqT68VTRQYmcHBNY6wNaNqh"
         },
         {
           "name": "delegation_program",
@@ -701,38 +704,38 @@
             "program": {
               "kind": "const",
               "value": [
-                218,
-                73,
-                44,
-                110,
-                232,
-                150,
-                102,
-                212,
-                239,
-                202,
+                200,
+                179,
                 74,
-                215,
-                147,
-                203,
-                19,
+                93,
+                148,
+                220,
+                58,
+                242,
+                58,
+                94,
+                207,
+                10,
                 225,
-                89,
-                28,
-                132,
-                98,
-                59,
-                127,
-                178,
-                134,
-                120,
-                30,
-                219,
-                39,
-                72,
-                37,
+                218,
+                185,
                 35,
-                8
+                191,
+                190,
+                152,
+                233,
+                216,
+                63,
+                149,
+                207,
+                99,
+                195,
+                9,
+                243,
+                148,
+                49,
+                213,
+                244
               ]
             }
           }
@@ -840,7 +843,7 @@
         },
         {
           "name": "owner_program",
-          "address": "Fh6bQUgE35Hq7nP22GZ1Youwnph2UaiEh9xTtDJuHJbH"
+          "address": "EWT7685cosRWNCgW6BeT8FqT68VTRQYmcHBNY6wNaNqh"
         },
         {
           "name": "delegation_program",
@@ -903,38 +906,38 @@
             "program": {
               "kind": "const",
               "value": [
-                218,
-                73,
-                44,
-                110,
-                232,
-                150,
-                102,
-                212,
-                239,
-                202,
+                200,
+                179,
                 74,
-                215,
-                147,
-                203,
-                19,
+                93,
+                148,
+                220,
+                58,
+                242,
+                58,
+                94,
+                207,
+                10,
                 225,
-                89,
-                28,
-                132,
-                98,
-                59,
-                127,
-                178,
-                134,
-                120,
-                30,
-                219,
-                39,
-                72,
-                37,
+                218,
+                185,
                 35,
-                8
+                191,
+                190,
+                152,
+                233,
+                216,
+                63,
+                149,
+                207,
+                99,
+                195,
+                9,
+                243,
+                148,
+                49,
+                213,
+                244
               ]
             }
           }
@@ -1016,7 +1019,7 @@
         },
         {
           "name": "owner_program",
-          "address": "Fh6bQUgE35Hq7nP22GZ1Youwnph2UaiEh9xTtDJuHJbH"
+          "address": "EWT7685cosRWNCgW6BeT8FqT68VTRQYmcHBNY6wNaNqh"
         },
         {
           "name": "delegation_program",
@@ -1473,6 +1476,130 @@
       "args": []
     },
     {
+      "name": "leave_during_live",
+      "discriminator": [
+        138,
+        170,
+        121,
+        215,
+        126,
+        79,
+        5,
+        10
+      ],
+      "accounts": [
+        {
+          "name": "player",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "match_account",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  116,
+                  99,
+                  104
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "match_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "team",
+          "writable": true
+        },
+        {
+          "name": "basket",
+          "docs": [
+            "Optional close: Basket PDA. When present, its lamports are",
+            "refunded to `player` (P-D2 partial). When absent, the caller",
+            "is leaving pre-lock-in (Basket PDA never existed)."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  97,
+                  115,
+                  107,
+                  101,
+                  116
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "match_id"
+              },
+              {
+                "kind": "account",
+                "path": "player"
+              }
+            ]
+          }
+        },
+        {
+          "name": "stop_loss",
+          "docs": [
+            "Optional close: StopLoss PDA. Same pattern as Basket."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  111,
+                  112,
+                  45,
+                  108,
+                  111,
+                  115,
+                  115
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "match_id"
+              },
+              {
+                "kind": "account",
+                "path": "player"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "match_id",
+          "type": "u32"
+        },
+        {
+          "name": "side",
+          "type": "u8"
+        }
+      ]
+    },
+    {
       "name": "leave_match",
       "discriminator": [
         199,
@@ -1546,6 +1673,7 @@
         },
         {
           "name": "match_account",
+          "writable": true,
           "pda": {
             "seeds": [
               {
@@ -1609,6 +1737,44 @@
                   111,
                   115,
                   115
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "match_id"
+              },
+              {
+                "kind": "account",
+                "path": "player"
+              }
+            ]
+          }
+        },
+        {
+          "name": "entry_prices",
+          "docs": [
+            "D11: per-player entry-price snapshot. `init_if_needed` so re-locks",
+            "don't reset the entry. The snapshot is taken from the current",
+            "`match.last_prices_e6` (parallel array — slot N corresponds to",
+            "basket slot N). On a fresh match where `last_prices_e6` is all zeros",
+            "(no ticks yet), the entry snapshot is all zeros — `reveal_round`",
+            "treats zero as \"stale\" and contributes 0 to weighted P&L.",
+            "",
+            "Seed mirrors Basket: `(match_id, player)` — `side` lives on the",
+            "account data but isn't part of the seed because a player can only",
+            "be on one side."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  110,
+                  116,
+                  114,
+                  121
                 ]
               },
               {
@@ -1805,9 +1971,12 @@
       ],
       "accounts": [
         {
-          "name": "proposer",
+          "name": "admin",
           "writable": true,
-          "signer": true
+          "signer": true,
+          "relations": [
+            "config"
+          ]
         },
         {
           "name": "config",
@@ -2206,6 +2375,12 @@
           }
         },
         {
+          "name": "team_0"
+        },
+        {
+          "name": "team_1"
+        },
+        {
           "name": "ftr_authority",
           "pda": {
             "seeds": [
@@ -2232,10 +2407,6 @@
         },
         {
           "name": "ftr_mint"
-        },
-        {
-          "name": "winner_ftr_account",
-          "writable": true
         },
         {
           "name": "token_program",
@@ -2494,6 +2665,19 @@
       ]
     },
     {
+      "name": "EntryPrices",
+      "discriminator": [
+        157,
+        155,
+        70,
+        13,
+        78,
+        59,
+        209,
+        154
+      ]
+    },
+    {
       "name": "GameConfig",
       "discriminator": [
         45,
@@ -2585,6 +2769,164 @@
       ]
     }
   ],
+  "events": [
+    {
+      "name": "ChaosFired",
+      "discriminator": [
+        220,
+        107,
+        48,
+        51,
+        14,
+        209,
+        42,
+        45
+      ]
+    },
+    {
+      "name": "LockedIn",
+      "discriminator": [
+        255,
+        17,
+        1,
+        2,
+        192,
+        191,
+        114,
+        186
+      ]
+    },
+    {
+      "name": "MatchCreated",
+      "discriminator": [
+        151,
+        176,
+        11,
+        24,
+        34,
+        225,
+        227,
+        16
+      ]
+    },
+    {
+      "name": "PriceTick",
+      "discriminator": [
+        223,
+        42,
+        8,
+        135,
+        176,
+        150,
+        240,
+        142
+      ]
+    },
+    {
+      "name": "ProposalOpened",
+      "discriminator": [
+        118,
+        111,
+        242,
+        245,
+        53,
+        115,
+        95,
+        209
+      ]
+    },
+    {
+      "name": "ProposalTallied",
+      "discriminator": [
+        160,
+        131,
+        90,
+        39,
+        14,
+        222,
+        55,
+        56
+      ]
+    },
+    {
+      "name": "RoundFinalized",
+      "discriminator": [
+        43,
+        187,
+        17,
+        193,
+        36,
+        241,
+        48,
+        82
+      ]
+    },
+    {
+      "name": "RoundRevealed",
+      "discriminator": [
+        99,
+        213,
+        118,
+        5,
+        55,
+        211,
+        57,
+        71
+      ]
+    },
+    {
+      "name": "TeamFolded",
+      "discriminator": [
+        124,
+        142,
+        112,
+        155,
+        138,
+        83,
+        29,
+        73
+      ]
+    },
+    {
+      "name": "TeamMemberLeft",
+      "discriminator": [
+        43,
+        197,
+        59,
+        174,
+        119,
+        145,
+        59,
+        48
+      ]
+    },
+    {
+      "name": "TeamRegistered",
+      "discriminator": [
+        34,
+        196,
+        222,
+        157,
+        183,
+        10,
+        215,
+        104
+      ]
+    },
+    {
+      "name": "VillainSelected",
+      "discriminator": [
+        1,
+        162,
+        177,
+        70,
+        21,
+        24,
+        181,
+        46
+      ]
+    }
+  ],
   "errors": [
     {
       "code": 6000,
@@ -2628,28 +2970,23 @@
     },
     {
       "code": 6008,
-      "name": "VillainRequestPending",
-      "msg": "Villain VRF request already pending"
-    },
-    {
-      "code": 6009,
       "name": "InvalidOracleQueue",
       "msg": "Oracle queue is not a MagicBlock default queue"
     },
     {
-      "code": 6010,
+      "code": 6009,
       "name": "FtrMintNotInitialized",
       "msg": "FTR mint not yet initialized"
     },
     {
-      "code": 6011,
-      "name": "NoVoterFtrAccount",
-      "msg": "No FTR token account provided for voter weight snapshot"
-    },
-    {
-      "code": 6012,
+      "code": 6010,
       "name": "MatchNotDelegated",
       "msg": "Cannot reveal a match whose Match account is not delegated to ER"
+    },
+    {
+      "code": 6011,
+      "name": "Overflow",
+      "msg": "Arithmetic overflow in counter / accumulator"
     }
   ],
   "types": [
@@ -2755,6 +3092,26 @@
       }
     },
     {
+      "name": "ChaosFired",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "match_id",
+            "type": "u32"
+          },
+          {
+            "name": "sequence",
+            "type": "u32"
+          },
+          {
+            "name": "kind",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
       "name": "ChaosKind",
       "type": {
         "kind": "enum",
@@ -2767,6 +3124,65 @@
           },
           {
             "name": "FakeNews"
+          }
+        ]
+      }
+    },
+    {
+      "name": "EntryPrices",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "match_id",
+            "type": "u32"
+          },
+          {
+            "name": "side",
+            "type": "u8"
+          },
+          {
+            "name": "player",
+            "type": "pubkey"
+          },
+          {
+            "name": "entry_prices_e6",
+            "docs": [
+              "Per-slot entry price in e6-scaled USD, parallel to `Basket.mints`",
+              "(and to `Match.last_prices_e6` / `Match.last_mint`). A slot that",
+              "wasn't picked at lock-in keeps `0` and contributes 0 to the team's",
+              "weighted P&L (matches the `teamPnlPercent` symmetry guard in",
+              "`app/lib/pnl.ts`)."
+            ],
+            "type": {
+              "array": [
+                "u64",
+                3
+              ]
+            }
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "FoldKind",
+      "docs": [
+        "Why a team folded — distinguishes voluntary quit from stop-loss trigger",
+        "in the `TeamFolded` event so indexers / spectators can colour the feed",
+        "differently."
+      ],
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Manual"
+          },
+          {
+            "name": "StopLoss"
           }
         ]
       }
@@ -2803,6 +3219,44 @@
           {
             "name": "bump",
             "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "LockedIn",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "match_id",
+            "type": "u32"
+          },
+          {
+            "name": "side",
+            "type": "u8"
+          },
+          {
+            "name": "player",
+            "type": "pubkey"
+          },
+          {
+            "name": "mints",
+            "type": {
+              "array": [
+                "pubkey",
+                3
+              ]
+            }
+          },
+          {
+            "name": "weights",
+            "type": {
+              "array": [
+                "u16",
+                3
+              ]
+            }
           }
         ]
       }
@@ -2870,6 +3324,40 @@
                 3
               ]
             }
+          },
+          {
+            "name": "last_mint",
+            "docs": [
+              "Mint pubkey last reported for each basket slot. Parallel to",
+              "`last_prices_e6` so `reveal_round` can resolve basket mints ↔",
+              "latest prices without a client-side mint map (P-B1 fix)."
+            ],
+            "type": {
+              "array": [
+                "pubkey",
+                3
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "MatchCreated",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "match_id",
+            "type": "u32"
+          },
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "pot",
+            "type": "u64"
           }
         ]
       }
@@ -2893,6 +3381,26 @@
           },
           {
             "name": "Finalized"
+          }
+        ]
+      }
+    },
+    {
+      "name": "PriceTick",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "match_id",
+            "type": "u32"
+          },
+          {
+            "name": "slot",
+            "type": "u8"
+          },
+          {
+            "name": "price_e6",
+            "type": "u64"
           }
         ]
       }
@@ -2951,6 +3459,31 @@
       }
     },
     {
+      "name": "ProposalOpened",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "proposal_id",
+            "type": "u32"
+          },
+          {
+            "name": "proposer",
+            "type": "pubkey"
+          },
+          {
+            "name": "param_name",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
       "name": "ProposalStatus",
       "type": {
         "kind": "enum",
@@ -2960,6 +3493,26 @@
           },
           {
             "name": "Tallied"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ProposalTallied",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "proposal_id",
+            "type": "u32"
+          },
+          {
+            "name": "ftr_yes",
+            "type": "u64"
+          },
+          {
+            "name": "ftr_no",
+            "type": "u64"
           }
         ]
       }
@@ -2975,6 +3528,38 @@
           },
           {
             "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "RoundFinalized",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "match_id",
+            "type": "u32"
+          }
+        ]
+      }
+    },
+    {
+      "name": "RoundRevealed",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "match_id",
+            "type": "u32"
+          },
+          {
+            "name": "winner_side",
+            "type": "u8"
+          },
+          {
+            "name": "ftr_minted",
             "type": "u8"
           }
         ]
@@ -3040,16 +3625,24 @@
     },
     {
       "name": "StopLossRange",
+      "docs": [
+        "Signed stop-loss band — `min_bps` is the floor (most-negative loss tolerable),",
+        "`max_bps` is the edge (least-negative loss tolerable).",
+        "",
+        "The UI models these as negative values (e.g. `minBps: -1500` means \"stop when",
+        "loss exceeds 15%\"). Signed `i16` is required so Borsh accepts the negative",
+        "inputs at the serializer boundary (Borsh rejects negative values for `u16`)."
+      ],
       "type": {
         "kind": "struct",
         "fields": [
           {
             "name": "min_bps",
-            "type": "u16"
+            "type": "i16"
           },
           {
             "name": "max_bps",
-            "type": "u16"
+            "type": "i16"
           }
         ]
       }
@@ -3101,6 +3694,34 @@
       }
     },
     {
+      "name": "TeamFolded",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "match_id",
+            "type": "u32"
+          },
+          {
+            "name": "side",
+            "type": "u8"
+          },
+          {
+            "name": "by",
+            "type": "pubkey"
+          },
+          {
+            "name": "kind",
+            "type": {
+              "defined": {
+                "name": "FoldKind"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
       "name": "TeamMember",
       "type": {
         "kind": "struct",
@@ -3115,6 +3736,46 @@
           },
           {
             "name": "stop_loss_pda",
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "TeamMemberLeft",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "match_id",
+            "type": "u32"
+          },
+          {
+            "name": "side",
+            "type": "u8"
+          },
+          {
+            "name": "player",
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "TeamRegistered",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "match_id",
+            "type": "u32"
+          },
+          {
+            "name": "side",
+            "type": "u8"
+          },
+          {
+            "name": "leader",
             "type": "pubkey"
           }
         ]
@@ -3149,6 +3810,22 @@
           {
             "name": "bump",
             "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "VillainSelected",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "match_id",
+            "type": "u32"
+          },
+          {
+            "name": "mint",
+            "type": "pubkey"
           }
         ]
       }

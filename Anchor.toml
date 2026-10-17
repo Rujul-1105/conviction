@@ -13,7 +13,7 @@ resolution = true
 skip-lint = false
 
 [programs.devnet]
-conviction = "Fh6bQUgE35Hq7nP22GZ1Youwnph2UaiEh9xTtDJuHJbH"
+conviction = "EWT7685cosRWNCgW6BeT8FqT68VTRQYmcHBNY6wNaNqh"
 
 [registry]
 url = "https://api.apr.dev"

@@ -5,7 +5,7 @@
  * IDL can be found at `target/idl/conviction.json`.
  */
 export type Conviction = {
-  "address": "Fh6bQUgE35Hq7nP22GZ1Youwnph2UaiEh9xTtDJuHJbH",
+  "address": "EWT7685cosRWNCgW6BeT8FqT68VTRQYmcHBNY6wNaNqh",
   "metadata": {
     "name": "conviction",
     "version": "0.1.0",
@@ -62,6 +62,9 @@ export type Conviction = {
         },
         {
           "name": "matchAccount",
+          "docs": [
+            "`Match.chaos_count` (P-D8 fix)."
+          ],
           "writable": true
         }
       ],
@@ -318,38 +321,38 @@ export type Conviction = {
             "program": {
               "kind": "const",
               "value": [
-                218,
-                73,
-                44,
-                110,
-                232,
-                150,
-                102,
-                212,
-                239,
-                202,
+                200,
+                179,
                 74,
-                215,
-                147,
-                203,
-                19,
+                93,
+                148,
+                220,
+                58,
+                242,
+                58,
+                94,
+                207,
+                10,
                 225,
-                89,
-                28,
-                132,
-                98,
-                59,
-                127,
-                178,
-                134,
-                120,
-                30,
-                219,
-                39,
-                72,
-                37,
+                218,
+                185,
                 35,
-                8
+                191,
+                190,
+                152,
+                233,
+                216,
+                63,
+                149,
+                207,
+                99,
+                195,
+                9,
+                243,
+                148,
+                49,
+                213,
+                244
               ]
             }
           }
@@ -454,7 +457,7 @@ export type Conviction = {
         },
         {
           "name": "ownerProgram",
-          "address": "Fh6bQUgE35Hq7nP22GZ1Youwnph2UaiEh9xTtDJuHJbH"
+          "address": "EWT7685cosRWNCgW6BeT8FqT68VTRQYmcHBNY6wNaNqh"
         },
         {
           "name": "delegationProgram",
@@ -517,38 +520,38 @@ export type Conviction = {
             "program": {
               "kind": "const",
               "value": [
-                218,
-                73,
-                44,
-                110,
-                232,
-                150,
-                102,
-                212,
-                239,
-                202,
+                200,
+                179,
                 74,
-                215,
-                147,
-                203,
-                19,
+                93,
+                148,
+                220,
+                58,
+                242,
+                58,
+                94,
+                207,
+                10,
                 225,
-                89,
-                28,
-                132,
-                98,
-                59,
-                127,
-                178,
-                134,
-                120,
-                30,
-                219,
-                39,
-                72,
-                37,
+                218,
+                185,
                 35,
-                8
+                191,
+                190,
+                152,
+                233,
+                216,
+                63,
+                149,
+                207,
+                99,
+                195,
+                9,
+                243,
+                148,
+                49,
+                213,
+                244
               ]
             }
           }
@@ -648,7 +651,7 @@ export type Conviction = {
         },
         {
           "name": "ownerProgram",
-          "address": "Fh6bQUgE35Hq7nP22GZ1Youwnph2UaiEh9xTtDJuHJbH"
+          "address": "EWT7685cosRWNCgW6BeT8FqT68VTRQYmcHBNY6wNaNqh"
         },
         {
           "name": "delegationProgram",
@@ -707,38 +710,38 @@ export type Conviction = {
             "program": {
               "kind": "const",
               "value": [
-                218,
-                73,
-                44,
-                110,
-                232,
-                150,
-                102,
-                212,
-                239,
-                202,
+                200,
+                179,
                 74,
-                215,
-                147,
-                203,
-                19,
+                93,
+                148,
+                220,
+                58,
+                242,
+                58,
+                94,
+                207,
+                10,
                 225,
-                89,
-                28,
-                132,
-                98,
-                59,
-                127,
-                178,
-                134,
-                120,
-                30,
-                219,
-                39,
-                72,
-                37,
+                218,
+                185,
                 35,
-                8
+                191,
+                190,
+                152,
+                233,
+                216,
+                63,
+                149,
+                207,
+                99,
+                195,
+                9,
+                243,
+                148,
+                49,
+                213,
+                244
               ]
             }
           }
@@ -846,7 +849,7 @@ export type Conviction = {
         },
         {
           "name": "ownerProgram",
-          "address": "Fh6bQUgE35Hq7nP22GZ1Youwnph2UaiEh9xTtDJuHJbH"
+          "address": "EWT7685cosRWNCgW6BeT8FqT68VTRQYmcHBNY6wNaNqh"
         },
         {
           "name": "delegationProgram",
@@ -909,38 +912,38 @@ export type Conviction = {
             "program": {
               "kind": "const",
               "value": [
-                218,
-                73,
-                44,
-                110,
-                232,
-                150,
-                102,
-                212,
-                239,
-                202,
+                200,
+                179,
                 74,
-                215,
-                147,
-                203,
-                19,
+                93,
+                148,
+                220,
+                58,
+                242,
+                58,
+                94,
+                207,
+                10,
                 225,
-                89,
-                28,
-                132,
-                98,
-                59,
-                127,
-                178,
-                134,
-                120,
-                30,
-                219,
-                39,
-                72,
-                37,
+                218,
+                185,
                 35,
-                8
+                191,
+                190,
+                152,
+                233,
+                216,
+                63,
+                149,
+                207,
+                99,
+                195,
+                9,
+                243,
+                148,
+                49,
+                213,
+                244
               ]
             }
           }
@@ -1022,7 +1025,7 @@ export type Conviction = {
         },
         {
           "name": "ownerProgram",
-          "address": "Fh6bQUgE35Hq7nP22GZ1Youwnph2UaiEh9xTtDJuHJbH"
+          "address": "EWT7685cosRWNCgW6BeT8FqT68VTRQYmcHBNY6wNaNqh"
         },
         {
           "name": "delegationProgram",
@@ -1080,6 +1083,69 @@ export type Conviction = {
         {
           "name": "matchId",
           "type": "u32"
+        }
+      ]
+    },
+    {
+      "name": "fold",
+      "discriminator": [
+        63,
+        91,
+        162,
+        171,
+        160,
+        70,
+        220,
+        136
+      ],
+      "accounts": [
+        {
+          "name": "player",
+          "signer": true
+        },
+        {
+          "name": "matchAccount",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  116,
+                  99,
+                  104
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "matchId"
+              }
+            ]
+          }
+        },
+        {
+          "name": "team",
+          "writable": true
+        },
+        {
+          "name": "magicProgram",
+          "address": "Magic11111111111111111111111111111111111111"
+        },
+        {
+          "name": "magicContext",
+          "writable": true,
+          "address": "MagicContext1111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "matchId",
+          "type": "u32"
+        },
+        {
+          "name": "side",
+          "type": "u8"
         }
       ]
     },
@@ -1416,6 +1482,184 @@ export type Conviction = {
       "args": []
     },
     {
+      "name": "leaveDuringLive",
+      "discriminator": [
+        138,
+        170,
+        121,
+        215,
+        126,
+        79,
+        5,
+        10
+      ],
+      "accounts": [
+        {
+          "name": "player",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "matchAccount",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  116,
+                  99,
+                  104
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "matchId"
+              }
+            ]
+          }
+        },
+        {
+          "name": "team",
+          "writable": true
+        },
+        {
+          "name": "basket",
+          "docs": [
+            "Optional close: Basket PDA. When present, its lamports are",
+            "refunded to `player` (P-D2 partial). When absent, the caller",
+            "is leaving pre-lock-in (Basket PDA never existed)."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  97,
+                  115,
+                  107,
+                  101,
+                  116
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "matchId"
+              },
+              {
+                "kind": "account",
+                "path": "player"
+              }
+            ]
+          }
+        },
+        {
+          "name": "stopLoss",
+          "docs": [
+            "Optional close: StopLoss PDA. Same pattern as Basket."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  111,
+                  112,
+                  45,
+                  108,
+                  111,
+                  115,
+                  115
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "matchId"
+              },
+              {
+                "kind": "account",
+                "path": "player"
+              }
+            ]
+          }
+        },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "matchId",
+          "type": "u32"
+        },
+        {
+          "name": "side",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "leaveMatch",
+      "discriminator": [
+        199,
+        14,
+        16,
+        91,
+        104,
+        95,
+        166,
+        15
+      ],
+      "accounts": [
+        {
+          "name": "player",
+          "signer": true
+        },
+        {
+          "name": "matchAccount",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  116,
+                  99,
+                  104
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "matchId"
+              }
+            ]
+          }
+        },
+        {
+          "name": "team",
+          "writable": true
+        }
+      ],
+      "args": [
+        {
+          "name": "matchId",
+          "type": "u32"
+        },
+        {
+          "name": "side",
+          "type": "u8"
+        }
+      ]
+    },
+    {
       "name": "lockInPreRound",
       "discriminator": [
         179,
@@ -1435,6 +1679,7 @@ export type Conviction = {
         },
         {
           "name": "matchAccount",
+          "writable": true,
           "pda": {
             "seeds": [
               {
@@ -1498,6 +1743,44 @@ export type Conviction = {
                   111,
                   115,
                   115
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "matchId"
+              },
+              {
+                "kind": "account",
+                "path": "player"
+              }
+            ]
+          }
+        },
+        {
+          "name": "entryPrices",
+          "docs": [
+            "D11: per-player entry-price snapshot. `init_if_needed` so re-locks",
+            "don't reset the entry. The snapshot is taken from the current",
+            "`match.last_prices_e6` (parallel array — slot N corresponds to",
+            "basket slot N). On a fresh match where `last_prices_e6` is all zeros",
+            "(no ticks yet), the entry snapshot is all zeros — `reveal_round`",
+            "treats zero as \"stale\" and contributes 0 to weighted P&L.",
+            "",
+            "Seed mirrors Basket: `(match_id, player)` — `side` lives on the",
+            "account data but isn't part of the seed because a player can only",
+            "be on one side."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  110,
+                  116,
+                  114,
+                  121
                 ]
               },
               {
@@ -1694,9 +1977,12 @@ export type Conviction = {
       ],
       "accounts": [
         {
-          "name": "proposer",
+          "name": "admin",
           "writable": true,
-          "signer": true
+          "signer": true,
+          "relations": [
+            "config"
+          ]
         },
         {
           "name": "config",
@@ -2095,6 +2381,12 @@ export type Conviction = {
           }
         },
         {
+          "name": "team0"
+        },
+        {
+          "name": "team1"
+        },
+        {
           "name": "ftrAuthority",
           "pda": {
             "seeds": [
@@ -2121,10 +2413,6 @@ export type Conviction = {
         },
         {
           "name": "ftrMint"
-        },
-        {
-          "name": "winnerFtrAccount",
-          "writable": true
         },
         {
           "name": "tokenProgram",
@@ -2383,6 +2671,19 @@ export type Conviction = {
       ]
     },
     {
+      "name": "entryPrices",
+      "discriminator": [
+        157,
+        155,
+        70,
+        13,
+        78,
+        59,
+        209,
+        154
+      ]
+    },
+    {
       "name": "gameConfig",
       "discriminator": [
         45,
@@ -2474,6 +2775,164 @@ export type Conviction = {
       ]
     }
   ],
+  "events": [
+    {
+      "name": "chaosFired",
+      "discriminator": [
+        220,
+        107,
+        48,
+        51,
+        14,
+        209,
+        42,
+        45
+      ]
+    },
+    {
+      "name": "lockedIn",
+      "discriminator": [
+        255,
+        17,
+        1,
+        2,
+        192,
+        191,
+        114,
+        186
+      ]
+    },
+    {
+      "name": "matchCreated",
+      "discriminator": [
+        151,
+        176,
+        11,
+        24,
+        34,
+        225,
+        227,
+        16
+      ]
+    },
+    {
+      "name": "priceTick",
+      "discriminator": [
+        223,
+        42,
+        8,
+        135,
+        176,
+        150,
+        240,
+        142
+      ]
+    },
+    {
+      "name": "proposalOpened",
+      "discriminator": [
+        118,
+        111,
+        242,
+        245,
+        53,
+        115,
+        95,
+        209
+      ]
+    },
+    {
+      "name": "proposalTallied",
+      "discriminator": [
+        160,
+        131,
+        90,
+        39,
+        14,
+        222,
+        55,
+        56
+      ]
+    },
+    {
+      "name": "roundFinalized",
+      "discriminator": [
+        43,
+        187,
+        17,
+        193,
+        36,
+        241,
+        48,
+        82
+      ]
+    },
+    {
+      "name": "roundRevealed",
+      "discriminator": [
+        99,
+        213,
+        118,
+        5,
+        55,
+        211,
+        57,
+        71
+      ]
+    },
+    {
+      "name": "teamFolded",
+      "discriminator": [
+        124,
+        142,
+        112,
+        155,
+        138,
+        83,
+        29,
+        73
+      ]
+    },
+    {
+      "name": "teamMemberLeft",
+      "discriminator": [
+        43,
+        197,
+        59,
+        174,
+        119,
+        145,
+        59,
+        48
+      ]
+    },
+    {
+      "name": "teamRegistered",
+      "discriminator": [
+        34,
+        196,
+        222,
+        157,
+        183,
+        10,
+        215,
+        104
+      ]
+    },
+    {
+      "name": "villainSelected",
+      "discriminator": [
+        1,
+        162,
+        177,
+        70,
+        21,
+        24,
+        181,
+        46
+      ]
+    }
+  ],
   "errors": [
     {
       "code": 6000,
@@ -2517,28 +2976,23 @@ export type Conviction = {
     },
     {
       "code": 6008,
-      "name": "villainRequestPending",
-      "msg": "Villain VRF request already pending"
-    },
-    {
-      "code": 6009,
       "name": "invalidOracleQueue",
       "msg": "Oracle queue is not a MagicBlock default queue"
     },
     {
-      "code": 6010,
+      "code": 6009,
       "name": "ftrMintNotInitialized",
       "msg": "FTR mint not yet initialized"
     },
     {
-      "code": 6011,
-      "name": "noVoterFtrAccount",
-      "msg": "No FTR token account provided for voter weight snapshot"
-    },
-    {
-      "code": 6012,
+      "code": 6010,
       "name": "matchNotDelegated",
       "msg": "Cannot reveal a match whose Match account is not delegated to ER"
+    },
+    {
+      "code": 6011,
+      "name": "overflow",
+      "msg": "Arithmetic overflow in counter / accumulator"
     }
   ],
   "types": [
@@ -2644,6 +3098,26 @@ export type Conviction = {
       }
     },
     {
+      "name": "chaosFired",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "matchId",
+            "type": "u32"
+          },
+          {
+            "name": "sequence",
+            "type": "u32"
+          },
+          {
+            "name": "kind",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
       "name": "chaosKind",
       "type": {
         "kind": "enum",
@@ -2656,6 +3130,65 @@ export type Conviction = {
           },
           {
             "name": "fakeNews"
+          }
+        ]
+      }
+    },
+    {
+      "name": "entryPrices",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "matchId",
+            "type": "u32"
+          },
+          {
+            "name": "side",
+            "type": "u8"
+          },
+          {
+            "name": "player",
+            "type": "pubkey"
+          },
+          {
+            "name": "entryPricesE6",
+            "docs": [
+              "Per-slot entry price in e6-scaled USD, parallel to `Basket.mints`",
+              "(and to `Match.last_prices_e6` / `Match.last_mint`). A slot that",
+              "wasn't picked at lock-in keeps `0` and contributes 0 to the team's",
+              "weighted P&L (matches the `teamPnlPercent` symmetry guard in",
+              "`app/lib/pnl.ts`)."
+            ],
+            "type": {
+              "array": [
+                "u64",
+                3
+              ]
+            }
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "foldKind",
+      "docs": [
+        "Why a team folded — distinguishes voluntary quit from stop-loss trigger",
+        "in the `TeamFolded` event so indexers / spectators can colour the feed",
+        "differently."
+      ],
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "manual"
+          },
+          {
+            "name": "stopLoss"
           }
         ]
       }
@@ -2692,6 +3225,44 @@ export type Conviction = {
           {
             "name": "bump",
             "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "lockedIn",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "matchId",
+            "type": "u32"
+          },
+          {
+            "name": "side",
+            "type": "u8"
+          },
+          {
+            "name": "player",
+            "type": "pubkey"
+          },
+          {
+            "name": "mints",
+            "type": {
+              "array": [
+                "pubkey",
+                3
+              ]
+            }
+          },
+          {
+            "name": "weights",
+            "type": {
+              "array": [
+                "u16",
+                3
+              ]
+            }
           }
         ]
       }
@@ -2747,6 +3318,52 @@ export type Conviction = {
           {
             "name": "bump",
             "type": "u8"
+          },
+          {
+            "name": "lastPricesE6",
+            "docs": [
+              "Latest observed price (e6) per basket slot. See file-level note."
+            ],
+            "type": {
+              "array": [
+                "u64",
+                3
+              ]
+            }
+          },
+          {
+            "name": "lastMint",
+            "docs": [
+              "Mint pubkey last reported for each basket slot. Parallel to",
+              "`last_prices_e6` so `reveal_round` can resolve basket mints ↔",
+              "latest prices without a client-side mint map (P-B1 fix)."
+            ],
+            "type": {
+              "array": [
+                "pubkey",
+                3
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "matchCreated",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "matchId",
+            "type": "u32"
+          },
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "pot",
+            "type": "u64"
           }
         ]
       }
@@ -2770,6 +3387,26 @@ export type Conviction = {
           },
           {
             "name": "finalized"
+          }
+        ]
+      }
+    },
+    {
+      "name": "priceTick",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "matchId",
+            "type": "u32"
+          },
+          {
+            "name": "slot",
+            "type": "u8"
+          },
+          {
+            "name": "priceE6",
+            "type": "u64"
           }
         ]
       }
@@ -2828,6 +3465,31 @@ export type Conviction = {
       }
     },
     {
+      "name": "proposalOpened",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "proposalId",
+            "type": "u32"
+          },
+          {
+            "name": "proposer",
+            "type": "pubkey"
+          },
+          {
+            "name": "paramName",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
       "name": "proposalStatus",
       "type": {
         "kind": "enum",
@@ -2837,6 +3499,26 @@ export type Conviction = {
           },
           {
             "name": "tallied"
+          }
+        ]
+      }
+    },
+    {
+      "name": "proposalTallied",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "proposalId",
+            "type": "u32"
+          },
+          {
+            "name": "ftrYes",
+            "type": "u64"
+          },
+          {
+            "name": "ftrNo",
+            "type": "u64"
           }
         ]
       }
@@ -2852,6 +3534,38 @@ export type Conviction = {
           },
           {
             "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "roundFinalized",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "matchId",
+            "type": "u32"
+          }
+        ]
+      }
+    },
+    {
+      "name": "roundRevealed",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "matchId",
+            "type": "u32"
+          },
+          {
+            "name": "winnerSide",
+            "type": "u8"
+          },
+          {
+            "name": "ftrMinted",
             "type": "u8"
           }
         ]
@@ -2917,16 +3631,24 @@ export type Conviction = {
     },
     {
       "name": "stopLossRange",
+      "docs": [
+        "Signed stop-loss band — `min_bps` is the floor (most-negative loss tolerable),",
+        "`max_bps` is the edge (least-negative loss tolerable).",
+        "",
+        "The UI models these as negative values (e.g. `minBps: -1500` means \"stop when",
+        "loss exceeds 15%\"). Signed `i16` is required so Borsh accepts the negative",
+        "inputs at the serializer boundary (Borsh rejects negative values for `u16`)."
+      ],
       "type": {
         "kind": "struct",
         "fields": [
           {
             "name": "minBps",
-            "type": "u16"
+            "type": "i16"
           },
           {
             "name": "maxBps",
-            "type": "u16"
+            "type": "i16"
           }
         ]
       }
@@ -2969,6 +3691,38 @@ export type Conviction = {
           {
             "name": "bump",
             "type": "u8"
+          },
+          {
+            "name": "folded",
+            "type": "bool"
+          }
+        ]
+      }
+    },
+    {
+      "name": "teamFolded",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "matchId",
+            "type": "u32"
+          },
+          {
+            "name": "side",
+            "type": "u8"
+          },
+          {
+            "name": "by",
+            "type": "pubkey"
+          },
+          {
+            "name": "kind",
+            "type": {
+              "defined": {
+                "name": "foldKind"
+              }
+            }
           }
         ]
       }
@@ -2988,6 +3742,46 @@ export type Conviction = {
           },
           {
             "name": "stopLossPda",
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "teamMemberLeft",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "matchId",
+            "type": "u32"
+          },
+          {
+            "name": "side",
+            "type": "u8"
+          },
+          {
+            "name": "player",
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "teamRegistered",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "matchId",
+            "type": "u32"
+          },
+          {
+            "name": "side",
+            "type": "u8"
+          },
+          {
+            "name": "leader",
             "type": "pubkey"
           }
         ]
@@ -3022,6 +3816,22 @@ export type Conviction = {
           {
             "name": "bump",
             "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "villainSelected",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "matchId",
+            "type": "u32"
+          },
+          {
+            "name": "mint",
+            "type": "pubkey"
           }
         ]
       }
