@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { useWallet as useSolanaWallet } from '@solana/wallet-adapter-react'
 import { Button } from '@/components/ui/button'
 import { Card, PanelLabel } from '@/components/ui/card'
 import { Num, SolAmount } from '@/components/ui/num'
@@ -49,6 +50,10 @@ export function MissionControl({
 }) {
   const { data, isLoading } = useRound(matchId)
   const { teamName } = useGameWallet()
+  // Wallet-adapter PublicKey is required by `useTeamPnl` so it can key the
+  // per-viewer entry-price cache. `useGameWallet` only exposes the address
+  // string, so we read the raw key from the adapter here.
+  const { publicKey: viewerWallet } = useSolanaWallet()
   const isSpectator = mode === 'spectator'
 
   const match = data?.match
@@ -140,6 +145,8 @@ export function MissionControl({
         <div className="space-y-4">
           <LeaderboardColumn
             teams={match.teams}
+            match={match}
+            wallet={viewerWallet ?? null}
             highlightTeamId={myTeam?.id}
             series={series}
           />
@@ -150,6 +157,7 @@ export function MissionControl({
           <Card className="p-4">
             <PriceChart
               teams={match.teams}
+              match={match}
               stopLossBand={myTeam?.basket?.band}
               series={series}
             />
@@ -172,7 +180,7 @@ export function MissionControl({
               </Link>
             </Card>
           ) : (
-            <ActionBar matchId={matchId} team={myTeam} />
+            <ActionBar matchId={matchId} team={myTeam} match={match} />
           )}
         </div>
 

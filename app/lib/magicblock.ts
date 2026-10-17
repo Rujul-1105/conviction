@@ -1,4 +1,10 @@
-import { Connection, type PublicKey } from '@solana/web3.js'
+import {
+  ComputeBudgetProgram,
+  Connection,
+  PublicKey,
+  Transaction,
+  type TransactionInstruction,
+} from '@solana/web3.js'
 
 /**
  * MagicBlock dual-connection helper.
@@ -109,6 +115,12 @@ export async function getErConnection(
  *
  * This is the primitive lib/api/real.ts needs for subscribeToRound, since the
  * program emits no events and account diffs are the only realtime signal.
+ *
+ * TODO: recheck on rotation. The router can rotate a delegated account to a
+ * different ER FQDN mid-round; this primitive resolves once at setup and
+ * never re-checks. Phase 9 should add a 30s router-poll + resubscribe loop.
+ * Phase 8 demos don't see rotation (sticky ER for round lifetime) so this
+ * is acceptable deferral, not a blocker.
  */
 export async function subscribeToDelegatedAccount(
   pda: PublicKey,
@@ -139,4 +151,69 @@ export async function subscribeToDelegatedAccount(
       void connection.removeAccountChangeListener(subId)
     }
   }
+}
+
+/**
+ * Subscribe to multiple PDAs on their respective ERs in one call.
+ *
+ * The onChange callback fires once per diff, with the PDA that fired. A
+ * single Solana tx often writes several PDAs in the same slot (e.g. a fold
+ * updates both Match and Team); the caller should debounce.
+ *
+ * Returns an aggregate unsubscribe; safe to call even if some PDAs fail
+ * to set up (those return noops internally).
+ */
+export async function subscribeToDelegatedAccounts(
+  pdas: PublicKey[],
+  onChange: (pda: PublicKey, data: Buffer, slot: number) => void,
+): Promise<() => void> {
+  const results = await Promise.all(
+    pdas.map((pda) =>
+      subscribeToDelegatedAccount(pda, (data, slot) => onChange(pda, data, slot)),
+    ),
+  )
+  return () => {
+    for (const unsub of results) unsub()
+  }
+}
+
+/**
+ * Build + sign + send a multi-ix transaction through the ER that currently
+ * holds `representativePda`. Atomic across all ixs: a Solana `Transaction`
+ * reverts the whole batch if any ix fails — this is the "intent bundle"
+ * semantics that lives in bare Solana without needing a missing SDK helper.
+ *
+ * `skipPreflight: true` because PER (Private Ephemeral Rollups) is
+ * semi-trusted and the simulation adds latency without surfacing real
+ * errors. `maxRetries: 3` forgives transient 429/5xx from the ER.
+ */
+export async function sendErBundle(args: {
+  representativePda: PublicKey
+  ixs: TransactionInstruction[]
+  wallet: {
+    publicKey: PublicKey
+    signTransaction: (tx: Transaction) => Promise<Transaction>
+  }
+  computeUnits?: number
+}): Promise<string> {
+  const {
+    representativePda,
+    ixs,
+    wallet,
+    computeUnits = 1_400_000,
+  } = args
+
+  const conn = await getErConnection(representativePda)
+
+  const tx = new Transaction()
+  tx.add(ComputeBudgetProgram.setComputeUnitLimit({ units: computeUnits }))
+  for (const ix of ixs) tx.add(ix)
+
+  tx.recentBlockhash = (await conn.getLatestBlockhash()).blockhash
+  tx.feePayer = wallet.publicKey
+  const signed = await wallet.signTransaction(tx)
+  return await conn.sendRawTransaction(signed.serialize(), {
+    skipPreflight: true,
+    maxRetries: 3,
+  })
 }

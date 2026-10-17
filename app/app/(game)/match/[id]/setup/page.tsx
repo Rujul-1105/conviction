@@ -81,7 +81,12 @@ export default function SetupPage({ params }: { params: { id: string } }) {
       toast.success('Locked in', { description: 'Sealed until reveal.' })
       router.push(`/match/${params.id}/live`)
     },
-    onError: () => toast.error('Lock-in failed'),
+    onError: (err) => {
+      console.error('[lockIn]', err)
+      toast.error('Lock-in failed', {
+        description: err instanceof Error ? err.message : String(err),
+      })
+    },
   })
 
   const stepIndex = STEPS.findIndex((s) => s.key === step)

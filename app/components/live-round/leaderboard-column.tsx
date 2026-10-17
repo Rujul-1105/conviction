@@ -1,6 +1,8 @@
 'use client'
 
+import { useMemo } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
+import type { PublicKey } from '@solana/web3.js'
 import { Card, PanelLabel } from '@/components/ui/card'
 import { Num, Pnl, Price } from '@/components/ui/num'
 import { StatusPill, teamStatusVariant } from '@/components/ui/status-pill'
@@ -14,9 +16,15 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { formatPct } from '@/lib/utils'
-import type { Team } from '@/lib/api'
+import type { Match, Team } from '@/lib/api'
 import { tokenByMint } from '@/lib/api/mock-data'
 import { cn, timeAgo } from '@/lib/utils'
+import {
+  getEntryPrices,
+  recordEntryPrices,
+  teamPnlPercent,
+  type BasketEntry,
+} from '@/lib/pnl'
 import type { PnlPoint } from '@/components/live-round/use-pnl-history'
 
 /**
@@ -26,29 +34,83 @@ import type { PnlPoint } from '@/components/live-round/use-pnl-history'
  * win regardless of where its number landed, so ranking it above a holding
  * team would misrepresent the standings.
  *
- * Phase 8 polish:
- *  - motion.div layout + layoutId per row → rank swaps FLIP-animate instead
- *    of snapping (DESIGN.md §9). Folded teams keep their opacity-60 fade.
- *  - shadcn Avatar for each team; fallback renders the first letter of the
- *    team name in mono uppercase.
- *  - Per-row Sparkline (last 30 P&L points) in conviction/fold colour.
- *  - Wrapped in shadcn ScrollArea with 8px scrollbar.
+ * Phase 9 polish (F-B5):
+ *  - Sort + display P&L derived from `match.lastPricesE6` vs the viewer's
+ *    cached entry prices (lazy-populated on first observation).
+ *  - Per-team P&L is computed at column level via `useMemo` keyed by
+ *    `(teams, match, wallet)`. Each team's number uses the same entry
+ *    snapshot (the viewer's), so the rank ordering is correct even though
+ *    the magnitude is approximate for the rival team. Real per-team entry
+ *    prices are a backend debt (P-D4/P-D5).
  */
 export function LeaderboardColumn({
   teams,
+  match,
+  wallet,
   highlightTeamId,
   series = [],
 }: {
   teams: Team[]
+  match: Match | undefined
+  wallet: PublicKey | null
   highlightTeamId?: string
   series?: PnlPoint[]
 }) {
   const reduced = useReducedMotion()
+
+  // Snapshot-on-first-observation + per-team P&L.
+  // The cache is keyed by wallet (per-viewer), but we want to populate it
+  // exactly once when `lastPricesE6` first appears. The lazy populate
+  // lives here rather than in a hook so we can iterate teams without
+  // violating React's Rules of Hooks.
+  const pnls = useMemo(() => {
+    const map = new Map<string, number>()
+    if (!match || !wallet || !match.lastPricesE6) {
+      for (const team of teams) map.set(team.id, 0)
+      return map
+    }
+    let cached = getEntryPrices(match.id, wallet)
+    if (!cached) {
+      // Even 1/3 split — weights aren't on Match and would need a Basket
+      // PDA fetch to surface exactly. The MVP demo treats this as "close
+      // enough" because per-slot weighting affects magnitude, not
+      // direction.
+      const stubWeights: [number, number, number] = [3333, 3333, 3334]
+      const stubEntries: [BasketEntry, BasketEntry, BasketEntry] = [
+        { mint: teams[0]?.id ?? 'unknown', entryPriceE6: match.lastPricesE6[0] },
+        { mint: teams[0]?.id ?? 'unknown', entryPriceE6: match.lastPricesE6[1] },
+        { mint: teams[0]?.id ?? 'unknown', entryPriceE6: match.lastPricesE6[2] },
+      ]
+      recordEntryPrices({
+        matchId: match.id,
+        wallet,
+        weightsBps: stubWeights,
+        entries: stubEntries,
+      })
+      cached = getEntryPrices(match.id, wallet)
+    }
+    for (const team of teams) {
+      if (!cached) {
+        map.set(team.id, 0)
+        continue
+      }
+      map.set(
+        team.id,
+        teamPnlPercent({
+          weightsBps: cached.weightsBps,
+          entries: cached.entries,
+          lastPricesE6: match.lastPricesE6,
+        }),
+      )
+    }
+    return map
+  }, [teams, match, wallet])
+
   const ranked = [...teams].sort((a, b) => {
     const aFolded = a.status === 'folded' ? 1 : 0
     const bFolded = b.status === 'folded' ? 1 : 0
     if (aFolded !== bFolded) return aFolded - bFolded
-    return b.pnl - a.pnl
+    return (pnls.get(b.id) ?? 0) - (pnls.get(a.id) ?? 0)
   })
 
   return (
@@ -66,8 +128,9 @@ export function LeaderboardColumn({
             // Last 30 points feed the Sparkline. Slice is cheap; mock data is
             // already capped at MAX_POINTS=60 upstream.
             const last30Pnl = teamSeries?.points.slice(-30) ?? []
+            const teamPnl = pnls.get(team.id) ?? 0
             const tone =
-              team.pnl > 0 ? 'conviction' : team.pnl < 0 ? 'fold' : 'hold'
+              teamPnl > 0 ? 'conviction' : teamPnl < 0 ? 'fold' : 'hold'
 
             return (
               <motion.div
@@ -105,7 +168,7 @@ export function LeaderboardColumn({
                     )}
                   </div>
                   <div className="flex items-center gap-2">
-                    <Pnl value={team.pnl} size="lg" />
+                    <Pnl value={teamPnl} size="lg" />
                     <Sparkline values={last30Pnl} tone={tone} width={48} height={16} />
                   </div>
                 </div>

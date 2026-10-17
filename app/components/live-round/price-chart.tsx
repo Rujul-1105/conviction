@@ -12,7 +12,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { colors } from '@/lib/colors'
-import type { StopLossBand, Team } from '@/lib/api'
+import type { Match, StopLossBand, Team } from '@/lib/api'
 import { useBirdeyePrices } from '@/lib/hooks/use-token-universe'
 import { usePnlHistory, type PnlPoint } from '@/components/live-round/use-pnl-history'
 
@@ -48,6 +48,7 @@ const PAD = 8
 
 type Props = {
   teams: Team[]
+  match?: Match
   stopLossBand?: StopLossBand
   /** Pre-computed rolling series from usePnlHistory. Falls back to local
    *  sampling if omitted, so the chart keeps working even when nothing has
@@ -55,7 +56,7 @@ type Props = {
   series?: PnlPoint[]
 }
 
-export function PriceChart({ teams, stopLossBand, series: externalSeries }: Props) {
+export function PriceChart({ teams, match, stopLossBand, series: externalSeries }: Props) {
   const localSeries = usePnlHistory(teams)
   const series = externalSeries ?? localSeries
   const teamsRef = useRef(teams)
@@ -76,6 +77,23 @@ export function PriceChart({ teams, stopLossBand, series: externalSeries }: Prop
   )
   const [birdeyeActive, setBirdeyeActive] = useState(false)
 
+  // ── On-chain tick age ──────────────────────────────────────────────────────
+  // Track when `lastPricesE6` last changed. The ER subscription pushes Match
+  // diffs into the React Query cache; every diff bumps `lastPricesE6` and
+  // therefore `match.id` keyed query result, which propagates here. The pill
+  // flips to "Stale" once the on-chain tick is older than 60s.
+  const lastPricesRef = useRef<string | null>(null)
+  const [lastTickMs, setLastTickMs] = useState<number | null>(null)
+
+  useEffect(() => {
+    if (!match?.lastPricesE6) return
+    const sig = match.lastPricesE6.join(',')
+    if (sig !== lastPricesRef.current) {
+      lastPricesRef.current = sig
+      setLastTickMs(Date.now())
+    }
+  }, [match?.lastPricesE6])
+
   useEffect(() => {
     if (birdeyeError) {
       setBirdeyeActive(false)
@@ -88,6 +106,31 @@ export function PriceChart({ teams, stopLossBand, series: externalSeries }: Prop
       setBirdeyeActive(hasBirdeyeKey)
     }
   }, [birdeyeError, birdeye.data, hasBirdeyeKey])
+
+  // ── Pill state matrix (F-B2) ───────────────────────────────────────────────
+  // 60s threshold matches DESIGN.md §11 "stale" rule. When `lastTickMs` is
+  // null (no tick observed yet for this match) we treat the chart as live
+  // rollup — the on-chain subscription hasn't fired yet but the match is
+  // genuinely on the rollup.
+  const STALE_THRESHOLD_MS = 60_000
+  const ageMs = lastTickMs === null ? 0 : Date.now() - lastTickMs
+  const isStale = lastTickMs !== null && ageMs >= STALE_THRESHOLD_MS
+  const pillTone: 'live-birdeye' | 'live-rollup' | 'stale-birdeye' | 'stale-rollup' =
+    isStale
+      ? birdeyeActive
+        ? 'stale-birdeye'
+        : 'stale-rollup'
+      : birdeyeActive
+        ? 'live-birdeye'
+        : 'live-rollup'
+  const pillLabel =
+    pillTone === 'live-birdeye'
+      ? 'Live · Birdeye fresh'
+      : pillTone === 'live-rollup'
+        ? 'Live (rollup-settled)'
+        : pillTone === 'stale-birdeye'
+          ? `Stale (${Math.round(ageMs / 1000)}s · Birdeye fresh)`
+          : 'Stale — Birdeye unavailable'
 
   // ── Geometry ───────────────────────────────────────────────────────────────
   // Symmetric domain around zero so the midline is always the break-even line.
@@ -188,15 +231,25 @@ export function PriceChart({ teams, stopLossBand, series: externalSeries }: Prop
                 {anyTeamFolded ? 'Auto-fold armed' : 'Band armed'}
               </span>
             )}
+            {/* Price-source pill — 4-state matrix per F-B2 plan.
+                * Freshness: on-chain `lastPricesE6` age.
+                * Source:   Birdeye returns data + build-time key is present.
+                * States:
+                *   age < 60s + Birdeye live → "Live · Birdeye fresh"
+                *   age < 60s + no Birdeye    → "Live (rollup-settled)"
+                *   age ≥ 60s + Birdeye live → "Stale (60s+ · Birdeye fresh)"
+                *   age ≥ 60s + no Birdeye    → "Stale — Birdeye unavailable" */}
             <span
               className={
                 'rounded-md border px-2 py-0.5 text-label ' +
-                (birdeyeActive
+                (pillTone === 'live-birdeye' || pillTone === 'stale-birdeye'
                   ? 'border-conviction/30 bg-conviction/10 text-conviction'
-                  : 'border-border bg-surface text-whisper')
+                  : pillTone === 'live-rollup'
+                    ? 'border-hold/30 bg-hold/10 text-hold'
+                    : 'border-fold/30 bg-fold/10 text-fold')
               }
             >
-              {birdeyeActive ? 'Birdeye live' : 'Mock walk'}
+              {pillLabel}
             </span>
           </div>
         </div>

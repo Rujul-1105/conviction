@@ -90,7 +90,12 @@ export function CreateMatchModal() {
       toast.success('Match created', { description: 'Pick your basket to start.' })
       router.push(`/match/${match.id}/setup`)
     },
-    onError: () => toast.error('Could not create the match'),
+    onError: (err) => {
+      console.error('[createMatch]', err)
+      toast.error('Could not create the match', {
+        description: err instanceof Error ? err.message : String(err),
+      })
+    },
   })
 
   return (

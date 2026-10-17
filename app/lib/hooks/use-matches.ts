@@ -9,6 +9,10 @@ import { api } from '@/lib/api'
  * Refetch intervals are deliberately different: the lobby's open list changes
  * on human timescales (5s) while live matches move constantly (3s). React
  * Query owns all server/on-chain state; Zustand never caches these.
+ *
+ * Note: `useLeaderboard` was deleted in the F-B3 fix (dead code — the live
+ * screen sorted `match.teams` client-side in `leaderboard-column.tsx`, and
+ * the 3s polling duplicated work that ER subscriptions now own).
  */
 
 export function useOpenMatches() {
@@ -32,14 +36,5 @@ export function useMatch(id: string) {
     queryKey: ['match', id],
     queryFn: () => api.getMatch(id),
     enabled: !!id,
-  })
-}
-
-export function useLeaderboard(matchId: string) {
-  return useQuery({
-    queryKey: ['leaderboard', matchId],
-    queryFn: () => api.getLeaderboard(matchId),
-    enabled: !!matchId,
-    refetchInterval: 3000,
   })
 }

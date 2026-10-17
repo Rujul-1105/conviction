@@ -14,7 +14,7 @@ import { shortAddress } from '@/lib/utils'
  *     addresses shown elsewhere.
  *  3. Subtle separator with build/version metadata.
  */
-const PROGRAM_ID = 'Fh6bQUgE35Hq7nP22GZ1Youwnph2UaiEh9xTtDJuHJbH'
+const PROGRAM_ID = 'EvuchyGQK4ZqBxYcr7hZUi4CmNUqMHZD6VbEH3iizVeh'
 const ER_ENDPOINT = 'devnet-router.magicblock.app'
 
 export function Footer() {

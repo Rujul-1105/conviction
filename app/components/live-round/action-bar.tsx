@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { motion, useReducedMotion } from 'framer-motion'
 import { toast } from 'sonner'
+import { useWallet as useSolanaWallet } from '@solana/wallet-adapter-react'
 import { Button, MotionButton } from '@/components/ui/button'
 import { Card, PanelLabel } from '@/components/ui/card'
 import { Pnl } from '@/components/ui/num'
@@ -20,7 +21,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { api, type Team } from '@/lib/api'
+import { api, type Match as MatchType, type Team } from '@/lib/api'
+import { useTeamPnl } from '@/lib/hooks/use-pnl'
 import { foldFlash, motionSafe } from '@/lib/motion'
 
 /**
@@ -45,12 +47,15 @@ import { foldFlash, motionSafe } from '@/lib/motion'
 export function ActionBar({
   matchId,
   team,
+  match,
 }: {
   matchId: string
   team: Team | undefined
+  match: MatchType | undefined
 }) {
   const queryClient = useQueryClient()
   const reduced = useReducedMotion()
+  const { publicKey: viewerWallet } = useSolanaWallet()
   const [confirmOpen, setConfirmOpen] = useState(false)
 
   const fold = useMutation({
@@ -58,7 +63,6 @@ export function ActionBar({
     onSuccess: async () => {
       setConfirmOpen(false)
       await queryClient.invalidateQueries({ queryKey: ['match', matchId] })
-      await queryClient.invalidateQueries({ queryKey: ['leaderboard', matchId] })
       await queryClient.invalidateQueries({ queryKey: ['round', matchId] })
       toast.error('You folded', { description: 'Your round is over.' })
     },
@@ -66,6 +70,12 @@ export function ActionBar({
   })
 
   const hasFolded = team?.status === 'folded'
+
+  // Real weighted P&L from the on-chain `lastPricesE6` vs the viewer's cached
+  // entry prices. Falls back to 0 (no surprise moves) when entry prices
+  // haven't been snapshotted yet — see `useTeamPnl` for the lazy-populate
+  // contract.
+  const pnl = useTeamPnl(team, match, viewerWallet ?? null)
 
   return (
     <>
@@ -78,7 +88,7 @@ export function ActionBar({
         <Card className="flex flex-wrap items-center gap-4 p-4">
           <div>
             <PanelLabel>Your position</PanelLabel>
-            <Pnl value={team?.pnl ?? 0} size="xl" className="block" />
+            <Pnl value={pnl} size="xl" className="block" />
           </div>
 
           <div className="ml-auto flex items-center gap-3">
@@ -133,7 +143,7 @@ export function ActionBar({
           <div className="space-y-4">
             <div className="rounded-md border border-fold/30 bg-fold/10 p-3">
               <PanelLabel>Locking in a loss of</PanelLabel>
-              <Pnl value={team?.pnl ?? 0} size="xl" className="block" />
+              <Pnl value={pnl} size="xl" className="block" />
             </div>
 
             <div className="flex gap-3">

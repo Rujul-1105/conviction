@@ -87,6 +87,13 @@ export type Match = {
   villainTokenMint?: string
   chaosEventCount: number
   spectatorCount: number
+  /**
+   * Latest observed price (e6-scaled USD) per basket slot, mirrored from
+   * the on-chain `Match.last_prices_e6`. Only present when the match has
+   * been read off-chain — absent in mock fixtures and pre-lock matches.
+   * Indexed by basket slot (0..2) so consumers can map to `team.basket`.
+   */
+  lastPricesE6?: [number, number, number]
 }
 
 export type RoundEventType =

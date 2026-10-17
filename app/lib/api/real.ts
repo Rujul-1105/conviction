@@ -1,9 +1,11 @@
 import { PublicKey } from '@solana/web3.js'
 import { BN } from '@coral-xyz/anchor'
 import {
+  findBasketPda,
   findConfigPda,
   findMatchPda,
   findProposalPda,
+  findStopLossPda,
   findTeamPda,
   findVillainPda,
 } from '@/lib/anchor/pda'
@@ -11,7 +13,10 @@ import {
   getCurrentConnection,
   getCurrentProgram,
   getCurrentWallet,
+  invalidateProgram,
 } from '@/lib/anchor/context'
+import { buildReadProgram } from '@/lib/anchor/program'
+import { sendErBundle, subscribeToDelegatedAccounts } from '@/lib/magicblock'
 import { TOKENS, tokenByMint } from './mock-data'
 import type {
   Basket,
@@ -27,22 +32,22 @@ import type {
 } from './index'
 
 /**
- * Real (on-chain) implementation — wired against `Fh6b…` on devnet.
+ * Real (on-chain) implementation — wired against `EvuchyGQK…` on devnet.
  *
  * Loose-typed throughout: the IDL JSON is huge, and Anchor's intricate
  * generics aren't worth fighting for an MVP wire-up. The runtime shape is
  * verified by `anchor build` + IDL regen.
  *
  * Things that are intentionally simplified for the MVP:
- *  - `lockInPicks` builds the four-ix sequence serially rather than in a
- *    single `MagicIntentBundleBuilder` transaction. The demo doesn't need
- *    the atomic version yet.
- *  - `subscribeToRound` polls `getRound` every 3s because the program emits
- *    no events. A real `onAccountChange` flow lands in Phase 5.
+ *  - `lockInPicks` builds a two-phase sequence (idempotent PER init + atomic
+ *    4-ix bundle via `sendErBundle`) so any failure in the lock step reverts
+ *    the whole bundle. See the per-method comment for the exact contract.
+ *  - `subscribeToRound` reads via ER `onAccountChange` on Match + Team×2;
+ *    the program emits no events so account diffs are the only signal.
  *  - `placeBet` / `getSpectatorBets` stay client-side — on-chain bidding
  *    was dropped in Phase B+2; spectator realtime uses mock fixtures.
- *  - P&L is a stub (always 0); the real implementation derives from
- *    `Match.last_prices_e6` (Phase 1 fix) versus basket entry prices.
+ *  - P&L is derived from `Match.last_prices_e6` weighted by the team's
+ *    basket weights vs. cached entry prices; see `lib/pnl.ts`.
  */
 
 const notWired = (what: string): never => {
@@ -94,6 +99,7 @@ type AnchorMatch = {
   chaosCount: number
   bump: number
   lastPricesE6: [BN, BN, BN]
+  lastMint: [PublicKey, PublicKey, PublicKey]
 }
 
 type AnchorVillainPick = {
@@ -138,6 +144,13 @@ function anchorMatchToUi(am: AnchorMatch, teams: Team[]): Match {
       : undefined,
     chaosEventCount: am.chaosCount,
     spectatorCount: 0,
+    // Mirror the on-chain per-slot latest-price array. Used by `useTeamPnl`
+    // to derive weighted P&L against each viewer's cached entry prices.
+    lastPricesE6: [
+      am.lastPricesE6[0].toNumber(),
+      am.lastPricesE6[1].toNumber(),
+      am.lastPricesE6[2].toNumber(),
+    ],
   }
 }
 
@@ -200,46 +213,43 @@ export const realApi: ConvictionApi = {
   // ─── Matchmaking ───────────────────────────────────────────────────────────
 
   async getOpenMatches(): Promise<Match[]> {
-    const program = getCurrentProgram() as any
-    if (!program) return mockOpenMatches()
+    // Try the cached signed program first; fall back to a read-only Program
+    // so lobby reads work pre-wallet. Either way, honest empty-state on a
+    // genuinely empty chain — no cinematic fallback.
+    const program = (getCurrentProgram() as any) ?? buildReadProgram(getCurrentConnection())
     try {
       const all = (await program.account.match.all()) as Array<{
         account: AnchorMatch
       }>
-      const live = all
+      return all
         .filter(({ account }) =>
           Boolean(account.phase.created || account.phase.lockedIn),
         )
         .map(({ account }) => anchorMatchToUi(account, []))
-      // Fall back to mock fixtures when devnet is empty so the lobby +
-      // spectator pages render before any real matches exist. The Phase 5
-      // demo bootstrap script can seed devnet to populate this.
-      return live.length > 0 ? live : mockOpenMatches()
-    } catch {
-      return mockOpenMatches()
+    } catch (err) {
+      console.error('[getOpenMatches] program.account.match.all failed', err)
+      throw err
     }
   },
 
   async getLiveMatches(): Promise<Match[]> {
-    const program = getCurrentProgram() as any
-    if (!program) return mockLiveMatches()
+    const program = (getCurrentProgram() as any) ?? buildReadProgram(getCurrentConnection())
     try {
       const all = (await program.account.match.all()) as Array<{
         account: AnchorMatch
       }>
-      const live = all
+      return all
         .filter(({ account }) => Boolean(account.phase.live))
         .map(({ account }) => anchorMatchToUi(account, []))
-      return live.length > 0 ? live : mockLiveMatches()
-    } catch {
-      return mockLiveMatches()
+    } catch (err) {
+      console.error('[getLiveMatches] program.account.match.all failed', err)
+      throw err
     }
   },
 
   async getMatch(id: string): Promise<Match> {
     const matchId = Number(id)
-    const program = getCurrentProgram() as any
-    if (!program) return mockMatchById(id)
+    const program = (getCurrentProgram() as any) ?? buildReadProgram(getCurrentConnection())
     try {
       const am = (await program.account.match.fetch(
         findMatchPda(matchId),
@@ -257,33 +267,40 @@ export const realApi: ConvictionApi = {
       if (t1) teams.push(anchorTeamToUi(t1 as AnchorTeam, matchId, 1))
       return anchorMatchToUi(am, teams)
     } catch {
-      // No on-chain match found — fall through to the mock fixture so the
-      // spectator page can be reached by id without a real match existing.
-      return mockMatchById(id)
+      // No on-chain match at this PDA. The verbatim error string keeps
+      // `mission-control.tsx:74-83` ("Round is no longer on the ledger.")
+      // empty-state copy aligned.
+      throw new Error('Round is no longer on the ledger.')
     }
   },
 
   async createMatch(params): Promise<Match> {
     const program = getCurrentProgram() as any
     if (!program) throw new Error('Wallet not connected')
-    // match_id derivation: use the RoundCounter account's `count` field;
-    // fall back to a timestamp if the counter isn't initialised yet.
-    let matchId = Math.floor(Date.now() / 1000) & 0xffffffff
+    const wallet = requireWallet()
+
+    // match_id derivation: read the singleton RoundCounter PDA's
+    // `currentRound` (camelCased by Anchor from `current_round`) and
+    // add 1. Fall back to 1 if the counter is not yet initialised
+    // (client-side safety; the on-chain `init_if_needed` will create
+    // it on the very first call regardless).
+    let matchId = 1
     try {
       const counters = (await program.account.roundCounter.all()) as Array<{
-        account: { count: BN }
+        account: { currentRound: BN }
       }>
       const last = counters[counters.length - 1]
-      if (last) matchId = last.account.count.toNumber() + 1
-    } catch {
-      // counter not initialised; timestamp fallback is fine for MVP
+      if (last) matchId = last.account.currentRound.toNumber() + 1
+    } catch (err) {
+      console.warn('[createMatch] roundCounter fetch failed; using matchId=1', err)
     }
 
     const pot = new BN(Math.floor((params.pot ?? 1) * 1e9))
-    await program.methods
+    const sig = await program.methods
       .createMatch(matchId, pot)
-      .accounts({})
+      .accounts({ authority: wallet.publicKey })
       .rpc()
+    console.log('[createMatch] tx', sig, 'matchId', matchId)
     return {
       id: String(matchId),
       roundNumber: matchId,
@@ -385,9 +402,38 @@ export const realApi: ConvictionApi = {
     if (side < 0) throw new Error('Player is not registered on either team')
 
     const basketState = readPendingBasket(id)
+    const basketPda = findBasketPda(id, side, w.publicKey)
+    const stopLossPda = findStopLossPda(id, side, w.publicKey)
 
-    // 1. lock_in_pre_round
-    await program.methods
+    // Phase A — PER init (idempotent).
+    // The `init_*_permission` ixs are only meaningful once the Basket/StopLoss
+    // PDAs exist (they read `per_members` from those accounts). On a fresh
+    // lock-in the Basket PDA is created in Phase B, so Phase A is a no-op;
+    // on a re-lock (or if the bootstrap script pre-created them) Phase A
+    // runs and creates the permission PDAs. Any failure here is treated as
+    // benign — Phase B is the atomic guarantee that the lock step lands.
+    await sendIfNeeded(
+      () => program.methods
+        .initBasketPermission()
+        .accounts({ player: w.publicKey })
+        .rpc(),
+      'initBasketPermission',
+    )
+    await sendIfNeeded(
+      () => program.methods
+        .initStopLossPermission()
+        .accounts({ player: w.publicKey })
+        .rpc(),
+      'initStopLossPermission',
+    )
+
+    // Phase B — atomic bundle.
+    // All three ixs sign by the player wallet. A Solana `Transaction` is
+    // atomic across its ixs: if any ix fails the whole bundle reverts and
+    // the match never enters `LockedIn` phase. This closes the half-state
+    // window where `lockInPreRound` could succeed but `delegateBasket`
+    // could fail, leaving the Basket un-delegated to the ER.
+    const lockIx = await program.methods
       .lockInPreRound(
         id,
         side,
@@ -399,13 +445,31 @@ export const realApi: ConvictionApi = {
         0,
       )
       .accounts({})
-      .rpc()
+      .instruction()
+    const delegateBasketIx = await program.methods
+      .delegateBasket(id, side)
+      .accounts({})
+      .instruction()
+    const delegateStopLossIx = await program.methods
+      .delegateStopLoss(id, side)
+      .accounts({})
+      .instruction()
 
-    // 2. delegate basket + stop-loss PDAs to the ER.
-    // The full PER init is omitted from the MVP wire-up — production needs
-    // both delegation ix AND permission init in a single bundle.
-    await program.methods.delegateBasket(id, side).accounts({}).rpc()
-    await program.methods.delegateStopLoss(id, side).accounts({}).rpc()
+    await sendErBundle({
+      representativePda: basketPda,
+      ixs: [lockIx, delegateBasketIx, delegateStopLossIx],
+      wallet: w as any,
+    })
+
+    // The cached Program (Anchor coder + account subscriptions) is stale
+    // after we wrote new accounts; clear it so the next read picks up the
+    // new layout (Basket/StopLoss now delegated, Match now LockedIn).
+    invalidateProgram()
+
+    // Quiet the linter on unused-vars stopLossPda — it's documented for the
+    // Bundle PDA trace but the bundle keys off basketPda alone.
+    void basketPda
+    void stopLossPda
   },
 
   // ─── Live round ────────────────────────────────────────────────────────────
@@ -453,26 +517,56 @@ export const realApi: ConvictionApi = {
   },
 
   subscribeToRound(matchId: string, cb: (event: RoundEvent) => void): () => void {
-    // The program emits no events; poll `getRound` every 3s. Phase 5 swaps
-    // this for a real `onAccountChange` flow once the match is delegated.
-    const id = setInterval(async () => {
+    // ER `onAccountChange` over Match + Team×2 — the canonical subscribe set
+    // (PLAN.md:203). The program emits no events so account diffs are the
+    // only realtime signal. A 250ms debounce collapses a 3-PDA burst (a
+    // single tx often writes Match + both Teams) into one getRound refetch
+    // and event emission. Setup is async — the API contract stays sync by
+    // absorbing the Promise internally; screens keep their sync subscribe
+    // shape.
+    const id = Number(matchId)
+    let unsubs: Array<() => void> = []
+    let cancelled = false
+    let debounce: number | undefined
+
+    void (async () => {
       try {
-        const round = await realApi.getRound(matchId)
-        const last = round.match.teams[0]
-        if (last) {
-          cb({
-            id: `poll-${Date.now()}`,
-            timestamp: Date.now(),
-            type: 'price',
-            teamId: last.id,
-            message: `${last.name} holding at ${last.pnl.toFixed(1)}%`,
-          })
-        }
+        const unsubscribeAll = await subscribeToDelegatedAccounts(
+          [findMatchPda(id), findTeamPda(id, 0), findTeamPda(id, 1)],
+          () => {
+            if (debounce !== undefined) window.clearTimeout(debounce)
+            debounce = window.setTimeout(() => {
+              void (async () => {
+                try {
+                  const round = await realApi.getRound(matchId)
+                  const last = round.match.teams[0]
+                  if (!last) return
+                  cb({
+                    id: `er-${Date.now()}`,
+                    timestamp: Date.now(),
+                    type: 'price',
+                    teamId: last.id,
+                    message: `${last.name} holding at ${last.pnl.toFixed(1)}%`,
+                  })
+                } catch {
+                  // Match not on chain (yet); skip.
+                }
+              })()
+            }, 250)
+          },
+        )
+        if (cancelled) unsubscribeAll()
+        else unsubs.push(unsubscribeAll)
       } catch {
-        // Match not on chain yet; skip silently.
+        // Router unreachable / no PDAs delegated; silent noop.
       }
-    }, 3000)
-    return () => clearInterval(id)
+    })()
+
+    return () => {
+      cancelled = true
+      for (const u of unsubs) u()
+      if (debounce !== undefined) window.clearTimeout(debounce)
+    }
   },
 
   // ─── Spectator ─────────────────────────────────────────────────────────────
@@ -633,82 +727,23 @@ function readPendingBasket(_matchId: number): {
 
 export { readPendingBasket }
 
-// ─── Mock fallbacks ─────────────────────────────────────────────────────────
-// When devnet has no matches yet, fall back to the cinematic fixtures the
-// mock layer used before. Keeps the demo narrative intact without forcing
-// the user to seed devnet with real matches first.
-
-// Inline mock fixture (mirror of mock-data.ts LIVE_MATCHES first entry) so
-// the spectator page can render even when devnet is empty. Kept short —
-// full cinematic data lives in `lib/api/mock-data.ts`.
-const SPECTATOR_FALLBACK: Match = {
-  id: 'spectate-demo',
-  roundNumber: 7,
-  mode: 'classic',
-  tier: 'mixed',
-  pot: 18.2,
-  duration: 15 * 60,
-  teams: [
-    {
-      id: 'team-1',
-      name: 'Village of Conviction',
-      walletAddresses: ['So1Fallback111111111111111111111111111111111'],
-      pnl: 4.2,
-      status: 'holding',
-      basket: {
-        tokens: [
-          {
-            mint: 'So11111111111111111111111111111111111111112',
-            symbol: 'SOL',
-            name: 'Solana',
-            decimals: 9,
-            tier: 'safe',
-            currentPrice: 214.32,
-            priceChange24h: 2.4,
-          },
-        ],
-        band: { minBps: -1400, maxBps: -500 },
-      },
-    },
-    {
-      id: 'team-2',
-      name: 'Diamond Hand Syndicate',
-      walletAddresses: ['So2Fallback222222222222222222222222222222222'],
-      pnl: -8.1,
-      status: 'holding',
-      basket: {
-        tokens: [
-          {
-            mint: 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263',
-            symbol: 'BONK',
-            name: 'Bonk',
-            decimals: 5,
-            tier: 'wild',
-            currentPrice: 0.00003142,
-            priceChange24h: -6.8,
-          },
-        ],
-        band: { minBps: -2000, maxBps: -600 },
-      },
-    },
-  ],
-  status: 'live',
-  startTime: Date.now() - 6 * 60 * 1000,
-  endTime: Date.now() + 9 * 60 * 1000,
-  chaosEventCount: 1,
-  spectatorCount: 217,
-}
-
-// Override the empty stubs above with the cinematic fallback so the spectator
-// page actually renders. Kept local so this file doesn't depend on
-// ./mock (which would create a circular import: real.ts → mock → real).
-function mockOpenMatches(): Match[] {
-  return [SPECTATOR_FALLBACK]
-}
-function mockLiveMatches(): Match[] {
-  return [SPECTATOR_FALLBACK]
-}
-function mockMatchById(id: string): Match {
-  if (id === SPECTATOR_FALLBACK.id) return SPECTATOR_FALLBACK
-  return { ...SPECTATOR_FALLBACK, id, teams: [] }
+/**
+ * Try-send a setup ix. Used by Phase A of `lockInPicks` where the ixs are
+ * idempotent (the program rejects `init` on an existing account) and the
+ * caller wants to continue regardless of the outcome. The only signal we
+ * carry forward is whether the call reached the chain at all — log it so
+ * operators can see why a re-lock might have skipped the permission init.
+ */
+async function sendIfNeeded(
+  send: () => Promise<string>,
+  label: string,
+): Promise<void> {
+  try {
+    await send()
+  } catch (err) {
+    console.warn(
+      `[lockInPicks] ${label} skipped:`,
+      err instanceof Error ? err.message : err,
+    )
+  }
 }

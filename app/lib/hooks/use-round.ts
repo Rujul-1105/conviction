@@ -10,9 +10,14 @@ type RoundData = { match: Match; events: RoundEvent[] }
 /**
  * Live round subscription (DESIGN.md §7).
  *
- * The mock fires every 3s; the real implementation will be an ER
- * onAccountChange subscription. Either way events are pushed straight into the
- * React Query cache so the feed re-renders without a refetch round-trip.
+ * `realApi.subscribeToRound` subscribes via ER `onAccountChange` on Match +
+ * Team×2 and writes fresh round state straight into `['round', matchId]`.
+ * Events are pushed into the same cache so the feed re-renders without a
+ * refetch round-trip. The only React Query mutation needed is the fold
+ * invalidation on `['match', matchId]` so any consumer of `useMatch` (which
+ * uses a separate cache key) picks up the team-status change. The
+ * `['leaderboard', matchId]` cache was deleted with the `useLeaderboard`
+ * hook in F-B3.
  */
 export function useSubscribeRound(matchId: string) {
   const queryClient = useQueryClient()
@@ -28,10 +33,11 @@ export function useSubscribeRound(matchId: string) {
         return { ...old, events: [event, ...old.events].slice(0, 60) }
       })
 
-      // A fold changes standings, so pull fresh match + leaderboard state.
+      // A fold changes team status (alive/folded). Refresh the separate
+      // `['match', matchId]` cache that `useMatch` (a different key)
+      // reads from, so any consumer outside `useRound` sees the update.
       if (event.type === 'fold' || event.type === 'round_end') {
         void queryClient.invalidateQueries({ queryKey: ['match', matchId] })
-        void queryClient.invalidateQueries({ queryKey: ['leaderboard', matchId] })
       }
 
       // Chaos flashes a banner. The banner self-clears — never let it sit.
