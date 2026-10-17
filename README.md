@@ -10,15 +10,15 @@ live 2-round mini-season demo with on-chain ER + PER + VRF integration.
 
 **Live demo:** https://conviction-nine.vercel.app
 
-**On-chain program:** [`Fh6bQUgE35Hq7nP22GZ1Youwnph2UaiEh9xTtDJuHJbH`](https://explorer.solana.com/address/Fh6bQUgE35Hq7nP22GZ1Youwnph2UaiEh9xTtDJuHJbH?cluster=devnet) (devnet)
+**On-chain program:** [`EvuchyGQK4ZqBxYcr7hZUi4CmNUqMHZD6VbEH3iizVeh`](https://explorer.solana.com/address/EvuchyGQK4ZqBxYcr7hZUi4CmNUqMHZD6VbEH3iizVeh?cluster=devnet) (devnet)
 
 ## What's shipped (MVP)
 
 A deployable, end-to-end demo on MagicBlock devnet:
 
-- **Anchor program** at `Fh6b…` — 24 instructions, 9 state accounts, 14
-  error variants, all ≤150 LOC per file. Idempotent init script for
-  GameConfig + FTR mint.
+- **Anchor program** at `EvuchyGQK…` — 25 instructions, 10 state
+  accounts, 15 error variants, all ≤150 LOC per file. Idempotent init
+  script for GameConfig + FTR mint + RoundCounter.
 - **Next.js 14 frontend** — 10 routes (landing, connect, lobby, match
   setup, live, reveal, spectate, governance, leaderboard, welcome),
   full shadcn design system, Framer Motion FLIP animations, per-team
@@ -32,18 +32,18 @@ A deployable, end-to-end demo on MagicBlock devnet:
 - **Vercel deploy artifacts** — `app/vercel.json`, `app/.env.example`,
   `docs/deploy.md` with the 5-step manual flow.
 
-On-chain pointers (devnet):
+On-chain pointers (devnet, regenerated 2026-09-13):
 
 | Account | Address |
 | | |
-| Program | `Fh6bQUgE35Hq7nP22GZ1Youwnph2UaiEh9xTtDJuHJbH` |
-| GameConfig PDA | `54Lyv5mQqUm2z5hCp4nzDWSWwRZUViohvRt82kkgeti2` |
-| RoundCounter PDA | `7tizNzRh66ah4jB4HzEG7nHryNv2hvyV38fb4BPdTkwS` |
+| Program | `EvuchyGQK4ZqBxYcr7hZUi4CmNUqMHZD6VbEH3iizVeh` |
+| GameConfig PDA | `CsuWaugANEK32k68sUsbP4Baw89VFTis6twYXgUh9o7R` |
+| RoundCounter PDA | `E61ZYnompTd57nZt76tNAinFuzdJntbKcrDu4u5SJCWg` (created on first `create_match`) |
 | FTR mint | `21Rki1gfiUYbM4bdyhma4TRWjYeS1SCXNb8ENKqsTr7V` |
 
 Explorer:
 ```
-https://explorer.solana.com/address/Fh6bQUgE35Hq7nP22GZ1Youwnph2UaiEh9xTtDJuHJbH?cluster=devnet
+https://explorer.solana.com/address/EvuchyGQK4ZqBxYcr7hZUi4CmNUqMHZD6VbEH3iizVeh?cluster=devnet
 ```
 
 ## Architecture
@@ -65,9 +65,9 @@ https://explorer.solana.com/address/Fh6bQUgE35Hq7nP22GZ1Youwnph2UaiEh9xTtDJuHJbH
         └──────┬───────┘       └───────┬──────┘  └───────────┘
                │                      │
         ┌──────▼──────────────────────▼──────┐
-        │ conviction program (Fh6b…)         │
-        │  - 24 instructions                  │
-        │  - 9 state accounts                  │
+        │ conviction program (EvuchyGQK…)     │
+        │  - 25 instructions                  │
+        │  - 10 state accounts                 │
         │  - delegated to ER per match        │
         │  - PER-sealed baskets + thresholds  │
         │  - VRF callbacks for villain+chaos  │

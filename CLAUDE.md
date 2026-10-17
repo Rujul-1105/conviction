@@ -33,11 +33,26 @@ generic "Loading…" / "No data" everywhere. Palette unchanged (DESIGN.md
 icon.png + logo_icon@2x generated. ADR 0005 records the design direction
 and rationale. Plan: `/home/rujul/.claude/plans/create-a-plan-for-immutable-metcalfe.md`.
 
+**Post-deploy hotfix (2026-09-13, uncommitted):** unblocked `/lobby` match
+creation. Three concurrent bugs were masking each other — the program used
+`#[account(init, …)]` on the singleton `RoundCounter` (broke every match
+after the first), the handler unconditionally reset `current_round = 1`
+on every call, and `real.ts` read `count` instead of `currentRound` so
+matchId silently fell back to a timestamp. Plus the modal swallowed the
+real error. All four fixed: program now `init_if_needed` + init-from-zero
++ bump; client reads the right field + passes `authority` explicitly +
+logs the tx signature; modal surfaces `err.message` in the toast. **New
+program ID generated** (`EvuchyGQK4ZqBxYcr7hZUi4CmNUqMHZD6VbEH3iizVeh`)
+because the in-flight upgrade was slow on devnet — third ID in this
+project's history (DnoA… → Fh6b… → EvuchyGQK…). Plan:
+`/home/rujul/.claude/plans/i-am-not-able-delightful-sprout.md`.
+
 > **Phase A.2 correction:** the bytecode deployed at `Fh6b…` had the *old* MVP
 > program ID baked in as `declare_id`, so every instruction reverted with
 > `DeclaredProgramIdMismatch` (4100) — the program was live but non-functional.
 > Fixed in Phase B by `solana program extend … 10240` + redeploy. On-chain
-> bytecode is now byte-identical to `target/deploy/conviction.so`.
+> bytecode is now byte-identical to `target/deploy/conviction.so`. `Fh6b…`
+> is the second program ID; now also deprecated.
 
 ## Design source of truth
 **`docs/DESIGN.md` wins for all frontend decisions** (ADR 0003). It supersedes:
@@ -69,9 +84,14 @@ and rationale. Plan: `/home/rujul/.claude/plans/create-a-plan-for-immutable-metc
    only signal.
 5. Phase C: Supabase schema + Helius webhook for the L1 event fallback.
 
+> **Closed (post-deploy hotfix 2026-09-13):** match creation from `/lobby`.
+> `init_if_needed` + `current_round` field-name fix + explicit `authority`
+> + error surfacing. Program redeployed under new ID — see above.
+
 
 ## Pointers
-- Program ID (devnet, Phase A.2): `Fh6bQUgE35Hq7nP22GZ1Youwnph2UaiEh9xTtDJuHJbH` — conviction.
+- Program ID (devnet, current): `EvuchyGQK4ZqBxYcr7hZUi4CmNUqMHZD6VbEH3iizVeh` — conviction.
+- (Deprecated) Phase A.2 ID: `Fh6bQUgE35Hq7nP22GZ1Youwnph2UaiEh9xTtDJuHJbH` — closed during the 2026-09-13 fresh redeploy.
 - (Deprecated) MVP ID: `DnoA4ZcLeP47K45ZUuWb1xyByg62kCo5rGgppnbxmu7P` — closed during A.2 redeploy.
 - Phase 0 counter (still live on devnet): `2Prk1oV522ED8ytsHXXxLYfBaPVYSHLEwRoXg3At979`.
 - ER FQDN: derived at runtime via router `getDelegationStatus`; observed
@@ -105,7 +125,9 @@ and rationale. Plan: `/home/rujul/.claude/plans/create-a-plan-for-immutable-metc
 - IDL account still not on chain — `anchor idl init` fails with
   `InstructionFallbackNotFound` (anchor-cli 0.31.1 vs anchor-lang 1.0.2;
   `#[ephemeral]` likely displaces Anchor's IDL fallback). Not blocking: the
-  IDL JSON is checked in at `app/lib/idl/conviction.json`.
+  IDL JSON is checked in at `app/lib/idl/conviction.json`. Last
+  confirmed 2026-09-13 — still debt after the fresh-ID redeploy;
+  user opted to acknowledge, not fix.
 - `reveal_round` mints 1 FTR to a single winner; full rosters-walk + per-member
   minting is still outstanding.
 - VRF callbacks tested at the instruction-surface level only; the actual
