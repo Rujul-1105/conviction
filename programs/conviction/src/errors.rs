@@ -29,14 +29,17 @@ pub enum ConvictionError {
     VillainAlreadyFulfilled,
     #[msg("Chaos VRF already fulfilled for this sequence")]
     ChaosAlreadyFulfilled,
-    #[msg("Villain VRF request already pending")]
-    VillainRequestPending,
+    // Note: `VillainRequestPending` (was 6008) and `NoVoterFtrAccount`
+    // (was 6011) were deleted in the backend-debt cleanup (P-D7). They're
+    // dead-code today and the live demo has no use for them. The IDs
+    // shift down; on-chain consumer code that referenced them by number
+    // must move to the new shape.
     #[msg("Oracle queue is not a MagicBlock default queue")]
     InvalidOracleQueue,
     #[msg("FTR mint not yet initialized")]
     FtrMintNotInitialized,
-    #[msg("No FTR token account provided for voter weight snapshot")]
-    NoVoterFtrAccount,
     #[msg("Cannot reveal a match whose Match account is not delegated to ER")]
     MatchNotDelegated,
+    #[msg("Arithmetic overflow in counter / accumulator")]
+    Overflow,
 }

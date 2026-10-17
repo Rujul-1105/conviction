@@ -29,12 +29,14 @@ pub mod errors;
 pub mod constants;
 pub mod helpers;
 pub mod instructions;
+pub mod events;
 
 // Re-export every on-chain type so handlers and tests can `use crate::*;`.
 pub use errors::*;
 pub use state::*;
 pub use constants::*;
 pub use helpers::*;
+pub use events::*;
 
 // Re-export every Accounts struct at the crate root so `Context<X>` inside
 // `#[program]` can identify X via its short name (`CreateMatch`, not
@@ -52,6 +54,7 @@ pub use instructions::delegate_basket::DelegateBasket;
 pub use instructions::delegate_stop_loss::DelegateStopLoss;
 pub use instructions::init_basket_permission::InitBasketPermission;
 pub use instructions::init_stop_loss_permission::InitStopLossPermission;
+pub use instructions::leave_during_live::LeaveDuringLive;
 pub use instructions::leave_match::LeaveMatch;
 pub use instructions::request_villain_vrf::RequestVillainVrf;
 pub use instructions::callback_villain::CallbackVillain;
@@ -81,6 +84,7 @@ pub use instructions::delegate_basket::__client_accounts_delegate_basket as __cl
 pub use instructions::delegate_stop_loss::__client_accounts_delegate_stop_loss as __client_accounts_delegate_stop_loss;
 pub use instructions::init_basket_permission::__client_accounts_init_basket_permission as __client_accounts_init_basket_permission;
 pub use instructions::init_stop_loss_permission::__client_accounts_init_stop_loss_permission as __client_accounts_init_stop_loss_permission;
+pub use instructions::leave_during_live::__client_accounts_leave_during_live as __client_accounts_leave_during_live;
 pub use instructions::leave_match::__client_accounts_leave_match as __client_accounts_leave_match;
 pub use instructions::request_villain_vrf::__client_accounts_request_villain_vrf as __client_accounts_request_villain_vrf;
 pub use instructions::callback_villain::__client_accounts_callback_villain as __client_accounts_callback_villain;
@@ -98,7 +102,7 @@ pub use instructions::tally_proposal::__client_accounts_tally_proposal as __clie
 // helper lives inside `pub mod conviction` below; alias it up to the crate root.
 pub use conviction::__client_accounts_initialize_after_undelegation as __client_accounts_initialize_after_undelegation;
 
-declare_id!("Fh6bQUgE35Hq7nP22GZ1Youwnph2UaiEh9xTtDJuHJbH");
+declare_id!("EWT7685cosRWNCgW6BeT8FqT68VTRQYmcHBNY6wNaNqh");
 
 #[ephemeral]
 #[program]
@@ -246,8 +250,8 @@ pub mod conviction {
         instructions::tick_price::handler(ctx, _match_id, _mint, _price_e6)
     }
 
-    pub fn reveal_round(
-        ctx: Context<RevealRound>,
+    pub fn reveal_round<'info>(
+        ctx: Context<'info, RevealRound<'info>>,
         _match_id: u32,
     ) -> Result<()> {
         instructions::reveal_round::handler(ctx, _match_id)
@@ -266,6 +270,14 @@ pub mod conviction {
         side: u8,
     ) -> Result<()> {
         instructions::fold::handler(ctx, match_id, side)
+    }
+
+    pub fn leave_during_live(
+        ctx: Context<LeaveDuringLive>,
+        match_id: u32,
+        side: u8,
+    ) -> Result<()> {
+        instructions::leave_during_live::handler(ctx, match_id, side)
     }
 
     pub fn commit_match_state(

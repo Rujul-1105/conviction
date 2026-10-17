@@ -28,3 +28,14 @@ pub enum ChaosKind {
     Pump,
     FakeNews,
 }
+
+/// Why a team folded — distinguishes voluntary quit from stop-loss trigger
+/// in the `TeamFolded` event so indexers / spectators can colour the feed
+/// differently.
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy, PartialEq, Eq)]
+pub enum FoldKind {
+    /// Player chose to fold voluntarily (`fold` ix).
+    Manual,
+    /// StopLoss band hit; `reveal_round` auto-folds during settlement.
+    StopLoss,
+}

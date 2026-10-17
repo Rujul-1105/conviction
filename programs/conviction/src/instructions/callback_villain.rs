@@ -5,6 +5,14 @@
 //! `constants.rs`. The minted token mirrors the front-end's
 //! `app/tokens.json` curated universe so it's always a real, tradeable
 //! SPL mint.
+//!
+//! P-B2 fix: also mirror the chosen mint into `Match.villain_pubkey` so
+//! the on-chain Match account carries the villain identity (previously
+//! this field was `None` for the entire match lifecycle — declared in
+//! `Match` but never written). We deserialize+serialize through raw
+//! account data because the Accounts struct declares `match_account` as
+//! `UncheckedAccount` (the VRF callback can't depend on Anchor account
+//! resolution since it runs on the ER without the full provider stack).
 
 use anchor_lang::prelude::*;
 
@@ -12,7 +20,8 @@ use ephemeral_rollups_sdk::anchor::vrf_callback;
 
 use crate::constants::{TOKEN_UNIVERSE, VILLAIN_SEED};
 use crate::errors::ConvictionError;
-use crate::state::VillainPick;
+use crate::state::{Match, VillainPick};
+use crate::*;
 
 #[vrf_callback]
 #[derive(Accounts)]
@@ -49,6 +58,21 @@ pub fn handler(
         0,
         universe_len,
     );
-    vp.villain_mint = TOKEN_UNIVERSE[pick_idx as usize];
+    let picked_mint = TOKEN_UNIVERSE[pick_idx as usize];
+    vp.villain_mint = picked_mint;
+
+    // Mirror to Match.villain_pubkey via raw deserialize/serialize —
+    // the Accounts struct can't promote `match_account` to
+    // `Account<'info, Match>` here without breaking the `#[vrf_callback]`
+    // macro's account-metas plumbing.
+    let mut data = ctx.accounts.match_account.try_borrow_mut_data()?;
+    let mut m = Match::try_deserialize(&mut &data[..])?;
+    m.villain_pubkey = Some(picked_mint);
+    m.serialize(&mut &mut data[..])?;
+
+    emit!(VillainSelected {
+        match_id: _match_id,
+        mint: picked_mint,
+    });
     Ok(())
 }

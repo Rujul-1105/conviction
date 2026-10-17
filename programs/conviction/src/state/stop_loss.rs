@@ -5,10 +5,16 @@ use anchor_lang::prelude::*;
 
 use crate::constants::MAX_PERMISSION_MEMBERS;
 
+/// Signed stop-loss band — `min_bps` is the floor (most-negative loss tolerable),
+/// `max_bps` is the edge (least-negative loss tolerable).
+///
+/// The UI models these as negative values (e.g. `minBps: -1500` means "stop when
+/// loss exceeds 15%"). Signed `i16` is required so Borsh accepts the negative
+/// inputs at the serializer boundary (Borsh rejects negative values for `u16`).
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy)]
 pub struct StopLossRange {
-    pub min_bps: u16,
-    pub max_bps: u16,
+    pub min_bps: i16,
+    pub max_bps: i16,
 }
 
 #[account]

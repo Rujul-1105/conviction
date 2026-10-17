@@ -24,6 +24,7 @@ pub mod villain_pick;
 pub mod chaos_event;
 pub mod proposal;
 pub mod round_counter;
+pub mod entry_prices;
 
 pub use enums::*;
 pub use game_config::*;
@@ -35,6 +36,7 @@ pub use villain_pick::*;
 pub use chaos_event::*;
 pub use proposal::*;
 pub use round_counter::*;
+pub use entry_prices::*;
 
 // File-name collision note:
 // `state::match_state` instead of `state::match` — `match` is a reserved

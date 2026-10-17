@@ -14,7 +14,8 @@ use ephemeral_rollups_sdk::anchor::commit;
 
 use crate::constants::{MATCH_SEED, TEAM_SEED};
 use crate::errors::ConvictionError;
-use crate::state::{enums::MatchPhase, Match, Team};
+use crate::state::{enums::MatchPhase, enums::FoldKind, Match, Team};
+use crate::*;
 
 #[commit]
 #[derive(Accounts)]
@@ -53,5 +54,12 @@ pub fn handler(
     let team = &mut ctx.accounts.team;
     team.folded = true;
     team.alive = 0;
+
+    emit!(TeamFolded {
+        match_id: _match_id,
+        side,
+        by: player_key,
+        kind: FoldKind::Manual,
+    });
     Ok(())
 }

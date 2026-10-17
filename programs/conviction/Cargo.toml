@@ -37,7 +37,9 @@ solana = []
 
 [dependencies]
 # Anchor 1.0.x pairs with ephemeral-rollups-sdk 0.16.x via the "anchor" feature flag.
-anchor-lang = { version = "1.0.2", features = ["init-if-needed"] }
+# `event-cpi` enables the `#[event]` macro + `emit!()` runtime calls — the
+# program emits events for every meaningful state transition (P-B4 fix).
+anchor-lang = { version = "1.0.2", features = ["init-if-needed", "event-cpi"] }
 # anchor-spl pairs with anchor-lang 1.0.x. Used for FTR mint + SPL token
 # CPI in vote_on_proposal / reveal_round.
 anchor-spl = "1.0.2"

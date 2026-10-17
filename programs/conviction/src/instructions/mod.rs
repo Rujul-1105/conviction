@@ -25,6 +25,7 @@ pub mod init_basket_permission;
 pub mod init_config;
 pub mod init_ftr_mint;
 pub mod init_stop_loss_permission;
+pub mod leave_during_live;
 pub mod leave_match;
 pub mod lock_in_pre_round;
 pub mod propose_param_change;

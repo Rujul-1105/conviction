@@ -1,13 +1,18 @@
 //! `create_match` — open a new match in the `Created` phase.
 //!
-//! Allocates both the per-match `Match` PDA and the singleton
-//! `RoundCounter`. The counter is initialized here to 1; later the
-//! `tick_price` / round-crank instructions may bump it.
+//! Allocates the per-match `Match` PDA (one-shot `init`) and lazily
+//! initializes / bumps the singleton `RoundCounter` PDA at
+//! `[ROUND_SEED]` (`init_if_needed`). The counter starts at 1 on the
+//! very first match ever and increments by 1 on every subsequent
+//! match — `match_id` is normally sourced from this counter on the
+//! client side, so each match gets a fresh sequential id.
 
 use anchor_lang::prelude::*;
 
 use crate::constants::{GAME_CONFIG_SEED, MATCH_SEED, ROUND_SEED};
+use crate::errors::ConvictionError;
 use crate::state::{enums::MatchPhase, GameConfig, Match, RoundCounter};
+use crate::*;
 
 #[derive(Accounts)]
 #[instruction(match_id: u32)]
@@ -18,7 +23,7 @@ pub struct CreateMatch<'info> {
     pub config: Account<'info, GameConfig>,
     #[account(init, payer = authority, space = Match::SIZE, seeds = [MATCH_SEED, &match_id.to_le_bytes()], bump)]
     pub match_account: Account<'info, Match>,
-    #[account(init, payer = authority, space = RoundCounter::SIZE, seeds = [ROUND_SEED], bump)]
+    #[account(init_if_needed, payer = authority, space = RoundCounter::SIZE, seeds = [ROUND_SEED], bump)]
     pub round_counter: Account<'info, RoundCounter>,
     pub system_program: Program<'info, System>,
 }
@@ -35,8 +40,25 @@ pub fn handler(ctx: Context<CreateMatch>, match_id: u32, pot: u64) -> Result<()>
     m.chaos_count = 0;
     m.bump = ctx.bumps.match_account;
 
+    // Singleton RoundCounter: init-from-zero on first match, otherwise
+    // bump. `init_if_needed` means the account already exists for
+    // every match after the first — the `init` variant would revert
+    // every time with `already in use`.
     let rc = &mut ctx.accounts.round_counter;
-    rc.current_round = 1;
-    rc.bump = ctx.bumps.round_counter;
+    if rc.current_round == 0 {
+        rc.current_round = 1;
+        rc.bump = ctx.bumps.round_counter;
+    } else {
+        rc.current_round = rc
+            .current_round
+            .checked_add(1)
+            .ok_or(ConvictionError::Overflow)?;
+    }
+
+    emit!(MatchCreated {
+        match_id,
+        authority: ctx.accounts.authority.key(),
+        pot,
+    });
     Ok(())
 }

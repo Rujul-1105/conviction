@@ -11,6 +11,7 @@ use crate::state::{
     enums::MatchPhase,
     Match, Team, TeamMember,
 };
+use crate::*;
 
 #[derive(Accounts)]
 #[instruction(match_id: u32, side: u8)]
@@ -47,5 +48,11 @@ pub fn handler(
         m.phase == MatchPhase::Created,
         ConvictionError::InvalidPhaseTransition
     );
+
+    emit!(TeamRegistered {
+        match_id,
+        side,
+        leader: ctx.accounts.leader.key(),
+    });
     Ok(())
 }

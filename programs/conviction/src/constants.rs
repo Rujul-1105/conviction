@@ -39,6 +39,11 @@ pub const CHAOS_SEED: &[u8] = b"chaos";
 pub const PROPOSAL_SEED: &[u8] = b"proposal";
 pub const ROUND_SEED: &[u8] = b"round";
 pub const FTR_AUTHORITY_SEED: &[u8] = b"ftr_authority";
+/// Per-player per-match entry-price snapshot (D11). Written by
+/// `lock_in_pre_round` on first init; read by `reveal_round` to settle
+/// weighted P&L. Decoupled from Basket so no struct/SIZE churn on existing
+/// PDAs — a new seed means a new account space.
+pub const ENTRY_SEED: &[u8] = b"entry";
 
 pub const TOKEN_UNIVERSE: [Pubkey; 25] = [
     pubkey!("So11111111111111111111111111111111111111112"), // SOL
